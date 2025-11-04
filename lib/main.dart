@@ -1,6 +1,15 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/screens/auth/login/login_page.dart';
+import 'package:new_bie/src/screens/auth/unregister/unregister_page.dart';
+import 'package:new_bie/src/screens/journal/journal_page.dart';
+import 'package:new_bie/src/screens/my_profile/my_profile_page.dart';
+import 'package:new_bie/src/screens/my_profile/set_profile_page.dart';
+import 'package:new_bie/src/screens/post/post_detail_page.dart';
+import 'package:new_bie/src/screens/post/post_edit_page.dart';
+import 'package:new_bie/src/screens/splash_page.dart';
+import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -74,19 +83,25 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/login',
           builder: (context, state) {
-            return const HomeScreen();
+            return const LoginPage();
           },
         ),
         GoRoute(
           path: '/splash',
           builder: (context, state) {
-            return const HomeScreen();
+            return const SplashPage();
           },
         ),
         GoRoute(
           path: '/unregister',
           builder: (context, state) {
-            return const HomeScreen();
+            return const UnregisterPage();
+          },
+        ),
+        GoRoute(
+          path: '/set_profile',
+          builder: (context, state) {
+            return const SetProfilePage();
           },
         ),
         GoRoute(
@@ -94,13 +109,13 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             final postId = state.pathParameters["id"] ?? "0";
             final int detailId = int.parse(postId);
-            return const HomeScreen();
+            return const PostDetailPage();
           },
           routes: [
             GoRoute(
               path: '/edit',
               builder: (context, state) {
-                return const HomeScreen();
+                return const PostEditPage();
               },
             ),
           ],
@@ -109,7 +124,7 @@ class MyApp extends StatelessWidget {
           path: '/user_profile/:user_id',
           builder: (context, state) {
             final userId = state.pathParameters["user_id"] ?? "";
-            return const HomeScreen();
+            return const UserProfilePage();
           },
         ),
         ShellRoute(
@@ -126,25 +141,25 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: '/add',
               builder: (context, state) {
-                return const HomeScreen();
+                return const PostEditPage();
               },
             ),
             GoRoute(
               path: '/journal',
               builder: (context, state) {
-                return const HomeScreen();
+                return const JournalPage();
               },
             ),
             GoRoute(
               path: '/my_profile',
               builder: (context, state) {
-                return const HomeScreen();
+                return const MyProfilePage();
               },
               routes: [
                 GoRoute(
                   path: '/setting',
                   builder: (context, state) {
-                    return const HomeScreen();
+                    return const SetProfilePage();
                   },
                   routes: [
                     GoRoute(
