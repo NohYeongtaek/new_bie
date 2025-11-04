@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-//이것은 복붙용입니다. 혹시 몰라서 아직은 삭제하지 않으나 곧 삭제할 예정입니다.
-
-class EmptyViewModel extends ChangeNotifier {
+class NoticeDetailViewModel extends ChangeNotifier {
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  EmptyViewModel(BuildContext context) {}
+  NoticeDetailViewModel(BuildContext context) {}
 
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {

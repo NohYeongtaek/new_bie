@@ -10,10 +10,9 @@ class BottomNavBar extends StatelessWidget {
 
     int currentIndex = 0;
     if (location.startsWith('/home')) currentIndex = 0;
-    if (location.startsWith('/search')) currentIndex = 1;
-    if (location.startsWith('/profile')) currentIndex = 2;
-    if (location.startsWith('/open_chat')) currentIndex = 3;
-    if (location.startsWith('/memo')) currentIndex = 4;
+    if (location.startsWith('/add')) currentIndex = 1;
+    if (location.startsWith('/journal')) currentIndex = 2;
+    if (location.startsWith('/my_profile')) currentIndex = 3;
 
     return BottomNavigationBar(
       currentIndex: currentIndex,

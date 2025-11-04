@@ -1,18 +1,29 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/screens/auth/auth_view_model.dart';
 import 'package:new_bie/src/screens/auth/login/login_page.dart';
+import 'package:new_bie/src/screens/auth/login/login_view_model.dart';
 import 'package:new_bie/src/screens/auth/unregister/unregister_page.dart';
+import 'package:new_bie/src/screens/home/home_view_model.dart';
 import 'package:new_bie/src/screens/journal/journal_page.dart';
-import 'package:new_bie/src/screens/my_profile/follow_list_page.dart';
+import 'package:new_bie/src/screens/my_profile/follow_list/follow_list_page.dart';
+import 'package:new_bie/src/screens/my_profile/follow_list/follow_list_view_model.dart';
 import 'package:new_bie/src/screens/my_profile/my_profile_page.dart';
+import 'package:new_bie/src/screens/my_profile/my_profile_view_model.dart';
 import 'package:new_bie/src/screens/my_profile/set_profile_page.dart';
+import 'package:new_bie/src/screens/my_profile/set_profile_view_model.dart';
 import 'package:new_bie/src/screens/post/post_add_page.dart';
 import 'package:new_bie/src/screens/post/post_detail_page.dart';
 import 'package:new_bie/src/screens/post/post_edit_page.dart';
+import 'package:new_bie/src/screens/post/post_repository.dart';
+import 'package:new_bie/src/screens/search/search_result_view_model.dart';
 import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_page.dart';
+import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_view_model.dart';
 import 'package:new_bie/src/screens/setting/notice/notice_detail_page.dart';
 import 'package:new_bie/src/screens/setting/notice/notices_page.dart';
+import 'package:new_bie/src/screens/setting/notice/notices_repository.dart';
+import 'package:new_bie/src/screens/setting/notice/notices_view_model.dart';
 import 'package:new_bie/src/screens/setting/question/question_page.dart';
 import 'package:new_bie/src/screens/splash_page.dart';
 import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
@@ -34,8 +45,50 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) {
+            return AuthViewModel();
+          },
+        ),
+        Provider(create: (context) => PostRepository()),
+        Provider(create: (context) => NoticesRepository()),
+        ChangeNotifierProvider(
           create: (context) {
-            // return TaskViewModel();
+            return NoticesViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return LoginViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return HomeViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return FollowListViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return MyProfileViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return SetProfileViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return SearchResultViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return BlockedUserViewModel(context);
           },
         ),
       ],
