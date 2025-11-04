@@ -6,10 +6,8 @@ class JournalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("일지 페이지 To Be continue")),
-      body: SafeArea(
-        child: Center(child: Text("일지 페이지입니다\n추후 업데이트로 돌아오겠습니다.")),
-      ),
+      appBar: AppBar(title: const Text("일지")),
+      body: SafeArea(child: Column(children: [Text("일지는 개발 예정")])),
     );
   }
 }

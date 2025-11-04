@@ -6,8 +6,12 @@ import 'package:new_bie/src/screens/auth/unregister/unregister_page.dart';
 import 'package:new_bie/src/screens/journal/journal_page.dart';
 import 'package:new_bie/src/screens/my_profile/my_profile_page.dart';
 import 'package:new_bie/src/screens/my_profile/set_profile_page.dart';
+import 'package:new_bie/src/screens/post/post_add_page.dart';
 import 'package:new_bie/src/screens/post/post_detail_page.dart';
 import 'package:new_bie/src/screens/post/post_edit_page.dart';
+import 'package:new_bie/src/screens/setting/notice/notice_detail_page.dart';
+import 'package:new_bie/src/screens/setting/notice/notices_page.dart';
+import 'package:new_bie/src/screens/setting/question/question_page.dart';
 import 'package:new_bie/src/screens/splash_page.dart';
 import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
 import 'package:provider/provider.dart';
@@ -141,7 +145,7 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: '/add',
               builder: (context, state) {
-                return const PostEditPage();
+                return const PostAddPage();
               },
             ),
             GoRoute(
@@ -165,13 +169,13 @@ class MyApp extends StatelessWidget {
                     GoRoute(
                       path: '/question',
                       builder: (context, state) {
-                        return const HomeScreen();
+                        return const QuestionPage();
                       },
                     ),
                     GoRoute(
                       path: '/notice',
                       builder: (context, state) {
-                        return const HomeScreen();
+                        return const NoticesPage();
                       },
                       routes: [
                         GoRoute(
@@ -180,7 +184,7 @@ class MyApp extends StatelessWidget {
                             final noticeId =
                                 state.pathParameters["notice_id"] ?? "0";
                             final int detailId = int.parse(noticeId);
-                            return HomeScreen();
+                            return NoticeDetailPage();
                           },
                         ),
                       ],
