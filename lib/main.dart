@@ -1,0 +1,120 @@
+import 'package:event_bus/event_bus.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'bottom_nav_bar.dart';
+
+EventBus eventBus = EventBus();
+
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://syfgficcejjgtvpmtkzx.supabase.co',
+    anonKey: // 인증키
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+  );
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) {
+            // return TaskViewModel();
+          },
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  final String title;
+
+  // 생성자
+  const MyApp({super.key, this.title = "타이틀"});
+
+  // 오버라이드 -
+  @override
+  Widget build(BuildContext context) {
+    final AuthViewModel authVM = context.read<AuthViewModel>();
+
+    // 1. authVM - 데이터 상태를 바꾼다
+    // 2. 고 라우터 refreshListenable 에 authVM 이 연동되어 있다.
+    // 3. authVM 의 데이터 변수가 바뀌면
+    // 4. 고라우터의 redirect 로직이 타게된다.
+    // 5. 현재 사용자 인증 상태는 authVM 로 알 수 있다.
+    // 6. GoRouterState는 현재 사용자가 머물고 있는 화면 라우팅 주소를 알고 있다.
+    // 7. 우리의 입맛에 맞게 화면이동처리가 가능하다.
+
+    // final repo = context.read<MemoRepository>();
+
+    // 라우트 설정
+    final _router = GoRouter(
+      initialLocation: '',
+      refreshListenable: authVM,
+      redirect: (BuildContext context, GoRouterState state) {
+        final bool isLoggedIn = authVM.isLoggedIn;
+        debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
+        final String currentRoute = state.uri.toString();
+        debugPrint("[리디렉트] currentRoute: ${currentRoute}");
+
+        if (isLoggedIn && currentRoute == '/login') {
+          return '/home';
+        }
+        Set<String> unAuthenticatedRoutes = {'/login', '/register'};
+        if (!isLoggedIn && !unAuthenticatedRoutes.contains(currentRoute)) {
+          return '/login';
+        }
+
+        return null;
+      },
+      routes: [
+        GoRoute(
+          path: '/method_channel',
+          builder: (_, _) {
+            return const MethodChannelPage();
+          },
+        ),
+        ShellRoute(
+          builder: (context, state, child) {
+            return Scaffold(body: child, bottomNavigationBar: BottomNavBar());
+          },
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) {
+                return const ProfilePage();
+              },
+            ),
+            GoRoute(
+              path: '/memo',
+              builder: (context, state) {
+                return const MemoPage();
+              },
+              routes: [
+                GoRoute(
+                  path: '/:memo_id',
+                  builder: (context, state) {
+                    final memoId = state.pathParameters["memo_id"] ?? "0";
+                    final int detailId = int.parse(memoId);
+                    return MemoDetailPage(detailId: detailId);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    return MaterialApp.router(
+      title: title,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      routerConfig: _router,
+    );
+  }
+}
