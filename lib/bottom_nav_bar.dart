@@ -24,32 +24,13 @@ class BottomNavBar extends StatelessWidget {
             context.go('/home');
             break;
           case 1:
-            context.go('/search');
+            context.go('/add');
             break;
           case 2:
-            //TODO: 인증상태를 확인
-            // 인증이 되었다면 이동
-            // final bool isLoggedIn = context.read<AuthViewModel>().isLoggedIn;
-            // if (isLoggedIn) {
-            //   context.go('/profile');
-            // } else {
-            //   showDialog(
-            //     context: context,
-            //     builder: (context) {
-            //       return CustomAlertDialog(
-            //         title: "테스트",
-            //         message: "로그인이 필요합니다.",
-            //         onConfirm: () {},
-            //       );
-            //     },
-            //   );
-            // }
+            context.go('/journal');
             break;
           case 3:
-            context.go('/open_chat');
-            break;
-          case 4:
-            context.go('/memo');
+            context.go('/my_profile');
             break;
         }
       },

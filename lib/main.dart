@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'bottom_nav_bar.dart';
-import 'src/screens/home_screen.dart';
+import 'src/screens/home/home_screen.dart';
 
 EventBus eventBus = EventBus();
 
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
 
     // 라우트 설정
     final _router = GoRouter(
-      initialLocation: '/profile',
+      initialLocation: '/home',
       // refreshListenable: authVM,
       // redirect: (BuildContext context, GoRouterState state) {
       //   final bool isLoggedIn = authVM.isLoggedIn;
@@ -72,8 +72,43 @@ class MyApp extends StatelessWidget {
       // },
       routes: [
         GoRoute(
-          path: '/method_channel',
-          builder: (_, _) {
+          path: '/login',
+          builder: (context, state) {
+            return const HomeScreen();
+          },
+        ),
+        GoRoute(
+          path: '/splash',
+          builder: (context, state) {
+            return const HomeScreen();
+          },
+        ),
+        GoRoute(
+          path: '/unregister',
+          builder: (context, state) {
+            return const HomeScreen();
+          },
+        ),
+        GoRoute(
+          path: '/post/:id',
+          builder: (context, state) {
+            final postId = state.pathParameters["id"] ?? "0";
+            final int detailId = int.parse(postId);
+            return const HomeScreen();
+          },
+          routes: [
+            GoRoute(
+              path: '/edit',
+              builder: (context, state) {
+                return const HomeScreen();
+              },
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/user_profile/:user_id',
+          builder: (context, state) {
+            final userId = state.pathParameters["user_id"] ?? "";
             return const HomeScreen();
           },
         ),
@@ -83,23 +118,70 @@ class MyApp extends StatelessWidget {
           },
           routes: [
             GoRoute(
-              path: '/profile',
+              path: '/home',
               builder: (context, state) {
                 return const HomeScreen();
               },
             ),
             GoRoute(
-              path: '/memo',
+              path: '/add',
+              builder: (context, state) {
+                return const HomeScreen();
+              },
+            ),
+            GoRoute(
+              path: '/journal',
+              builder: (context, state) {
+                return const HomeScreen();
+              },
+            ),
+            GoRoute(
+              path: '/my_profile',
               builder: (context, state) {
                 return const HomeScreen();
               },
               routes: [
                 GoRoute(
-                  path: '/:memo_id',
+                  path: '/setting',
                   builder: (context, state) {
-                    final memoId = state.pathParameters["memo_id"] ?? "0";
-                    final int detailId = int.parse(memoId);
-                    return HomeScreen();
+                    return const HomeScreen();
+                  },
+                  routes: [
+                    GoRoute(
+                      path: '/question',
+                      builder: (context, state) {
+                        return const HomeScreen();
+                      },
+                    ),
+                    GoRoute(
+                      path: '/notice',
+                      builder: (context, state) {
+                        return const HomeScreen();
+                      },
+                      routes: [
+                        GoRoute(
+                          path: '/:notice_id',
+                          builder: (context, state) {
+                            final noticeId =
+                                state.pathParameters["notice_id"] ?? "0";
+                            final int detailId = int.parse(noticeId);
+                            return HomeScreen();
+                          },
+                        ),
+                      ],
+                    ),
+                    GoRoute(
+                      path: '/blocked_users',
+                      builder: (context, state) {
+                        return const HomeScreen();
+                      },
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: '/follow',
+                  builder: (context, state) {
+                    return const HomeScreen();
                   },
                 ),
               ],
