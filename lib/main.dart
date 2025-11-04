@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'bottom_nav_bar.dart';
+import 'src/screens/home_screen.dart';
 
 EventBus eventBus = EventBus();
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
   // 오버라이드 -
   @override
   Widget build(BuildContext context) {
-    final AuthViewModel authVM = context.read<AuthViewModel>();
+    // final AuthViewModel authVM = context.read<AuthViewModel>();
 
     // 1. authVM - 데이터 상태를 바꾼다
     // 2. 고 라우터 refreshListenable 에 authVM 이 연동되어 있다.
@@ -51,29 +52,29 @@ class MyApp extends StatelessWidget {
 
     // 라우트 설정
     final _router = GoRouter(
-      initialLocation: '',
-      refreshListenable: authVM,
-      redirect: (BuildContext context, GoRouterState state) {
-        final bool isLoggedIn = authVM.isLoggedIn;
-        debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
-        final String currentRoute = state.uri.toString();
-        debugPrint("[리디렉트] currentRoute: ${currentRoute}");
-
-        if (isLoggedIn && currentRoute == '/login') {
-          return '/home';
-        }
-        Set<String> unAuthenticatedRoutes = {'/login', '/register'};
-        if (!isLoggedIn && !unAuthenticatedRoutes.contains(currentRoute)) {
-          return '/login';
-        }
-
-        return null;
-      },
+      initialLocation: '/profile',
+      // refreshListenable: authVM,
+      // redirect: (BuildContext context, GoRouterState state) {
+      //   final bool isLoggedIn = authVM.isLoggedIn;
+      //   debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
+      //   final String currentRoute = state.uri.toString();
+      //   debugPrint("[리디렉트] currentRoute: ${currentRoute}");
+      //
+      //   if (isLoggedIn && currentRoute == '/login') {
+      //     return '/home';
+      //   }
+      //   Set<String> unAuthenticatedRoutes = {'/login', '/register'};
+      //   if (!isLoggedIn && !unAuthenticatedRoutes.contains(currentRoute)) {
+      //     return '/login';
+      //   }
+      //
+      //   return null;
+      // },
       routes: [
         GoRoute(
           path: '/method_channel',
           builder: (_, _) {
-            return const MethodChannelPage();
+            return const HomeScreen();
           },
         ),
         ShellRoute(
@@ -84,13 +85,13 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: '/profile',
               builder: (context, state) {
-                return const ProfilePage();
+                return const HomeScreen();
               },
             ),
             GoRoute(
               path: '/memo',
               builder: (context, state) {
-                return const MemoPage();
+                return const HomeScreen();
               },
               routes: [
                 GoRoute(
@@ -98,7 +99,7 @@ class MyApp extends StatelessWidget {
                   builder: (context, state) {
                     final memoId = state.pathParameters["memo_id"] ?? "0";
                     final int detailId = int.parse(memoId);
-                    return MemoDetailPage(detailId: detailId);
+                    return HomeScreen();
                   },
                 ),
               ],
