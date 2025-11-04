@@ -37,8 +37,17 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    dataBinding {
+        enable = true
+    }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation ("io.github.parksanggwon:tedimagepicker:1.7.2")
+    //implementation 'io.github.parksanggwon:tedimagepicker:1.7.3'
+    // only lowercase!!
 }
