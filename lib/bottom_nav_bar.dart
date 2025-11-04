@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
@@ -30,21 +29,21 @@ class BottomNavBar extends StatelessWidget {
           case 2:
             //TODO: 인증상태를 확인
             // 인증이 되었다면 이동
-            final bool isLoggedIn = context.read<AuthViewModel>().isLoggedIn;
-            if (isLoggedIn) {
-              context.go('/profile');
-            } else {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return CustomAlertDialog(
-                    title: "테스트",
-                    message: "로그인이 필요합니다.",
-                    onConfirm: () {},
-                  );
-                },
-              );
-            }
+            // final bool isLoggedIn = context.read<AuthViewModel>().isLoggedIn;
+            // if (isLoggedIn) {
+            //   context.go('/profile');
+            // } else {
+            //   showDialog(
+            //     context: context,
+            //     builder: (context) {
+            //       return CustomAlertDialog(
+            //         title: "테스트",
+            //         message: "로그인이 필요합니다.",
+            //         onConfirm: () {},
+            //       );
+            //     },
+            //   );
+            // }
             break;
           case 3:
             context.go('/open_chat');
