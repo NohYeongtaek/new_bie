@@ -63,7 +63,7 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) {
-            return HomeViewModel(context);
+            return HomeViewModel(context.read<PostRepository>());
           },
         ),
         ChangeNotifierProvider(

@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/post_entity.dart';
+import 'package:new_bie/src/screens/post/post_repository.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  // int inputCount = 0;
+  //포스트 리포지토리와 연결
+  final PostRepository _postRepository;
+  List<PostEntity> _posts = [];
+  List<PostEntity> get posts => _posts;
 
-  // final TextEditingController textEditingController = TextEditingController();
+  //페이징 처리
+  int _currentPage = 1;
+  int get currentPage => _currentPage;
 
-  // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  HomeViewModel(BuildContext context) {}
+  //스크롤 컨트롤러
+  ScrollController scrollController = ScrollController();
+
+  HomeViewModel(this._postRepository) {
+    fetchPosts();
+  }
 
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
@@ -32,4 +43,16 @@ class HomeViewModel extends ChangeNotifier {
   //   await Future.delayed(const Duration(milliseconds: 1700));
   //   notifyListeners();
   // }
+
+  Future<void> fetchPosts() async {
+    _posts = await _postRepository.fetchPosts();
+    notifyListeners();
+  }
+
+  Future<void> fetchMoreMemos() async {
+    _currentPage = currentPage + 1;
+    List<PostEntity> newPosts = await _postRepository.fetchPosts();
+    _posts.addAll(newPosts);
+    notifyListeners();
+  }
 }
