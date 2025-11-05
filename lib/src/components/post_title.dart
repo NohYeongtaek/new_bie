@@ -24,3 +24,4 @@ class PostTitle extends StatelessWidget {
     );
   }
 }
+ 
