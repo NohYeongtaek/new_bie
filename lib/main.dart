@@ -28,6 +28,7 @@ import 'package:new_bie/src/screens/setting/notice/notices_view_model.dart';
 import 'package:new_bie/src/screens/setting/question/question_page.dart';
 import 'package:new_bie/src/screens/splash_page.dart';
 import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
+import 'package:new_bie/src/ui_set/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -269,7 +270,16 @@ class MyApp extends StatelessWidget {
       title: title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: orangeColor),
+        scaffoldBackgroundColor: blackColor,
+        textTheme: ThemeData(
+          brightness: Brightness.dark,
+        ).textTheme.apply(bodyColor: orangeColor, displayColor: orangeColor),
+        iconTheme: const IconThemeData(color: orangeColor),
+        appBarTheme: AppBarTheme(
+          backgroundColor: blackColor,
+          foregroundColor: orangeColor,
+        ),
       ),
       routerConfig: _router,
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/ui_set/colors.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
@@ -15,6 +16,11 @@ class BottomNavBar extends StatelessWidget {
     if (location.startsWith('/my_profile')) currentIndex = 3;
 
     return BottomNavigationBar(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      backgroundColor: blackColor,
+      selectedItemColor: orangeColor,
+      unselectedItemColor: Colors.white,
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
       onTap: (index) {
@@ -34,10 +40,10 @@ class BottomNavBar extends StatelessWidget {
         }
       },
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-        BottomNavigationBarItem(icon: Icon(Icons.add), label: '새글'),
-        BottomNavigationBarItem(icon: Icon(Icons.edit_calendar), label: '일지'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: '마이'),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.edit_calendar), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
       ],
     );
   }
