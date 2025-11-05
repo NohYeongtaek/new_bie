@@ -7,6 +7,7 @@ class UserEntity {
   final String? unregister_at;
   final int following_count;
   final int follower_count;
+  final String? email;
 
   UserEntity({
     required this.id,
@@ -17,6 +18,7 @@ class UserEntity {
     required this.unregister_at,
     required this.following_count,
     required this.follower_count,
+    required this.email,
   });
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class UserEntity {
       unregister_at: json['unregister_at'] as String,
       following_count: json['following_count'] as int,
       follower_count: json['follower_count'] as int,
+      email: json['email'] as String,
     );
   }
 }
