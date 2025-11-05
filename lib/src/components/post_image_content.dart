@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../ui_set/fonts.dart';
 
 class PostImageContent extends StatelessWidget {
   final String? imageUrl; //이미지 null
