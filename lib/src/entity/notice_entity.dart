@@ -16,9 +16,9 @@ class NoticeEntity {
   factory NoticeEntity.fromJson(Map<String, dynamic> json) {
     return NoticeEntity(
       id: json['id'] as int,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      published_at: json['published_at'] as String,
+      title: json['title'] as String?,
+      content: json['content'] as String?,
+      published_at: json['published_at'] as String?,
       created_at: json['created_at'] as String,
     );
   }
