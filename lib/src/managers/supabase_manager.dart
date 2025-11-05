@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseManager {
@@ -14,5 +15,32 @@ class SupabaseManager {
   // 생성자
   SupabaseManager() {
     debugPrint("SupabaseManager init");
+  }
+
+  Future<List<PostEntity>> fetchPosts() async {
+    // Map<String, dynamic> <- 이거 하나가 제이슨 이다
+    final List<Map<String, dynamic>> data = await supabase
+        .from('posts')
+        .select();
+    // 콜렉션 형태변환
+    // T Function(Map<String, dynamic>)
+    final List<PostEntity> results = data.map((Map<String, dynamic> json) {
+      return PostEntity.fromJson(json);
+    }).toList();
+
+    // 다양한 함수의 축약형태
+    final List<PostEntity> results2 = data.map((json) {
+      return PostEntity.fromJson(json);
+    }).toList();
+
+    // 다양한 함수의 축약형태
+    final List<PostEntity> results3 = data
+        .map((json) => PostEntity.fromJson(json))
+        .toList();
+
+    // 다양한 함수의 축약형태
+    final List<PostEntity> results4 = data.map(PostEntity.fromJson).toList();
+
+    return results;
   }
 }
