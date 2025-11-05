@@ -5,6 +5,7 @@ import 'package:new_bie/src/screens/auth/auth_view_model.dart';
 import 'package:new_bie/src/screens/auth/login/login_page.dart';
 import 'package:new_bie/src/screens/auth/login/login_view_model.dart';
 import 'package:new_bie/src/screens/auth/unregister/unregister_page.dart';
+import 'package:new_bie/src/screens/home/home_screen.dart';
 import 'package:new_bie/src/screens/home/home_view_model.dart';
 import 'package:new_bie/src/screens/journal/journal_page.dart';
 import 'package:new_bie/src/screens/my_profile/follow_list/follow_list_page.dart';
@@ -31,7 +32,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'bottom_nav_bar.dart';
-import 'src/screens/home/home_screen.dart';
 
 EventBus eventBus = EventBus();
 
