@@ -24,14 +24,14 @@ class UserEntity {
   factory UserEntity.fromJson(Map<String, dynamic> json) {
     return UserEntity(
       id: json['id'] as String,
-      profile_image: json['profile_image'] as String,
-      nick_name: json['nick_name'] as String,
-      introduction: json['introduction'] as String,
+      profile_image: json['profile_image'] as String?,
+      nick_name: json['nick_name'] as String?,
+      introduction: json['introduction'] as String?,
       created_at: json['created_at'] as String,
-      unregister_at: json['unregister_at'] as String,
+      unregister_at: json['unregister_at'] as String?,
       following_count: json['following_count'] as int,
       follower_count: json['follower_count'] as int,
-      email: json['email'] as String,
+      email: json['email'] as String?,
     );
   }
 }
