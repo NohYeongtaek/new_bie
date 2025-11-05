@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../ui_set/fonts.dart';
-import '../ui_set/colors.dart';
 
 class PostTitle extends StatelessWidget {
   final String title;
