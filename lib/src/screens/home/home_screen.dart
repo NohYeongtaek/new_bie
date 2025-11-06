@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:new_bie/src/components/post_item.dart';
-import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:new_bie/src/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../entity/post_with_profile_entity.dart';
 
 // 홈화면
 class HomeScreen extends StatelessWidget {
@@ -18,6 +19,9 @@ class HomeScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                TextField(),
+                Row(),
+                Text("최신순"),
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: viewModel.fetchPosts,
@@ -25,7 +29,8 @@ class HomeScreen extends StatelessWidget {
                       // controller: viewModel.scrollController,
                       itemCount: viewModel.posts.length, // 뷰모델.list.length
                       itemBuilder: (context, index) {
-                        final PostEntity item = viewModel.posts[index];
+                        final PostWithProfileEntity item =
+                            viewModel.posts[index];
                         return PostItem(post: item);
                       },
                     ),

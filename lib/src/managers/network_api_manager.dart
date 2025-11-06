@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 
 class NetworkApiManager {
   static final NetworkApiManager _shared = NetworkApiManager();
@@ -7,7 +8,53 @@ class NetworkApiManager {
   final dio = Dio();
 
   NetworkApiManager() {}
+
+  Future<PostWithProfileEntity> fetchPostItem(int id) async {
+    final response = await dio.get(
+      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts/${id}',
+      options: Options(
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    final List data = response.data['data'];
+    final List<PostWithProfileEntity> results = data.map((json) {
+      return PostWithProfileEntity.fromJson(json);
+    }).toList();
+
+    return results[0];
+  }
+
+  Future<List<PostWithProfileEntity>> fetchPosts() async {
+    final Response<dynamic> response = (await dio.get(
+      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts',
+      options: Options(
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      ),
+    ));
+
+    print("response 런타임타입 : ${response.runtimeType}");
+    final List data = response.data['data'];
+    print("${data.runtimeType}");
+    final List<PostWithProfileEntity> results = data.map((json) {
+      return PostWithProfileEntity.fromJson(json);
+    }).toList();
+
+    return results;
+  }
 }
+
+// curl --location 'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts/1' \
+// --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc' \
+// --header 'Content-Type: application/json'
 
 // 페이징 처리 로직 예시
 // Future<List<Memo>> fetchMemos({

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:new_bie/src/entity/notice_entity.dart';
+import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../entity/user_entity.dart';
 
 class SupabaseManager {
   // 이유 - 밖에서 shared를 null등 건드리지 못하게
@@ -52,8 +54,9 @@ class SupabaseManager {
         .select()
         .order('created_at', ascending: false); // 내림차순 정렬
 
-    final List<NoticeEntity> results =
-    data.map((json) => NoticeEntity.fromJson(json)).toList();
+    final List<NoticeEntity> results = data
+        .map((json) => NoticeEntity.fromJson(json))
+        .toList();
 
     return results;
   }
@@ -69,5 +72,16 @@ class SupabaseManager {
     if (row == null) return null;
 
     return NoticeEntity.fromJson(row);
+  Future<UserEntity> fetchAuthorProfile(String userId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('users')
+        .select()
+        .eq('id', userId);
+
+    final List<UserEntity> results2 = data.map((json) {
+      return UserEntity.fromJson(json);
+    }).toList();
+
+    return results2[0];
   }
 }
