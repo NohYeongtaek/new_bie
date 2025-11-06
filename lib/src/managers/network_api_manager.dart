@@ -21,7 +21,7 @@ class NetworkApiManager {
       ),
     );
 
-    final List data = response.data;
+    final List data = response.data['data'];
     final List<PostWithProfileEntity> results = data.map((json) {
       return PostWithProfileEntity.fromJson(json);
     }).toList();
@@ -42,7 +42,7 @@ class NetworkApiManager {
     ));
 
     print("response 런타임타입 : ${response.runtimeType}");
-    final List<Map<String, dynamic>> data = response.data;
+    final List data = response.data['data'];
     print("${data.runtimeType}");
     final List<PostWithProfileEntity> results = data.map((json) {
       return PostWithProfileEntity.fromJson(json);
