@@ -34,6 +34,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'bottom_nav_bar.dart';
 
+final SupabaseClient supabase = Supabase.instance.client;
+
 EventBus eventBus = EventBus();
 
 Future<void> main() async {
