@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:new_bie/src/entity/post_entity.dart';
+import 'package:new_bie/src/ui_set/colors.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 
 class PostItem extends StatelessWidget {
@@ -23,11 +24,11 @@ class PostItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(post.title ?? "제목 없음", style: titleFontStyle as TextStyle),
-          Text(post.created_at, style: dateFontStyle as TextStyle),
+          Text(post.title ?? "제목 없음", style: titleFontStyle),
+          Text(post.created_at, style: dateFontStyle),
           Text(
             post.content ?? "내용 없음",
-            style: contentFontStyle as TextStyle,
+            style: contentFontStyle,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -37,8 +38,20 @@ class PostItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               spacing: 10,
               children: [
-                Text("좋아요 : ${post.likes_count}"),
-                Text("댓글수 : ${post.comments_count}"),
+                Row(
+                  spacing: 10,
+                  children: [
+                    Icon(Icons.favorite, color: Colors.red),
+                    Text("${post.likes_count}"),
+                  ],
+                ),
+                Row(
+                  spacing: 10,
+                  children: [
+                    Icon(Icons.comment_outlined, color: orangeColor),
+                    Text("${post.comments_count}"),
+                  ],
+                ),
               ],
             ),
           ),
