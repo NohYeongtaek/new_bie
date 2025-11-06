@@ -44,16 +44,30 @@ class SupabaseManager {
 
     return results;
   }
-  // 공지추가
+
+  // 공지 목록 조회
   Future<List<NoticeEntity>> fetchNotices() async {
     final List<Map<String, dynamic>> data = await supabase
         .from('notices')
         .select()
-        .order('created_at', ascending: false); //내림차순(최신공지가위로)
+        .order('created_at', ascending: false); // 내림차순 정렬
 
     final List<NoticeEntity> results =
     data.map((json) => NoticeEntity.fromJson(json)).toList();
 
     return results;
+  }
+
+  // 공지 상세 조회
+  Future<NoticeEntity?> getNoticeById(int id) async {
+    final Map<String, dynamic>? row = await supabase
+        .from('notices')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
+
+    if (row == null) return null;
+
+    return NoticeEntity.fromJson(row);
   }
 }
