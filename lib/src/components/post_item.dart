@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/src/entity/post_entity.dart';
-import 'package:new_bie/src/ui_set/colors.dart';
+import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 
+import 'small_profile_component.dart';
+
 class PostItem extends StatelessWidget {
-  final PostEntity post;
+  final PostWithProfileEntity post;
   // final String? title;
   // final String? content;
   // final String created_at;
@@ -24,8 +25,12 @@ class PostItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SmallProfileComponent(
+            imageUrl: post.user.profile_image,
+            nickName: post.user.nick_name,
+            introduce: post.created_at,
+          ),
           Text(post.title ?? "제목 없음", style: titleFontStyle),
-          Text(post.created_at, style: dateFontStyle),
           Text(
             post.content ?? "내용 없음",
             style: contentFontStyle,
@@ -48,7 +53,7 @@ class PostItem extends StatelessWidget {
                 Row(
                   spacing: 10,
                   children: [
-                    Icon(Icons.comment_outlined, color: orangeColor),
+                    Icon(Icons.comment_outlined, color: Colors.white),
                     Text("${post.comments_count}"),
                   ],
                 ),
