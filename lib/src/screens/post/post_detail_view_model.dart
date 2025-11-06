@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/post_with_profile_entity.dart';
+import 'package:new_bie/src/screens/post/post_repository.dart';
+import 'package:provider/provider.dart';
 
 class PostDetailViewModel extends ChangeNotifier {
   // int inputCount = 0;
@@ -6,7 +9,25 @@ class PostDetailViewModel extends ChangeNotifier {
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  PostDetailViewModel(BuildContext context) {}
+  PostWithProfileEntity? post;
+
+  final int postId;
+  PostRepository _repository;
+
+  PostDetailViewModel(this.postId, BuildContext context)
+    : _repository = context.read<PostRepository>() {
+    fetchPost();
+  }
+
+  Future<void> fetchPost() async {
+    try {
+      post = await _repository.fetchPostItem(postId);
+    } catch (e) {
+      print("에러 : ${e}");
+    }
+    // 리빌딩, 리콤포지션 진행
+    notifyListeners();
+  }
 
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
@@ -27,9 +48,10 @@ class PostDetailViewModel extends ChangeNotifier {
   //   // 리빌딩, 리콤포지션 진행
   //   notifyListeners();
   // }
-  // Future<void> function1() async {
-  //   // 시간 지연 코드
-  //   await Future.delayed(const Duration(milliseconds: 1700));
-  //   notifyListeners();
-  // }
+
+  Future<void> function1() async {
+    // 시간 지연 코드
+    await Future.delayed(const Duration(milliseconds: 1700));
+    notifyListeners();
+  }
 }

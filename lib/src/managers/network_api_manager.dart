@@ -21,12 +21,11 @@ class NetworkApiManager {
       ),
     );
 
-    final List data = response.data['data'];
-    final List<PostWithProfileEntity> results = data.map((json) {
-      return PostWithProfileEntity.fromJson(json);
-    }).toList();
+    final Map<String, dynamic> data = response.data['data'];
+    print("data 데이터 타입 : ${data.runtimeType}");
+    final PostWithProfileEntity results = PostWithProfileEntity.fromJson(data);
 
-    return results[0];
+    return results;
   }
 
   Future<List<PostWithProfileEntity>> fetchPosts() async {
