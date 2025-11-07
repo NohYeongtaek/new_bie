@@ -10,6 +10,10 @@ class PostRepository {
     return await NetworkApiManager.shared.fetchPosts();
   }
 
+  Future<PostWithProfileEntity> fetchPostItem(int id) async {
+    return await NetworkApiManager.shared.fetchPostItem(id);
+  }
+
   Future<UserEntity> fetchAuthorProfile(String userId) async {
     return await SupabaseManager.shared.fetchAuthorProfile(userId);
   }

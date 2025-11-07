@@ -20,6 +20,7 @@ class SmallProfileComponent extends StatelessWidget {
       padding: EdgeInsets.all(8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 10,
         children: [
           SizedBox(
             width: imageSize,
@@ -31,7 +32,12 @@ class SmallProfileComponent extends StatelessWidget {
                   : Image.network(imageUrl!, fit: BoxFit.cover),
             ),
           ),
-          Expanded(child: Column(children: [Text(nickName), Text(introduce)])),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text(nickName), Text(introduce)],
+            ),
+          ),
         ],
       ),
     );
