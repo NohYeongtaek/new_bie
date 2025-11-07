@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:new_bie/src/screens/setting/notice/notices_view_model.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
+import 'package:new_bie/src/extension/time_extension.dart';
 
 class NoticesPage extends StatelessWidget {
   const NoticesPage({super.key});
@@ -39,7 +40,9 @@ class NoticesPage extends StatelessWidget {
               style: titleFontStyle,
             ),
             subtitle: Text(
-              vm.notices[index].title ?? '', //날짜
+              vm.notices[index].created_at != null
+                  ? timeAgo(vm.notices[index].created_at!.toDateTime())
+                  : '',
               style: dateFontStyle,
             ),
             trailing: Icon(Icons.chevron_right),
