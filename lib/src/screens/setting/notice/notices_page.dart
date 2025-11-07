@@ -40,9 +40,17 @@ class NoticesPage extends StatelessWidget {
             ),
             subtitle: Text(
               vm.notices[index].title ?? '', //날짜
-              style: contentFontStyle,
+              style: dateFontStyle,
             ),
             trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              // 상세 페이지 이동
+              Navigator.pushNamed(
+                context,
+                '/notice_detail',
+                arguments: vm.notices[index],
+              );
+            },
           );
         },
       ),
