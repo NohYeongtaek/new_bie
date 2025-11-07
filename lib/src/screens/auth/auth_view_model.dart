@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../managers/supabase_manager.dart';
+
 class AuthViewModel extends ChangeNotifier {
+  void logout() {
+    // _isLoggedIn = false;
+
+    SupabaseManager.shared.supabase.auth.signOut();
+    print("userId : ${SupabaseManager.shared.supabase.auth.currentUser?.id}");
+    notifyListeners();
+  }
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();

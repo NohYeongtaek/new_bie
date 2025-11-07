@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/components/likes_and_comments/like_button.dart';
 import 'package:new_bie/src/components/small_profile_component.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/screens/post/post_detail_view_model.dart';
@@ -16,13 +17,14 @@ class PostDetailPage extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (context) => PostDetailViewModel(postId, context),
-      child: _PostDetailPage(),
+      child: _PostDetailPage(postId: postId),
     );
   }
 }
 
 class _PostDetailPage extends StatelessWidget {
-  const _PostDetailPage({super.key});
+  final int postId;
+  const _PostDetailPage({super.key, required this.postId});
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +32,59 @@ class _PostDetailPage extends StatelessWidget {
       builder: (context, viewModel, child) {
         PostWithProfileEntity? post = viewModel.post;
         PostUserEntity? user = post?.user;
-        final Widget body = RefreshIndicator(
-          onRefresh: viewModel.fetchPost, // 뷰모델에서 새로고침
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SmallProfileComponent(
-                    nickName: user?.nick_name ?? "",
-                    imageUrl: user?.profile_image ?? "",
-                    introduce: post?.created_at ?? "",
+        final Widget body = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: viewModel.fetchPost, // 뷰모델에서 새로고침
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SmallProfileComponent(
+                          nickName: user?.nick_name ?? "",
+                          imageUrl: user?.profile_image ?? "",
+                          introduce: post?.created_at ?? "",
+                        ),
+                        Text(post?.title ?? "", style: titleFontStyle),
+                        Text(post?.content ?? "", style: contentFontStyle),
+                      ],
+                    ),
                   ),
-                  Text(post?.title ?? "", style: titleFontStyle),
-                  Text(post?.content ?? "", style: contentFontStyle),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  LikeButton(postId: postId),
+                  InkWell(
+                    onTap: () {},
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        Icon(Icons.comment_outlined, color: Colors.white),
+                        Text("${post?.comments_count}"),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
+          ],
         );
         return Scaffold(
           appBar: AppBar(title: Text("게시물")),
-          body: post != null ? body : CircularProgressIndicator(),
+          body: SafeArea(
+            child: post != null ? body : CircularProgressIndicator(),
+          ),
         );
       },
     );

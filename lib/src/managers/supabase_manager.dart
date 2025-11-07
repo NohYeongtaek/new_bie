@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/likes_entity.dart';
 import 'package:new_bie/src/entity/notice_entity.dart';
 import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -72,5 +73,27 @@ class SupabaseManager {
     }).toList();
 
     return results2[0];
+  }
+
+  Future<LikeEntity?> fetchLikeItem(int postId, String userId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('likes')
+        .select()
+        .eq('user_id', userId)
+        .eq('post_id', postId);
+
+    if (data.length == 0) return null;
+    final List<LikeEntity> results = data.map((json) {
+      return LikeEntity.fromJson(json);
+    }).toList();
+    return results.first;
+  }
+
+  Future<void> insertLike(int postId, String userId) async {
+    await supabase.from('likes').insert({'post_id': postId, 'user_id': userId});
+  }
+
+  Future<void> cancelLike(int id) async {
+    await supabase.from('likes').delete().eq('id', id);
   }
 }
