@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_bie/main.dart';
+import 'package:new_bie/src/managers/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -46,6 +47,7 @@ class LoginViewModel extends ChangeNotifier {
       idToken: idToken,
       accessToken: authorization.accessToken,
     );
+    print("userId : ${SupabaseManager.shared.supabase.auth.currentUser?.id}");
     notifyListeners();
   }
 }

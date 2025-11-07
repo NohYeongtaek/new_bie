@@ -7,16 +7,18 @@ import 'small_profile_component.dart';
 
 class PostItem extends StatelessWidget {
   final PostWithProfileEntity post;
+  void Function()? likeFunction = () {};
   // final String? title;
   // final String? content;
   // final String created_at;
 
-  const PostItem({
+  PostItem({
     super.key,
     // this.title,
     // this.content,
     // required this.created_at,
     required this.post,
+    this.likeFunction,
   });
 
   @override
@@ -48,12 +50,15 @@ class PostItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 spacing: 10,
                 children: [
-                  Row(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.favorite, color: Colors.red),
-                      Text("${post.likes_count}"),
-                    ],
+                  InkWell(
+                    onTap: likeFunction,
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        Icon(Icons.favorite, color: Colors.red),
+                        Text("${post.likes_count}"),
+                      ],
+                    ),
                   ),
                   Row(
                     spacing: 10,

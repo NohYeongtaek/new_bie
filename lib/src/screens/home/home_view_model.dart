@@ -55,4 +55,6 @@ class HomeViewModel extends ChangeNotifier {
     _posts.addAll(newPosts);
     notifyListeners();
   }
+
+  void likeCountUp(int index) {}
 }

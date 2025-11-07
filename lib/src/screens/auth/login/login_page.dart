@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/screens/auth/auth_view_model.dart';
 import 'package:new_bie/src/screens/auth/login/login_view_model.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,24 @@ class LoginPage extends StatelessWidget {
                             height: 25,
                           ),
                           Text("구글로 시작하기", style: TextStyle(fontSize: 20)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      context.read<AuthViewModel>().logout();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 10,
+                        children: [
+                          Text("로그아웃", style: TextStyle(fontSize: 20)),
                         ],
                       ),
                     ),
