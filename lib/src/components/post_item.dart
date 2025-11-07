@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/components/likes_and_comments/like_button.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 
@@ -50,22 +51,16 @@ class PostItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 spacing: 10,
                 children: [
+                  LikeButton(postId: post.id, likes_count: post.likes_count),
                   InkWell(
-                    onTap: likeFunction,
+                    onTap: () {},
                     child: Row(
                       spacing: 10,
                       children: [
-                        Icon(Icons.favorite, color: Colors.red),
-                        Text("${post.likes_count}"),
+                        Icon(Icons.comment_outlined, color: Colors.white),
+                        Text("${post.comments_count}"),
                       ],
                     ),
-                  ),
-                  Row(
-                    spacing: 10,
-                    children: [
-                      Icon(Icons.comment_outlined, color: Colors.white),
-                      Text("${post.comments_count}"),
-                    ],
                   ),
                 ],
               ),

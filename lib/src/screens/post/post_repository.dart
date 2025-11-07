@@ -1,3 +1,4 @@
+import 'package:new_bie/src/entity/likes_entity.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/entity/user_entity.dart';
 import 'package:new_bie/src/managers/network_api_manager.dart';
@@ -16,6 +17,22 @@ class PostRepository {
 
   Future<UserEntity> fetchAuthorProfile(String userId) async {
     return await SupabaseManager.shared.fetchAuthorProfile(userId);
+  }
+
+  Future<int> getPostLikeCount(int postId) async {
+    return await NetworkApiManager.shared.getPostLikeCount(postId);
+  }
+
+  Future<LikeEntity?> fetchLikeItem(int postId, String userId) async {
+    return await SupabaseManager.shared.fetchLikeItem(postId, userId);
+  }
+
+  Future<void> insertLike(int postId, String userId) async {
+    await SupabaseManager.shared.insertLike(postId, userId);
+  }
+
+  Future<void> cancelLike(int id) async {
+    await SupabaseManager.shared.cancelLike(id);
   }
 
   // Future<void> addMemo(String content) async {

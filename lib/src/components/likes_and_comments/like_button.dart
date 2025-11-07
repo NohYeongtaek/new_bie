@@ -5,21 +5,27 @@ import 'package:provider/provider.dart';
 // 뷰모델 주입하기,
 class LikeButton extends StatelessWidget {
   final int postId;
-  const LikeButton({super.key, required this.postId});
+  final int likes_count;
+  const LikeButton({super.key, required this.postId, this.likes_count = 0});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => LikesViewmodel(postId, context),
+      create: (context) => LikesViewmodel(postId, likes_count, context),
       child: Consumer<LikesViewmodel>(
         builder: (context, viewModel, child) {
           return InkWell(
-            onTap: () {},
+            onTap: viewModel.likeToggle,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 spacing: 10,
-                children: [Icon(Icons.favorite), Text("0")],
+                children: [
+                  viewModel.likeEntity != null
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Icon(Icons.favorite_border, color: Colors.red),
+                  Text("${viewModel.likes_count}"),
+                ],
               ),
             ),
           );
