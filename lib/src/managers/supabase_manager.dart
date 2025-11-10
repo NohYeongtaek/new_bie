@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/comments_entity.dart';
 import 'package:new_bie/src/entity/likes_entity.dart';
 import 'package:new_bie/src/entity/notice_entity.dart';
 import 'package:new_bie/src/entity/post_entity.dart';
@@ -95,5 +96,50 @@ class SupabaseManager {
 
   Future<void> cancelLike(int id) async {
     await supabase.from('likes').delete().eq('id', id);
+  }
+
+  Future<List<CommentEntity>> fetchComments(int postId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('comments')
+        .select()
+        .eq('post_id', postId);
+
+    final List<CommentEntity> results2 = data.map((json) {
+      return CommentEntity.fromJson(json);
+    }).toList();
+
+    return results2;
+  }
+
+  Future<List<int>> fetchCommentIds(int postId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('comments')
+        .select('id')
+        .eq('post_id', postId);
+    if (data.length == 0) return data as List<int>;
+    final List<int> results2 = data.map((json) {
+      return json['id'] as int;
+    }).toList();
+
+    return results2;
+  }
+
+  Future<void> insertComment(int postId, String userId, String content) async {
+    await supabase.from('comments').insert({
+      'post_id': postId,
+      'author_id': userId,
+      'content': content,
+    });
+  }
+
+  Future<void> deleteComment(int id) async {
+    await supabase.from('comments').delete().eq('id', id);
+  }
+
+  Future<void> editComment(int commentId, String content) async {
+    await supabase
+        .from('comments')
+        .update({'content': content})
+        .eq('id', commentId);
   }
 }

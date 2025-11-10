@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:new_bie/src/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/src/entity/likes_count_entity.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 
@@ -68,6 +69,27 @@ class NetworkApiManager {
     final LikesCountEntity results = LikesCountEntity.fromJson(data);
 
     return results.likes_count;
+  }
+
+  Future<CommentWithProfileEntity> fetchCommentItem(int id) async {
+    final response = await dio.get(
+      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/comments/${id}',
+      options: Options(
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    final Map<String, dynamic> data = response.data['data'];
+    print("data 데이터 타입 : ${data.runtimeType}");
+    final CommentWithProfileEntity results = CommentWithProfileEntity.fromJson(
+      data,
+    );
+
+    return results;
   }
 }
 

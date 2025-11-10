@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../managers/supabase_manager.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  void logout() {
+  Future<void> logout() async {
     // _isLoggedIn = false;
-
-    SupabaseManager.shared.supabase.auth.signOut();
+    final googleSignIn = GoogleSignIn.instance;
+    await googleSignIn.signOut();
+    await googleSignIn.disconnect();
+    await SupabaseManager.shared.supabase.auth.signOut();
     print("userId : ${SupabaseManager.shared.supabase.auth.currentUser?.id}");
     notifyListeners();
   }

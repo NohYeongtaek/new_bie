@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/src/components/likes_and_comments/like_button.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
+import 'package:new_bie/src/extension/time_extension.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 
+import 'likes_and_comments/comment_button.dart';
 import 'small_profile_component.dart';
 
 class PostItem extends StatelessWidget {
@@ -36,7 +38,7 @@ class PostItem extends StatelessWidget {
             SmallProfileComponent(
               imageUrl: post.user.profile_image,
               nickName: post.user.nick_name,
-              introduce: post.created_at,
+              introduce: "${post.created_at.toTimesAgo()}",
             ),
             Text(post.title ?? "제목 없음", style: titleFontStyle),
             Text(
@@ -52,15 +54,9 @@ class PostItem extends StatelessWidget {
                 spacing: 10,
                 children: [
                   LikeButton(postId: post.id, likes_count: post.likes_count),
-                  InkWell(
-                    onTap: () {},
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        Icon(Icons.comment_outlined, color: Colors.white),
-                        Text("${post.comments_count}"),
-                      ],
-                    ),
+                  CommentButton(
+                    comments_count: post.comments_count,
+                    postId: post.id,
                   ),
                 ],
               ),

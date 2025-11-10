@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/ui_set/colors.dart';
 
 // 제목
 final TextStyle titleFontStyle = TextStyle(
@@ -21,12 +22,14 @@ final TextStyle pageTitleFontStyle = TextStyle(
 
 // 게시물 업로드 시간 등등
 final TextStyle dateFontStyle = TextStyle(
+  color: orangeColor,
   fontSize: 14,
   fontWeight: FontWeight.normal,
 );
 
 // 음..... 가급적 사용 ㄴㄴ
 final TextStyle normalFontStyle = TextStyle(
+  color: orangeColor,
   fontSize: 16,
   fontWeight: FontWeight.normal,
 );
