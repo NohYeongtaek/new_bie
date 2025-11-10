@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/src/entity/post_entity.dart';
+import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/screens/post/post_repository.dart';
 
 class HomeViewModel extends ChangeNotifier {
   //포스트 리포지토리와 연결
   final PostRepository _postRepository;
-  List<PostEntity> _posts = [];
-  List<PostEntity> get posts => _posts;
+  List<PostWithProfileEntity> _posts = [];
+  List<PostWithProfileEntity> get posts => _posts;
 
   //페이징 처리
   int _currentPage = 1;
@@ -51,8 +51,10 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> fetchMoreMemos() async {
     _currentPage = currentPage + 1;
-    List<PostEntity> newPosts = await _postRepository.fetchPosts();
+    List<PostWithProfileEntity> newPosts = await _postRepository.fetchPosts();
     _posts.addAll(newPosts);
     notifyListeners();
   }
+
+  void likeCountUp(int index) {}
 }

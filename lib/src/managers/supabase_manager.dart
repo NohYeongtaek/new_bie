@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/likes_entity.dart';
+import 'package:new_bie/src/entity/notice_entity.dart';
 import 'package:new_bie/src/entity/post_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../entity/user_entity.dart';
 
 class SupabaseManager {
   // 이유 - 밖에서 shared를 null등 건드리지 못하게
@@ -42,5 +46,54 @@ class SupabaseManager {
     final List<PostEntity> results4 = data.map(PostEntity.fromJson).toList();
 
     return results;
+  }
+
+  // 공지추가
+  Future<List<NoticeEntity>> fetchNotices() async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('notices')
+        .select()
+        .order('created_at', ascending: false); //내림차순(최신공지가위로)
+
+    final List<NoticeEntity> results = data
+        .map((json) => NoticeEntity.fromJson(json))
+        .toList();
+
+    return results;
+  }
+
+  Future<UserEntity> fetchAuthorProfile(String userId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('users')
+        .select()
+        .eq('id', userId);
+
+    final List<UserEntity> results2 = data.map((json) {
+      return UserEntity.fromJson(json);
+    }).toList();
+
+    return results2[0];
+  }
+
+  Future<LikeEntity?> fetchLikeItem(int postId, String userId) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('likes')
+        .select()
+        .eq('user_id', userId)
+        .eq('post_id', postId);
+
+    if (data.length == 0) return null;
+    final List<LikeEntity> results = data.map((json) {
+      return LikeEntity.fromJson(json);
+    }).toList();
+    return results.first;
+  }
+
+  Future<void> insertLike(int postId, String userId) async {
+    await supabase.from('likes').insert({'post_id': postId, 'user_id': userId});
+  }
+
+  Future<void> cancelLike(int id) async {
+    await supabase.from('likes').delete().eq('id', id);
   }
 }

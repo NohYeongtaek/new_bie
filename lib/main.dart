@@ -26,6 +26,7 @@ import 'package:new_bie/src/screens/setting/notice/notices_page.dart';
 import 'package:new_bie/src/screens/setting/notice/notices_repository.dart';
 import 'package:new_bie/src/screens/setting/notice/notices_view_model.dart';
 import 'package:new_bie/src/screens/setting/question/question_page.dart';
+import 'package:new_bie/src/screens/setting/setting_page.dart';
 import 'package:new_bie/src/screens/splash_page.dart';
 import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
 import 'package:new_bie/src/ui_set/colors.dart';
@@ -33,6 +34,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'bottom_nav_bar.dart';
+
+final SupabaseClient supabase = Supabase.instance.client;
 
 EventBus eventBus = EventBus();
 
@@ -169,7 +172,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             final postId = state.pathParameters["id"] ?? "0";
             final int detailId = int.parse(postId);
-            return const PostDetailPage();
+            return PostDetailPage(id: detailId);
           },
           routes: [
             GoRoute(
@@ -219,7 +222,7 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/setting',
                   builder: (context, state) {
-                    return const SetProfilePage();
+                    return const SettingPage();
                   },
                   routes: [
                     GoRoute(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:new_bie/src/entity/user_entity.dart';
 import 'package:new_bie/src/components/small_profile_component.dart';
+import 'package:go_router/go_router.dart';
 
 class MyProfilePage extends StatelessWidget {
   final UserEntity user;
@@ -179,6 +180,7 @@ class MyProfilePage extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+
         ),
       ),
     );
