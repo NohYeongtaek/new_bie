@@ -45,7 +45,6 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-    <!-- 구글 로그인 -->
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -53,9 +52,7 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <!-- TODO Replace this value: -->
-                <!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-                <string>com.googleusercontent.apps.970264997757-klgdrvte9kj0o78jcgc25t1scbed2005</string>
+                <string>com.googleusercontent.apps.970264997757-ouss2eeke35sdtuab620hdccic5scohs</string>
             </array>
         </dict>
     </array>

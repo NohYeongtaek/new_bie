@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_bie/src/entity/comments_entity.dart';
 import 'package:new_bie/src/entity/likes_entity.dart';
 import 'package:new_bie/src/entity/notice_entity.dart';
@@ -20,6 +23,44 @@ class SupabaseManager {
   // 생성자
   SupabaseManager() {
     debugPrint("SupabaseManager init");
+  }
+
+  Future<void> googleSignIn() async {
+    /// Web Client ID that you registered with Google Cloud.
+    const webClientId =
+        '970264997757-ageb9icp3uccibddetg0q1q1coeiiklm.apps.googleusercontent.com';
+
+    /// iOS Client ID that you registered with Google Cloud.
+    const iosClientId =
+        '970264997757-ouss2eeke35sdtuab620hdccic5scohs.apps.googleusercontent.com';
+
+    // Google sign in on Android will work without providing the Android
+    // Client ID registered on Google Cloud.
+
+    final GoogleSignIn signIn = GoogleSignIn.instance;
+
+    // At the start of your app, initialize the GoogleSignIn instance
+    unawaited(
+      signIn.initialize(clientId: iosClientId, serverClientId: webClientId),
+    );
+
+    // Perform the sign in
+    final googleAccount = await signIn.authenticate();
+    final googleAuthorization = await googleAccount.authorizationClient
+        .authorizationForScopes(['email', 'profile']);
+    final googleAuthentication = googleAccount.authentication;
+    final idToken = googleAuthentication.idToken;
+    final accessToken = googleAuthorization?.accessToken;
+
+    if (idToken == null) {
+      throw 'No ID Token found.';
+    }
+
+    await supabase.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
   }
 
   Future<List<PostEntity>> fetchPosts() async {

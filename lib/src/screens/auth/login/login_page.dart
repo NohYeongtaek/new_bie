@@ -1,10 +1,35 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/managers/supabase_manager.dart';
 import 'package:new_bie/src/screens/auth/login/login_view_model.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class LoginPage extends StatelessWidget {
+final supabase = Supabase.instance.client;
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+
+    supabase.auth.onAuthStateChange.listen((data) {
+      setState(() {
+        _userId = data.session?.user.id;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +45,17 @@ class LoginPage extends StatelessWidget {
                 Text("/:new_bie", style: titleFontStyle),
                 Text("프로그래머를 위한 커뮤니티", style: contentFontStyle),
                 SizedBox(height: 150),
+                Text(_userId ?? '로그인 안됨'),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      viewmodel.nativeGoogleSignIn();
+                      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+                        await SupabaseManager.shared.googleSignIn();
+                      } else {
+                        await SupabaseManager.shared.supabase.auth
+                            .signInWithOAuth(OAuthProvider.google);
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
