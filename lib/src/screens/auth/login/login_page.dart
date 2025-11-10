@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text("/:new_bie", style: titleFontStyle),
                 Text("프로그래머를 위한 커뮤니티", style: contentFontStyle),
                 SizedBox(height: 150),
-                Text(_userId ?? '로그인 안됨'),
+                Text(_userId ?? '로그인 안됨(최종 배포 때엔 지울 것: 로그아웃 진행 중인 것 노출X)'),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(

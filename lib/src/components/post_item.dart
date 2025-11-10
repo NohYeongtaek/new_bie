@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:new_bie/src/components/likes_and_comments/like_button.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
 import 'package:new_bie/src/extension/time_extension.dart';
-import 'package:new_bie/src/managers/supabase_manager.dart';
 import 'package:new_bie/src/ui_set/fonts.dart';
 
 import 'likes_and_comments/comment_button.dart';
@@ -29,11 +28,7 @@ class PostItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (SupabaseManager.shared.supabase.auth.currentUser?.id == null) {
-          context.push('/login');
-        } else {
-          context.push('/post/${post.id}');
-        }
+        context.push('/post/${post.id}');
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),

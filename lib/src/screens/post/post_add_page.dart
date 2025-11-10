@@ -1,12 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-class PostAddPage extends StatelessWidget {
+import '../auth/auth_view_model.dart';
+
+class PostAddPage extends StatefulWidget {
   const PostAddPage({super.key});
 
+  @override
+  State<PostAddPage> createState() => _PostAddPageState();
+}
+
+class _PostAddPageState extends State<PostAddPage> {
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _checkAuthAndRedirect();
+    });
+  }
+
+  void _checkAuthAndRedirect() {
+    final authVM = context.read<AuthViewModel>();
+
+    if (!authVM.isLoggedIn) {
+      if (mounted) {
+        // 현재 스택을 로그인 페이지로 대체하고, 뒤로가기 방지를 위해 go 사용
+        context.go('/login');
+      }
+    }
+  }
+
   void _submitPost(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('게시물이 등록되었습니다.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('게시물이 등록되었습니다.')));
   }
 
   @override
@@ -59,9 +88,9 @@ class PostAddPage extends StatelessWidget {
             const SizedBox(height: 24),
             InkWell(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('사진 추가 클릭됨')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('사진 추가 클릭됨')));
               },
               child: Row(
                 children: const [
@@ -83,8 +112,10 @@ class PostAddPage extends StatelessWidget {
                     decoration: const InputDecoration(
                       hintText: '해시태그 입력',
                       border: OutlineInputBorder(),
-                      contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                   ),
                 ),
@@ -93,15 +124,17 @@ class PostAddPage extends StatelessWidget {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(
-                              '해시태그 "${hashtagController.text}" 추가됨')),
+                        content: Text('해시태그 "${hashtagController.text}" 추가됨'),
+                      ),
                     );
                     hashtagController.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
                   ),
                   child: const Text('추가'),
                 ),
@@ -113,4 +146,3 @@ class PostAddPage extends StatelessWidget {
     );
   }
 }
-

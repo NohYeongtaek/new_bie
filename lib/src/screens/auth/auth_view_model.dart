@@ -1,44 +1,71 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../managers/supabase_manager.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  Future<void> logout() async {
-    // _isLoggedIn = false;
-    final googleSignIn = GoogleSignIn.instance;
-    await googleSignIn.signOut();
-    await googleSignIn.disconnect();
-    await SupabaseManager.shared.supabase.auth.signOut();
-    print("userId : ${SupabaseManager.shared.supabase.auth.currentUser?.id}");
-    notifyListeners();
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  late StreamSubscription<AuthState> _subscription;
+
+  AuthViewModel() {
+    // Supabase 인증 상태 구독
+    _subscription = _subscribeAuthEvent();
   }
-  // int inputCount = 0;
 
-  // final TextEditingController textEditingController = TextEditingController();
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
-  // 입력한 글자 수를 받아오는 함수
-  // void handleTextInput(String input) {
-  //   inputCount = input.length;
-  //   notifyListeners();
-  // }
+  // 로그아웃 함수 (빠른 반응 + 백그라운드 처리)
+  Future<void> logout({VoidCallback? onLoggedOut}) async {
+    _isLoggedIn = false;
+    notifyListeners();
 
-  // Future 함수는 API나 Supabase, 메소드 채널과 사용할 때,
-  // 처리를 하는데 시간이 걸리는 작업을 할때 사용됨.
-  // 아래 함수 안 에서는 시간이 필요한 작업은 await를 사용 해야함
-  // Future<void> function() async {
-  //   try {
-  //
-  //   } catch (e) {
-  //
-  //   }
-  //
-  //   // 리빌딩, 리콤포지션 진행
-  //   notifyListeners();
-  // }
-  // Future<void> function1() async {
-  //   // 시간 지연 코드
-  //   await Future.delayed(const Duration(milliseconds: 1700));
-  //   notifyListeners();
-  // }
+    onLoggedOut?.call();
+
+    unawaited(_performLogoutTasks());
+  }
+
+  Future<void> _performLogoutTasks() async {
+    try {
+      final googleSignIn = GoogleSignIn.instance;
+
+      // Google 로그아웃 시도 (에러 무시)
+      try {
+        await googleSignIn.signOut();
+        await googleSignIn.disconnect();
+      } catch (e) {
+        debugPrint('⚠️ Google logout error: $e');
+      }
+
+      // Supabase 세션 로그아웃
+      await SupabaseManager.shared.supabase.auth.signOut();
+    } catch (e) {
+      debugPrint('⚠️ Logout failed: $e');
+    }
+
+    debugPrint('✅ Background logout completed');
+  }
+
+  //  Supabase 인증 상태 구독
+  StreamSubscription<AuthState> _subscribeAuthEvent() {
+    return SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((
+      data,
+    ) {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
+
+      _isLoggedIn = session != null;
+      notifyListeners();
+
+      debugPrint('[AuthVM] event: $event, session: $session');
+    });
+  }
 }

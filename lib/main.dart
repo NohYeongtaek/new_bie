@@ -49,7 +49,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) {
+          create: (context) {
             return AuthViewModel();
           },
         ),
@@ -110,7 +110,7 @@ class MyApp extends StatelessWidget {
   // 오버라이드 -
   @override
   Widget build(BuildContext context) {
-    // final AuthViewModel authVM = context.read<AuthViewModel>();
+    final AuthViewModel authVM = context.read<AuthViewModel>();
 
     // 1. authVM - 데이터 상태를 바꾼다
     // 2. 고 라우터 refreshListenable 에 authVM 이 연동되어 있다.
@@ -124,24 +124,31 @@ class MyApp extends StatelessWidget {
 
     // 라우트 설정
     final _router = GoRouter(
-      initialLocation: '/home',
-      // refreshListenable: authVM,
-      // redirect: (BuildContext context, GoRouterState state) {
-      //   final bool isLoggedIn = authVM.isLoggedIn;
-      //   debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
-      //   final String currentRoute = state.uri.toString();
-      //   debugPrint("[리디렉트] currentRoute: ${currentRoute}");
-      //
-      //   if (isLoggedIn && currentRoute == '/login') {
-      //     return '/home';
-      //   }
-      //   Set<String> unAuthenticatedRoutes = {'/login', '/register'};
-      //   if (!isLoggedIn && !unAuthenticatedRoutes.contains(currentRoute)) {
-      //     return '/login';
-      //   }
-      //
-      //   return null;
-      // },
+      initialLocation: '/splash',
+      refreshListenable: authVM,
+      redirect: (BuildContext context, GoRouterState state) {
+        final bool isLoggedIn = authVM.isLoggedIn;
+        debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
+        final String currentRoute = state.uri.toString();
+        debugPrint("[리디렉트] currentRoute: ${currentRoute}");
+
+        //로그인 되면 홈화면으로 이동
+        if (isLoggedIn && currentRoute == '/login') {
+          return '/home';
+        }
+
+        //접근 가능한 화면
+        final List<String> publicRoutes = ['/login', '/splash', '/home'];
+        // 비로그인인데 publicRoutes 중 어떤 것도 아닌 경우 로그인 페이지로(지선생)
+        final bool isPublic = publicRoutes.any(
+          (path) => currentRoute.startsWith(path),
+        );
+        if (!isLoggedIn && !isPublic) {
+          return '/login';
+        }
+
+        return null;
+      },
       routes: [
         GoRoute(
           path: '/login',
@@ -195,6 +202,12 @@ class MyApp extends StatelessWidget {
             return Scaffold(body: child, bottomNavigationBar: BottomNavBar());
           },
           routes: [
+            GoRoute(
+              path: '/splash',
+              builder: (context, state) {
+                return const SplashPage();
+              },
+            ),
             GoRoute(
               path: '/home',
               builder: (context, state) {
