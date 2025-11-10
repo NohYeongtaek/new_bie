@@ -24,7 +24,7 @@ class BlockedUserPage extends StatelessWidget {
     ),
 
       body: ListView.separated(
-        itemCount: vm.blockedUsers.length, //이 줄 다시보기
+        itemCount: vm.blockUsers.length, //이 줄 다시보기
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         separatorBuilder: (context, index) => const Divider(
           color: Color(0xFFE5E5E5),
@@ -33,7 +33,7 @@ class BlockedUserPage extends StatelessWidget {
         ),
 
         itemBuilder: (context, index) {
-          final user = vm.blockedUsers[index];
+          final user = vm.blockUsers[index];
 
           return ListTile(
               title: SmallProfileComponent(
