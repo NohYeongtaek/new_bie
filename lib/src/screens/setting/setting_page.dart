@@ -67,9 +67,12 @@ class SettingPage extends StatelessWidget {
                   leading: Icon(Icons.logout),
                   title: const Text('로그아웃'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    context.read<AuthViewModel>().logout();
-                    context.go('/home');
+                  onTap: () async {
+                    context.read<AuthViewModel>().logout(
+                      onLoggedOut: () {
+                        context.go('/login');
+                      },
+                    );
                   },
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
