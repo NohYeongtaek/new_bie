@@ -57,7 +57,7 @@ Future<void> main() async {
         Provider(create: (context) => NoticesRepository()),
         ChangeNotifierProvider(
           create: (context) {
-            return NoticesViewModel(context);
+            return NoticesViewModel(context.read<NoticesRepository>());
           },
         ),
         ChangeNotifierProvider(
