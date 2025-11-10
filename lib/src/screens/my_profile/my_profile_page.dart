@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/src/components/small_profile_component.dart';
 import 'package:new_bie/src/screens/my_profile/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class MyProfilePage extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/setting');
+                  context.push('/my_profile/setting');
                 },
               ),
             ],

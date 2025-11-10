@@ -155,4 +155,17 @@ class SupabaseManager {
         .update({'content': content})
         .eq('id', commentId);
   }
+
+  Future<UserEntity?> fetchUser(String id) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('users')
+        .select()
+        .eq('id', id);
+
+    if (data.length == 0) return null;
+    final List<UserEntity> results = data.map((json) {
+      return UserEntity.fromJson(json);
+    }).toList();
+    return results.first;
+  }
 }

@@ -48,6 +48,7 @@ class LoginViewModel extends ChangeNotifier {
       accessToken: authorization.accessToken,
     );
     print("userId : ${SupabaseManager.shared.supabase.auth.currentUser?.id}");
+    // 마이 프로필 뷰모델에 로그인 했다고 이벤트 쏴주기(유저 정보 가져오게 만들기.)
     notifyListeners();
   }
 }
