@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/screens/auth/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -31,26 +34,21 @@ class SettingPage extends StatelessWidget {
                   leading: Icon(Icons.chat_bubble_outline),
                   title: const Text('문의하기'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-
-                  },
+                  onTap: () {},
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 ListTile(
                   leading: Icon(Icons.notifications_none),
                   title: const Text('공지사항'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-
-                  },
+                  onTap: () {},
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 ListTile(
                   leading: Icon(Icons.block_outlined),
                   title: const Text('차단한 사용자 목록'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -70,7 +68,8 @@ class SettingPage extends StatelessWidget {
                   title: const Text('로그아웃'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
-
+                    context.read<AuthViewModel>().logout();
+                    context.go('/home');
                   },
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
@@ -80,8 +79,7 @@ class SettingPage extends StatelessWidget {
                     '탈퇴하기',
                     style: TextStyle(color: Colors.red),
                   ),
-                  onTap: () {
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -110,4 +108,3 @@ class SettingPage extends StatelessWidget {
     );
   }
 }
-

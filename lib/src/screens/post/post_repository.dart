@@ -4,6 +4,8 @@ import 'package:new_bie/src/entity/user_entity.dart';
 import 'package:new_bie/src/managers/network_api_manager.dart';
 import 'package:new_bie/src/managers/supabase_manager.dart';
 
+import '../../entity/comment_with_profile_entity.dart';
+
 class PostRepository {
   // 반환 형태가 무엇이 되어야 할까요?
   // List<Task>
@@ -33,6 +35,26 @@ class PostRepository {
 
   Future<void> cancelLike(int id) async {
     await SupabaseManager.shared.cancelLike(id);
+  }
+
+  Future<List<int>> fetchCommentIds(int postId) async {
+    return await SupabaseManager.shared.fetchCommentIds(postId);
+  }
+
+  Future<CommentWithProfileEntity> fetchCommentItem(int id) async {
+    return await NetworkApiManager.shared.fetchCommentItem(id);
+  }
+
+  Future<void> insertComment(int postId, String userId, String content) async {
+    await SupabaseManager.shared.insertComment(postId, userId, content);
+  }
+
+  Future<void> deleteComment(int id) async {
+    await SupabaseManager.shared.deleteComment(id);
+  }
+
+  Future<void> editComment(int commentId, String content) async {
+    await SupabaseManager.shared.editComment(commentId, content);
   }
 
   // Future<void> addMemo(String content) async {

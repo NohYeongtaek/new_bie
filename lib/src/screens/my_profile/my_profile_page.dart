@@ -1,139 +1,154 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/src/entity/user_entity.dart';
-import 'package:new_bie/src/components/small_profile_component.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/src/components/small_profile_component.dart';
+import 'package:new_bie/src/screens/my_profile/my_profile_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MyProfilePage extends StatelessWidget {
-  final UserEntity user;
+  // final UserEntity user;
 
-  const MyProfilePage({super.key, required this.user});
+  const MyProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
-      appBar: AppBar(
-        title: const Text(
-          '마이페이지',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              Navigator.pushNamed(context, '/setting');
-            },
+    return Consumer<MyProfileViewModel>(
+      builder: (context, viewModel, child) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF6F6F6),
+          appBar: AppBar(
+            title: const Text(
+              '마이페이지',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            centerTitle: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: () {
+                  context.push('/my_profile/setting');
+                },
+              ),
+            ],
+            elevation: 0,
           ),
-        ],
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 프로필
-            Container(
-              color: Colors.white,
-              padding:
-              const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Column(
-                children: [
-                  SmallProfileComponent(
-                    imageUrl: user.profile_image,
-                    nickName: user.nick_name ?? '닉네임 없음',
-                    introduce: user.introduction ?? '자기소개가 없습니다.',
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                // 프로필
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 16,
                   ),
-
-                  const SizedBox(height: 20),
-
-                  // 팔로워, 팔로잉부분
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
                     children: [
-                      Column(
+                      SmallProfileComponent(
+                        imageUrl: viewModel.user?.profile_image,
+                        nickName: viewModel.user?.nick_name ?? '닉네임 없음',
+                        introduce:
+                            viewModel.user?.introduction ?? '자기소개가 없습니다.',
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // 팔로워, 팔로잉부분
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '${user.follower_count}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Column(
+                            children: [
+                              Text(
+                                '${viewModel.user?.follower_count}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                '팔로워',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          const Text('팔로워',
-                              style: TextStyle(color: Colors.grey)),
+                          const SizedBox(width: 40),
+                          Column(
+                            children: [
+                              Text(
+                                '${viewModel.user?.following_count}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                '팔로잉',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      const SizedBox(width: 40),
-                      Column(
-                        children: [
-                          Text(
-                            '${user.following_count}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+
+                      const SizedBox(height: 20),
+
+                      // 프로필 수정버튼
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.shade200,
+                            foregroundColor: Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
                           ),
-                          const SizedBox(height: 4),
-                          const Text('팔로잉',
-                              style: TextStyle(color: Colors.grey)),
-                        ],
+                          onPressed: () {
+                            // 프로필 수정 페이지 이동
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Text('프로필 수정'),
+                          ),
+                        ),
                       ),
                     ],
                   ),
+                ),
 
-                  const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
-                  // 프로필 수정버튼
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade200,
-                        foregroundColor: Colors.black87,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                // 게시물
+                Container(
+                  color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
-                        elevation: 0,
+                        child: Text(
+                          '게시물',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        // 프로필 수정 페이지 이동
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Text('프로필 수정'),
-                      ),
-                    ),
+                      SizedBox(height: 400, child: _buildPostGridView([])),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-            // 게시물
-            Container(
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Text(
-                      '게시물',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 400,
-                    child: _buildPostGridView([]),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -180,10 +195,8 @@ class MyProfilePage extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-
         ),
       ),
     );
   }
 }
-

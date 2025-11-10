@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/src/entity/user_entity.dart';
+import 'package:new_bie/src/managers/supabase_manager.dart';
 
 class MyProfileViewModel extends ChangeNotifier {
   // int inputCount = 0;
@@ -6,8 +8,18 @@ class MyProfileViewModel extends ChangeNotifier {
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  MyProfileViewModel(BuildContext context) {}
+  UserEntity? user;
 
+  MyProfileViewModel(BuildContext context) {
+    fetchUser();
+  }
+
+  Future<void> fetchUser() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    user = await SupabaseManager.shared.fetchUser(userId);
+    notifyListeners();
+  }
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;

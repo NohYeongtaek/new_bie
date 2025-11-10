@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:new_bie/src/components/likes_and_comments/like_button.dart';
 import 'package:new_bie/src/components/small_profile_component.dart';
 import 'package:new_bie/src/entity/post_with_profile_entity.dart';
+import 'package:new_bie/src/extension/time_extension.dart';
 import 'package:new_bie/src/screens/post/post_detail_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/likes_and_comments/comment_button.dart';
 import '../../ui_set/fonts.dart';
 
 class PostDetailPage extends StatelessWidget {
@@ -48,7 +50,7 @@ class _PostDetailPage extends StatelessWidget {
                         SmallProfileComponent(
                           nickName: user?.nick_name ?? "",
                           imageUrl: user?.profile_image ?? "",
-                          introduce: post?.created_at ?? "",
+                          introduce: "${post?.created_at.toTimesAgo()}",
                         ),
                         Text(post?.title ?? "", style: titleFontStyle),
                         Text(post?.content ?? "", style: contentFontStyle),
@@ -65,15 +67,9 @@ class _PostDetailPage extends StatelessWidget {
                 spacing: 10,
                 children: [
                   LikeButton(postId: postId),
-                  InkWell(
-                    onTap: () {},
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        Icon(Icons.comment_outlined, color: Colors.white),
-                        Text("${post?.comments_count}"),
-                      ],
-                    ),
+                  CommentButton(
+                    comments_count: post?.comments_count ?? 0,
+                    postId: postId,
                   ),
                 ],
               ),
