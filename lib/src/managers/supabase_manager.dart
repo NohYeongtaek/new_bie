@@ -47,8 +47,8 @@ class SupabaseManager {
     // Perform the sign in
     final googleAccount = await signIn.authenticate();
     final googleAuthorization = await googleAccount.authorizationClient
-        .authorizationForScopes([]);
-    final googleAuthentication = googleAccount!.authentication;
+        .authorizationForScopes(['email', 'profile']);
+    final googleAuthentication = googleAccount.authentication;
     final idToken = googleAuthentication.idToken;
     final accessToken = googleAuthorization?.accessToken;
 
