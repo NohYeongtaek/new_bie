@@ -53,20 +53,18 @@ class _FollowListPageState extends State<FollowListPage> {
           Expanded(
             child: hasData
                 ? ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final item = list[index];
-                return _FollowListItem(item: item);
-              },
-            )
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final item = list[index];
+                      return _FollowListItem(item: item);
+                    },
+                  )
                 : Center(
-              child: Text(
-                isFollowerTab
-                    ? '아직 팔로워가 없습니다 🫢'
-                    : '아직 팔로잉한 유저가 없습니다 🙈',
-                style: const TextStyle(color: Colors.grey),
-              ),
-            ),
+                    child: Text(
+                      isFollowerTab ? '아직 팔로워가 없습니다 🫢' : '아직 팔로잉한 유저가 없습니다 🙈',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ),
           ),
         ],
       ),

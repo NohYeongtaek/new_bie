@@ -256,7 +256,7 @@ class MyApp extends StatelessWidget {
                             final noticeId =
                                 state.pathParameters["notice_id"] ?? "0";
                             final int detailId = int.parse(noticeId);
-                            return NoticeDetailPage();
+                            return const NoticeDetailPage();
                           },
                         ),
                       ],
@@ -272,7 +272,7 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/follow',
                   builder: (context, state) {
-                    return const FollowListPage();
+                    return const FollowListPage(followers: [], followings: []);
                   },
                 ),
               ],
