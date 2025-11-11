@@ -23,7 +23,7 @@ class LikeButton extends StatelessWidget {
                 children: [
                   viewModel.likeEntity != null
                       ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border, color: Colors.red),
+                      : Icon(Icons.favorite_border, color: Colors.grey),
                   Text("${viewModel.likes_count}"),
                 ],
               ),
