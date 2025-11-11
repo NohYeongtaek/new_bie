@@ -50,7 +50,10 @@ class _CommentItem extends StatelessWidget {
                             'assets/images/user.png',
                             fit: BoxFit.cover,
                           )
-                        : Image.network(imageUrl!, fit: BoxFit.cover),
+                        : Image.network(
+                            viewModel.comment?.user.profile_image ?? "",
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),

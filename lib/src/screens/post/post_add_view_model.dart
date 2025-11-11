@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:new_bie/src/managers/supabase_manager.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PostAddViewModel extends ChangeNotifier {
   // int inputCount = 0;
@@ -10,12 +14,65 @@ class PostAddViewModel extends ChangeNotifier {
   final hashtagController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   List<XFile> mediaFileList = [];
+  List<String> urlList = [];
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   PostAddViewModel(BuildContext context) {}
 
   Future<void> getImages() async {
     mediaFileList = await _picker.pickMultiImage();
     notifyListeners();
+  }
+
+  Future<void> uploadSelectedImages() async {
+    if (mediaFileList.length == 0) {
+      return;
+    }
+
+    for (var image in mediaFileList) {
+      String uploadedProfileImage = "";
+      final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
+      final imgFile = File(image.path);
+      await SupabaseManager.shared.supabase.storage
+          .from("images")
+          .upload(
+            fileName,
+            imgFile,
+            fileOptions: const FileOptions(
+              headers: {
+                "Authorization":
+                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+              },
+            ),
+          );
+      uploadedProfileImage = SupabaseManager.shared.supabase.storage
+          .from("images")
+          .getPublicUrl(fileName);
+      urlList.add(uploadedProfileImage);
+      print(urlList);
+    }
+    // mediaFileList.forEach((image) async {
+    //   String uploadedProfileImage = "";
+    //   final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
+    //   final imgFile = File(image.path);
+    //   await SupabaseManager.shared.supabase.storage
+    //       .from("images")
+    //       .upload(
+    //         fileName,
+    //         imgFile,
+    //         fileOptions: const FileOptions(
+    //           headers: {
+    //             "Authorization":
+    //                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+    //           },
+    //         ),
+    //       );
+    //   uploadedProfileImage = SupabaseManager.shared.supabase.storage
+    //       .from("images")
+    //       .getPublicUrl(fileName);
+    //   urlList.add(uploadedProfileImage);
+    //   print(urlList);
+    // });
+    print(urlList);
   }
 
   // 입력한 글자 수를 받아오는 함수
