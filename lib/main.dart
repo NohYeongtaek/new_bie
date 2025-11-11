@@ -1,39 +1,38 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:new_bie/src/screens/auth/auth_view_model.dart';
-import 'package:new_bie/src/screens/auth/login/login_page.dart';
-import 'package:new_bie/src/screens/auth/login/login_view_model.dart';
-import 'package:new_bie/src/screens/auth/unregister/unregister_page.dart';
-import 'package:new_bie/src/screens/home/home_screen.dart';
-import 'package:new_bie/src/screens/home/home_view_model.dart';
-import 'package:new_bie/src/screens/journal/journal_page.dart';
-import 'package:new_bie/src/screens/my_profile/follow_list/follow_list_page.dart';
-import 'package:new_bie/src/screens/my_profile/follow_list/follow_list_view_model.dart';
-import 'package:new_bie/src/screens/my_profile/my_profile_page.dart';
-import 'package:new_bie/src/screens/my_profile/my_profile_view_model.dart';
-import 'package:new_bie/src/screens/my_profile/set_profile_page.dart';
-import 'package:new_bie/src/screens/my_profile/set_profile_view_model.dart';
-import 'package:new_bie/src/screens/post/post_add_page.dart';
-import 'package:new_bie/src/screens/post/post_detail_page.dart';
-import 'package:new_bie/src/screens/post/post_edit_page.dart';
-import 'package:new_bie/src/screens/post/post_repository.dart';
-import 'package:new_bie/src/screens/search/search_result_view_model.dart';
-import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_page.dart';
-import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_view_model.dart';
-import 'package:new_bie/src/screens/setting/notice/notice_detail_page.dart';
-import 'package:new_bie/src/screens/setting/notice/notices_page.dart';
-import 'package:new_bie/src/screens/setting/notice/notices_repository.dart';
-import 'package:new_bie/src/screens/setting/notice/notices_view_model.dart';
-import 'package:new_bie/src/screens/setting/question/question_page.dart';
-import 'package:new_bie/src/screens/setting/setting_page.dart';
-import 'package:new_bie/src/screens/splash_page.dart';
-import 'package:new_bie/src/screens/user_profile/user_profile_page.dart';
-import 'package:new_bie/src/ui_set/colors.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
+import 'package:new_bie/core/widgets/bottom_nav_bar.dart';
+import 'package:new_bie/core/widgets/splash_page.dart';
+import 'package:new_bie/features/auth/ui/login_page.dart';
+import 'package:new_bie/features/auth/ui/unregister_page.dart';
+import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
+import 'package:new_bie/features/auth/viewmodel/login_view_model.dart';
+import 'package:new_bie/features/block_users/ui/blocked_user_page.dart';
+import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
+import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
+import 'package:new_bie/features/journal/ui/journal_page.dart';
+import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/features/post/ui/follow_list_page.dart';
+import 'package:new_bie/features/post/ui/home_screen.dart';
+import 'package:new_bie/features/post/ui/post_add_page.dart';
+import 'package:new_bie/features/post/ui/post_detail_page.dart';
+import 'package:new_bie/features/post/ui/post_edit_page.dart';
+import 'package:new_bie/features/post/viewmodel/home_view_model.dart';
+import 'package:new_bie/features/post/viewmodel/search/search_result_view_model.dart';
+import 'package:new_bie/features/profile/data/notices_repository.dart';
+import 'package:new_bie/features/profile/ui/my_profile_page.dart';
+import 'package:new_bie/features/profile/ui/notice_detail_page.dart';
+import 'package:new_bie/features/profile/ui/notices_page.dart';
+import 'package:new_bie/features/profile/ui/question_page.dart';
+import 'package:new_bie/features/profile/ui/set_profile_page.dart';
+import 'package:new_bie/features/profile/ui/setting_page.dart';
+import 'package:new_bie/features/profile/ui/user_profile_page.dart';
+import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
+import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
+import 'package:new_bie/features/profile/viewmodel/set_profile_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'bottom_nav_bar.dart';
 
 final SupabaseClient supabase = Supabase.instance.client;
 
@@ -82,7 +81,7 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) {
-            return SetProfileViewModel(context);
+            return SetProfileViewModel();
           },
         ),
         ChangeNotifierProvider(
