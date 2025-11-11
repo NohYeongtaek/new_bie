@@ -91,6 +91,34 @@ class NetworkApiManager {
 
     return results;
   }
+
+  Future<void> insertPost(
+    String userId,
+    String title,
+    String content,
+    List<String> images,
+  ) async {
+    try {
+      await dio.post(
+        'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts',
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          'author_id': userId,
+          'title': title,
+          'content': content,
+          'images': images,
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
 }
 
 // curl --location 'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts/1' \

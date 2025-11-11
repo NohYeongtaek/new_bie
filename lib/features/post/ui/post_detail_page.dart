@@ -48,7 +48,7 @@ class _PostDetailPage extends StatelessWidget {
                       children: [
                         SmallProfileComponent(
                           nickName: user?.nick_name ?? "",
-                          imageUrl: user?.profile_image ?? "",
+                          imageUrl: user?.profile_image,
                           introduce: "${post?.created_at.toTimesAgo()}",
                         ),
                         Text(post?.title ?? "", style: titleFontStyle),
