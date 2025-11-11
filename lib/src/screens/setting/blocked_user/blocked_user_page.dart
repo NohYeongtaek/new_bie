@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/src/components/small_profile_component.dart';
-import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_view_model.dart';
-import 'package:new_bie/src/ui_set/fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:new_bie/src/ui_set/fonts.dart';
+import 'package:new_bie/src/screens/setting/blocked_user/blocked_user_view_model.dart';
+import 'package:new_bie/src/components/small_profile_component.dart';
 
 class BlockedUserPage extends StatelessWidget {
   const BlockedUserPage({super.key});
@@ -13,14 +13,15 @@ class BlockedUserPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('차단된 사용자 목록', style: titleFontStyle),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: false,
-        elevation: 0,
+          title: Text('차단된 사용자 목록', style: titleFontStyle,
       ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.pop(context),
+      ),
+      centerTitle: false,
+      elevation: 0,
+    ),
 
       body: ListView.separated(
         itemCount: vm.blockUsers.length, //이 줄 다시보기
@@ -33,29 +34,32 @@ class BlockedUserPage extends StatelessWidget {
 
         itemBuilder: (context, index) {
           final user = vm.blockUsers[index];
-          // final user = vm.blockUsers[index];
 
           return ListTile(
-            title: SmallProfileComponent(
-              imageUrl: user.profile_image,
-              nickName: user.nick_name ?? "",
-              introduce: user.introduction ?? '',
-            ),
-            trailing: TextButton(
-              onPressed: () {},
-              // onPressed: () => vm.unblockUser(user),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.grey.shade100,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              title: SmallProfileComponent(
+                imageUrl: user.profileImage,
+                nickName: user.nickname,
+                introduce: user.introduce ?? '',
+
+              ),
+              trailing: TextButton(
+                onPressed: () => vm.unblockUser(user),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.grey.shade100,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '차단 해제', style: buttonFontStyle),
                 ),
               ),
-              child: Center(child: Text('차단 해제', style: buttonFontStyle)),
-            ),
           );
         },
       ),
     );
   }
 }
+

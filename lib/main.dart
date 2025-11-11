@@ -256,7 +256,7 @@ class MyApp extends StatelessWidget {
                             final noticeId =
                                 state.pathParameters["notice_id"] ?? "0";
                             final int detailId = int.parse(noticeId);
-                            return NoticeDetailPage();
+                            return const NoticeDetailPage();
                           },
                         ),
                       ],
