@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/main.dart';
 import 'package:new_bie/src/components/likes_and_comments/comments_viewmodel.dart';
 import 'package:new_bie/src/entity/comment_with_profile_entity.dart';
+import 'package:new_bie/src/event_bus/comment_event_bus.dart';
 import 'package:new_bie/src/screens/post/post_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +33,8 @@ class CommentItemViewmodel extends ChangeNotifier {
   Future<void> deleteComment() async {
     await _repository.deleteComment(comment_id);
     await Future.delayed(const Duration(milliseconds: 1700));
-    await _commentsViewmodel.refreshCommentsId(comment_id);
+    eventBus.fire(CommentEvent(CommentEventType.commentDelete));
+    notifyListeners();
   }
 
   void startEdit() {

@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostAddViewModel extends ChangeNotifier {
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();
-
+  final titleController = TextEditingController();
+  final contentController = TextEditingController();
+  final hashtagController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> mediaFileList = [];
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   PostAddViewModel(BuildContext context) {}
+
+  Future<void> getImages() async {
+    mediaFileList = await _picker.pickMultiImage();
+    notifyListeners();
+  }
 
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {

@@ -15,7 +15,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
 
-    // ⭐️ 1초 지연 후 화면 이동 (가장 일반적인 스플래시 패턴) ⭐️
+    // ⭐️ 2.5초 지연 후 화면 이동 (가장 일반적인 스플래시 패턴) ⭐️
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
         context.go('/home');

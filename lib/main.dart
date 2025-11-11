@@ -272,7 +272,7 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/follow',
                   builder: (context, state) {
-                    return const FollowListPage();
+                    return const FollowListPage(followers: [], followings: []);
                   },
                 ),
               ],

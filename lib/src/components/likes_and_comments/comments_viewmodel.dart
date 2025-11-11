@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/main.dart';
+import 'package:new_bie/src/event_bus/comment_event_bus.dart';
 import 'package:new_bie/src/managers/supabase_manager.dart';
 import 'package:new_bie/src/screens/post/post_repository.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,13 @@ class CommentsViewmodel extends ChangeNotifier {
   CommentsViewmodel(this.postId, BuildContext context)
     : _repository = context.read<PostRepository>() {
     fetchCommentsId();
+    eventBus.on<CommentEvent>().listen((event) {
+      switch (event.type) {
+        case CommentEventType.commentDelete:
+          refreshCommentsId();
+          break;
+      }
+    });
   }
 
   Future<void> fetchCommentsId() async {
@@ -22,9 +31,9 @@ class CommentsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> refreshCommentsId(int id) async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    commentsIdList = await _repository.fetchCommentIds(id);
+  Future<void> refreshCommentsId() async {
+    commentsIdList = [];
+    commentsIdList = await _repository.fetchCommentIds(postId);
     notifyListeners();
   }
 
