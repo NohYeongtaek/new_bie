@@ -10,6 +10,7 @@ class PostWithProfileEntity {
   final int likes_count;
   final int comments_count;
   final PostUserEntity user;
+  final List<PostImageEntity> postImages;
 
   PostWithProfileEntity({
     required this.id,
@@ -23,6 +24,7 @@ class PostWithProfileEntity {
     required this.likes_count,
     required this.comments_count,
     required this.user,
+    required this.postImages,
   });
 
   factory PostWithProfileEntity.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,11 @@ class PostWithProfileEntity {
       likes_count: json['likes_count'] as int,
       comments_count: json['comments_count'] as int,
       user: PostUserEntity.fromJson(json['users']),
+      postImages:
+          (json['post_images'] as List<dynamic>?)
+              ?.map((image) => PostImageEntity.fromJson(image))
+              .toList() ??
+          [],
     );
   }
 }
@@ -58,6 +65,29 @@ class PostUserEntity {
       id: json['id'] as String,
       nick_name: json['nick_name'] as String,
       profile_image: json['profile_image'] as String?,
+    );
+  }
+}
+
+class PostImageEntity {
+  final int id;
+  final int index;
+  final String image_url;
+  final String created_at;
+
+  PostImageEntity({
+    required this.id,
+    required this.index,
+    required this.image_url,
+    required this.created_at,
+  });
+
+  factory PostImageEntity.fromJson(Map<String, dynamic> json) {
+    return PostImageEntity(
+      id: json['id'] as int,
+      index: json['index'] as int,
+      image_url: json['image_url'] as String,
+      created_at: json['created_at'] as String,
     );
   }
 }

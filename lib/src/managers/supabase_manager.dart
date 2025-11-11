@@ -170,7 +170,7 @@ class SupabaseManager {
         .from('comments')
         .select('id')
         .eq('post_id', postId);
-    if (data.length == 0) return data as List<int>;
+    if (data.length == 0) return [];
     final List<int> results2 = data.map((json) {
       return json['id'] as int;
     }).toList();

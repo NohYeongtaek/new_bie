@@ -24,13 +24,12 @@ class _CommentsListview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CommentsViewmodel>(
       builder: (context, viewModel, child) {
-        Future<void> function1() async {}
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(color: orangeColor, height: 1),
             Expanded(
-              child: viewModel.commentsIdList.length == 0
+              child: viewModel.commentsIdList.isEmpty
                   ? Center(child: Text("작성된 댓글이 없습니다.\n첫 댓글 작성 해보세요!"))
                   : ListView.builder(
                       // controller: viewModel.scrollController,

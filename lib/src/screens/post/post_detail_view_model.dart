@@ -9,6 +9,9 @@ class PostDetailViewModel extends ChangeNotifier {
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
+  final PageController pageController = PageController();
+  List<String> images = [];
+  int currentPage = 0;
   PostWithProfileEntity? post;
 
   final int postId;
@@ -25,7 +28,15 @@ class PostDetailViewModel extends ChangeNotifier {
     } catch (e) {
       print("에러 : ${e}");
     }
+    if (post?.postImages.length != 0) {
+      images = post?.postImages.map((it) => it.image_url).toList() ?? [];
+    }
     // 리빌딩, 리콤포지션 진행
+    notifyListeners();
+  }
+
+  void onChangedPage(int index) {
+    currentPage = index;
     notifyListeners();
   }
 

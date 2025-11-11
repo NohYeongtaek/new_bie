@@ -54,12 +54,33 @@ class _PostDetailPage extends StatelessWidget {
                         ),
                         Text(post?.title ?? "", style: titleFontStyle),
                         Text(post?.content ?? "", style: contentFontStyle),
+                        if (viewModel.images.length != 0)
+                          SizedBox(
+                            height: 500,
+                            child: PageView.builder(
+                              controller: viewModel.pageController,
+                              onPageChanged: viewModel.onChangedPage,
+                              itemCount: viewModel.post?.postImages.length,
+                              itemBuilder: (context, index) {
+                                final url = viewModel.images[index];
+                                double size = double.infinity;
+                                double height = size;
+                                return Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  width: size,
+                                  height: height,
+                                );
+                              },
+                            ),
+                          ),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

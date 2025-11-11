@@ -41,12 +41,32 @@ class PostItem extends StatelessWidget {
               introduce: "${post.created_at.toTimesAgo()}",
             ),
             Text(post.title ?? "제목 없음", style: titleFontStyle),
+            if (post.postImages.length != 0)
+              SizedBox(
+                height: 216,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: post.postImages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        post.postImages[index].image_url,
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ),
             Text(
               post.content ?? "내용 없음",
               style: contentFontStyle,
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
             ),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
