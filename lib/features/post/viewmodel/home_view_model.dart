@@ -105,4 +105,10 @@ class HomeViewModel extends ChangeNotifier {
   // }
 
   void likeCountUp(int index) {}
+
+  Future<void> ChangeOrder(OrderByType inputType) async {
+    type = inputType;
+    await handleRefresh();
+    notifyListeners();
+  }
 }
