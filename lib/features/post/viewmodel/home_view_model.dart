@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+
+enum OrderByType { newFirst, oldFirst, likesFirst }
 
 class HomeViewModel extends ChangeNotifier {
   //포스트 리포지토리와 연결
   final PostRepository _postRepository;
   List<PostWithProfileEntity> _posts = [];
   List<PostWithProfileEntity> get posts => _posts;
-
+  bool buttonIsWorking = false;
+  OrderByType type = OrderByType.newFirst;
   //페이징 처리
   int _currentPage = 1;
   int get currentPage => _currentPage;
@@ -16,45 +21,88 @@ class HomeViewModel extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
 
   HomeViewModel(this._postRepository) {
+    Timer? _debounce;
+
+    scrollController.addListener(() async {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        final double offset = scrollController.offset;
+
+        if (offset < 50) {
+          if (buttonIsWorking) {
+            buttonIsWorking = false;
+            notifyListeners();
+          }
+        } else {
+          if (!buttonIsWorking) {
+            buttonIsWorking = true;
+            notifyListeners();
+          }
+        }
+      });
+
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        fetchNextPosts();
+      }
+    });
+
     fetchPosts();
   }
+  void upToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
-  // 입력한 글자 수를 받아오는 함수
-  // void handleTextInput(String input) {
-  //   inputCount = input.length;
-  //   notifyListeners();
-  // }
-
-  // Future 함수는 API나 Supabase, 메소드 채널과 사용할 때,
-  // 처리를 하는데 시간이 걸리는 작업을 할때 사용됨.
-  // 아래 함수 안 에서는 시간이 필요한 작업은 await를 사용 해야함
-  // Future<void> function() async {
-  //   try {
-  //
-  //   } catch (e) {
-  //
-  //   }
-  //
-  //   // 리빌딩, 리콤포지션 진행
-  //   notifyListeners();
-  // }
-  // Future<void> function1() async {
-  //   // 시간 지연 코드
-  //   await Future.delayed(const Duration(milliseconds: 1700));
-  //   notifyListeners();
-  // }
+  String setOrderBy(OrderByType type) {
+    if (type == OrderByType.newFirst)
+      return "created_at.desc";
+    else if (type == OrderByType.oldFirst)
+      return "created_at.asc";
+    else
+      return "likes_count.desc";
+  }
 
   Future<void> fetchPosts() async {
-    _posts = await _postRepository.fetchPosts();
+    String orderBy = setOrderBy(type);
+    _posts = await _postRepository.fetchPosts(
+      orderBy,
+      currentIndex: _currentPage,
+    );
     notifyListeners();
   }
 
-  Future<void> fetchMoreMemos() async {
-    _currentPage = currentPage + 1;
-    List<PostWithProfileEntity> newPosts = await _postRepository.fetchPosts();
-    _posts.addAll(newPosts);
+  Future<void> fetchNextPosts() async {
+    _currentPage++;
+    String orderBy = setOrderBy(type);
+    List<PostWithProfileEntity> newFetchPosts = await _postRepository
+        .fetchPosts(orderBy, currentIndex: _currentPage);
+    _posts.addAll(newFetchPosts);
     notifyListeners();
   }
+
+  Future<void> handleRefresh() async {
+    _currentPage = 1;
+    _posts = [];
+    notifyListeners();
+    String orderBy = setOrderBy(type);
+    _posts = await _postRepository.fetchPosts(
+      orderBy,
+      currentIndex: _currentPage,
+    );
+    notifyListeners();
+  }
+
+  // Future<void> fetchMoreMemos() async {
+  //   _currentPage = currentPage + 1;
+  //   List<PostWithProfileEntity> newPosts = await _postRepository.fetchPosts();
+  //   _posts.addAll(newPosts);
+  //   notifyListeners();
+  // }
 
   void likeCountUp(int index) {}
 }
