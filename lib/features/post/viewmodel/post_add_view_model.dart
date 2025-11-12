@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PostAddViewModel extends ChangeNotifier {
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();
+  PostRepository _repository;
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   final hashtagController = TextEditingController();
@@ -16,7 +19,8 @@ class PostAddViewModel extends ChangeNotifier {
   List<XFile> mediaFileList = [];
   List<String> urlList = [];
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  PostAddViewModel(BuildContext context) {}
+  PostAddViewModel(BuildContext context)
+    : _repository = context.read<PostRepository>() {}
 
   Future<void> getImages() async {
     mediaFileList = await _picker.pickMultiImage();
@@ -24,32 +28,45 @@ class PostAddViewModel extends ChangeNotifier {
   }
 
   Future<void> uploadSelectedImages() async {
-    if (mediaFileList.length == 0) {
-      return;
+    if (titleController.text.isEmpty || contentController.text.isEmpty) return;
+    if (mediaFileList.length != 0) {
+      for (var image in mediaFileList) {
+        String uploadedProfileImage = "";
+        final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
+        final imgFile = File(image.path);
+        await SupabaseManager.shared.supabase.storage
+            .from("images")
+            .upload(
+              fileName,
+              imgFile,
+              fileOptions: const FileOptions(
+                headers: {
+                  "Authorization":
+                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+                },
+              ),
+            );
+        uploadedProfileImage = SupabaseManager.shared.supabase.storage
+            .from("images")
+            .getPublicUrl(fileName);
+        urlList.add(uploadedProfileImage);
+        print(urlList);
+      }
     }
+    String userId = SupabaseManager.shared.supabase.auth.currentUser?.id ?? "";
+    await _repository.insertPost(
+      userId,
+      titleController.text,
+      contentController.text,
+      urlList,
+    );
 
-    for (var image in mediaFileList) {
-      String uploadedProfileImage = "";
-      final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
-      final imgFile = File(image.path);
-      await SupabaseManager.shared.supabase.storage
-          .from("images")
-          .upload(
-            fileName,
-            imgFile,
-            fileOptions: const FileOptions(
-              headers: {
-                "Authorization":
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
-              },
-            ),
-          );
-      uploadedProfileImage = SupabaseManager.shared.supabase.storage
-          .from("images")
-          .getPublicUrl(fileName);
-      urlList.add(uploadedProfileImage);
-      print(urlList);
-    }
+    mediaFileList = [];
+    urlList = [];
+    titleController.text = "";
+    contentController.text = "";
+    hashtagController.text = "";
+    notifyListeners();
     // mediaFileList.forEach((image) async {
     //   String uploadedProfileImage = "";
     //   final String fileName = "${DateTime.now().millisecondsSinceEpoch}";

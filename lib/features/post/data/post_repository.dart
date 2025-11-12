@@ -56,6 +56,15 @@ class PostRepository {
     await SupabaseManager.shared.editComment(commentId, content);
   }
 
+  Future<void> insertPost(
+    String userId,
+    String title,
+    String content,
+    List<String> images,
+  ) async {
+    await NetworkApiManager.shared.insertPost(userId, title, content, images);
+  }
+
   // Future<void> addMemo(String content) async {
   //   return await NetworkApiManager.shared.addMemo(content);
   // }
