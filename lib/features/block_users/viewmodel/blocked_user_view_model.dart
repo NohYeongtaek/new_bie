@@ -19,7 +19,7 @@ class BlockedUserViewModel extends ChangeNotifier {
     final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
     if (userId == null) return;
     _blockUsers = await SupabaseManager.shared.fetchBlockUsers(userId);
-
+    notifyListeners();
     await fetchBlockedUserProfile();
     notifyListeners();
   }
