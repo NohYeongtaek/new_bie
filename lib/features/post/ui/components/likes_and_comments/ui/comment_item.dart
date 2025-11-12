@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
+import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/likes_and_comments/viewmodel/comment_item_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -15,21 +16,22 @@ class CommentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => CommentItemViewmodel(comment_id, context),
-      child: _CommentItem(imageUrl: imageUrl),
+      child: _CommentItem(),
     );
     ;
   }
 }
 
 class _CommentItem extends StatelessWidget {
-  const _CommentItem({super.key, required this.imageUrl});
-
-  final String? imageUrl;
+  const _CommentItem({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CommentItemViewmodel>(
       builder: (context, viewModel, child) {
+        final String? userId =
+            SupabaseManager.shared.supabase.auth.currentUser?.id;
+        final String? blockId = viewModel.comment?.user.id;
         final double imageSize = 40;
         PostUserEntity? user = viewModel.comment?.user;
         final Widget body = Padding(
@@ -82,15 +84,7 @@ class _CommentItem extends StatelessWidget {
                   ],
                 ),
               ),
-              // ?SupabaseManager.shared.supabase.auth.currentUser?.id ==
-              //         viewModel.comment?.user.id
-              //     ? IconButton(
-              //         icon: Icon(Icons.delete),
-              //         onPressed: () {
-              //           viewModel.deleteComment();
-              //         },
-              //       )
-              //     : null,
+              // 자기 자신의 id 면 수정,삭제를 띄우고 아니면 신고, 차단을 띄워라
               viewModel.comment?.user.id ==
                       SupabaseManager.shared.supabase.auth.currentUser?.id
                   ? PopupMenuButton(
@@ -108,7 +102,15 @@ class _CommentItem extends StatelessWidget {
                   : PopupMenuButton(
                       itemBuilder: (context) => [
                         PopupMenuItem(onTap: () {}, child: Text("신고")),
-                        PopupMenuItem(onTap: () {}, child: Text("차단")),
+                        PopupMenuItem(
+                          onTap: () {
+                            context.read<BlockedUserViewModel>().addBlockUser(
+                              userId!,
+                              blockId!,
+                            );
+                          },
+                          child: Text("차단"),
+                        ),
                       ],
                     ),
             ],

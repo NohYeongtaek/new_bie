@@ -230,4 +230,11 @@ class SupabaseManager {
   Future<void> deleteBlockUser(int id) async {
     await supabase.from('blocked_users').delete().eq('id', id);
   }
+
+  Future<void> addBlockUser(String userId, String blockId) async {
+    await supabase.from("blocked_users").insert({
+      "user_id": userId,
+      "blocked_user_id": blockId,
+    });
+  }
 }
