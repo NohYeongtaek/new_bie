@@ -38,34 +38,43 @@ class BlockedUserPage extends StatelessWidget {
                       if (viewModel.blockedUserProfiles[index] == null) {
                         return const SizedBox.shrink();
                       }
-                      return ListTile(
-                        title: SmallProfileComponent(
-                          imageUrl: viewModel
-                              .blockedUserProfiles[index]
-                              ?.profile_image,
-                          nickName:
-                              viewModel.blockedUserProfiles[index]?.nick_name ??
-                              '',
-                          introduce:
-                              viewModel
-                                  .blockedUserProfiles[index]
-                                  ?.introduction ??
-                              '',
-                        ),
-                        trailing: TextButton(
-                          onPressed: () => viewModel.deleteBlockedUser(
-                            viewModel.blockUsers[index]?.id ?? 0,
-                          ),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.grey.shade100,
-                            foregroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                      return SizedBox(
+                        height: 100,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SmallProfileComponent(
+                                imageUrl: viewModel
+                                    .blockedUserProfiles[index]
+                                    ?.profile_image,
+                                nickName:
+                                    viewModel
+                                        .blockedUserProfiles[index]
+                                        ?.nick_name ??
+                                    '',
+                                introduce:
+                                    viewModel
+                                        .blockedUserProfiles[index]
+                                        ?.introduction ??
+                                    '',
+                              ),
                             ),
-                          ),
-                          child: Center(
-                            child: Text('차단 해제', style: buttonFontStyle),
-                          ),
+                            TextButton(
+                              onPressed: () => viewModel.deleteBlockedUser(
+                                viewModel.blockUsers[index]?.id ?? 0,
+                              ),
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.grey.shade100,
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text('차단 해제', style: buttonFontStyle),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },
