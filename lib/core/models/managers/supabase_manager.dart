@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:new_bie/features/block_users/data/blocked_user_entity.dart';
 import 'package:new_bie/features/post/data/entity/comments_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_entity.dart';
 import 'package:new_bie/features/post/data/entity/notice_entity.dart';
@@ -207,5 +208,26 @@ class SupabaseManager {
       return UserEntity.fromJson(json);
     }).toList();
     return results.first;
+  }
+
+  Future<List<BlockedUserEntity?>> fetchBlockUsers(String id) async {
+    // Map<String, dynamic> <- 이거 하나가 제이슨 이다
+    final List<Map<String, dynamic>> data = await supabase
+        .from('blocked_users')
+        .select()
+        .eq('user_id', id);
+    // 콜렉션 형태변환
+    // T Function(Map<String, dynamic>)
+    final List<BlockedUserEntity> results = data.map((
+      Map<String, dynamic> json,
+    ) {
+      return BlockedUserEntity.fromJson(json);
+    }).toList();
+
+    return results;
+  }
+
+  Future<void> deleteBlockUser(int id) async {
+    await supabase.from('blocked_users').delete().eq('id', id);
   }
 }

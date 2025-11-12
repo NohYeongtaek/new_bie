@@ -11,8 +11,6 @@ class BlockedUserPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<BlockedUserViewModel>();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('차단된 사용자 목록', style: titleFontStyle),
@@ -24,37 +22,59 @@ class BlockedUserPage extends StatelessWidget {
         elevation: 0,
       ),
 
-      body: ListView.separated(
-        itemCount: vm.blockUsers.length, //이 줄 다시보기
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        separatorBuilder: (context, index) => const Divider(
-          color: Color(0xFFE5E5E5),
-          height: 0.5,
-          thickness: 0.5,
-        ),
-
-        itemBuilder: (context, index) {
-          final user = vm.blockUsers[index];
-
-          return ListTile(
-            title: SmallProfileComponent(
-              imageUrl: user.profileImage,
-              nickName: user.nickname,
-              introduce: user.introduce ?? '',
-            ),
-            trailing: TextButton(
-              onPressed: () => vm.unblockUser(user),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.grey.shade100,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+      body: SafeArea(
+        child: Consumer<BlockedUserViewModel>(
+          builder: (context, viewModel, child) {
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: viewModel.blockedUserProfiles.length, //이 줄 다시보기
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    itemBuilder: (context, index) {
+                      if (viewModel.blockedUserProfiles[index] == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return ListTile(
+                        title: SmallProfileComponent(
+                          imageUrl: viewModel
+                              .blockedUserProfiles[index]
+                              ?.profile_image,
+                          nickName:
+                              viewModel.blockedUserProfiles[index]?.nick_name ??
+                              '',
+                          introduce:
+                              viewModel
+                                  .blockedUserProfiles[index]
+                                  ?.introduction ??
+                              '',
+                        ),
+                        trailing: TextButton(
+                          onPressed: () => viewModel.deleteBlockedUser(
+                            viewModel.blockUsers[index]?.id ?? 0,
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.grey.shade100,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text('차단 해제', style: buttonFontStyle),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              child: Center(child: Text('차단 해제', style: buttonFontStyle)),
-            ),
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -36,4 +36,6 @@ class UserEntity {
       email: json['email'] as String?,
     );
   }
+
+  operator [](int other) {}
 }

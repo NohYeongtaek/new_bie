@@ -48,7 +48,9 @@ class SettingPage extends StatelessWidget {
                   leading: Icon(Icons.block_outlined),
                   title: const Text('차단한 사용자 목록'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/my_profile/setting/blocked_users');
+                  },
                 ),
               ],
             ),
