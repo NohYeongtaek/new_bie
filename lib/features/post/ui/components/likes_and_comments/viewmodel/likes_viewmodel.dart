@@ -9,13 +9,19 @@ class LikesViewmodel extends ChangeNotifier {
   int likes_count = 0;
 
   bool isWorking = false;
+  bool _disposed = false;
 
   LikeEntity? likeEntity;
   PostRepository _repository;
 
   LikesViewmodel(this.postId, this.likes_count, BuildContext cotext)
     : _repository = cotext.read<PostRepository>() {
-    getLikeCount();
+    if (_disposed == false) getLikeCount();
+  }
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   Future<void> getLikeCount() async {

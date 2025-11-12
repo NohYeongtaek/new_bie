@@ -30,26 +30,46 @@ class NetworkApiManager {
     return results;
   }
 
-  Future<List<PostWithProfileEntity>> fetchPosts() async {
+  Future<List<PostWithProfileEntity>> fetchPosts(
+    String orderBy, {
+    int currentIndex = 1,
+    int perPage = 5,
+  }) async {
+    int startIndex = currentIndex - 1;
+    int endIndex = perPage - 1;
+
+    // 현재 페이지가 첫 페이지가 아니라면
+    if (currentIndex != 1) {
+      endIndex = (currentIndex * perPage) - 1;
+      startIndex = (currentIndex - 1) * perPage;
+    }
+
+    final String range = "${startIndex}-${endIndex}";
+
     final Response<dynamic> response = (await dio.get(
-      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts',
+      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts?orderBy=${orderBy}',
       options: Options(
         headers: {
           'Authorization':
               'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Range': range,
         },
       ),
     ));
 
     print("response 런타임타입 : ${response.runtimeType}");
-    final List data = response.data['data'];
-    print("${data.runtimeType}");
-    final List<PostWithProfileEntity> results = data.map((json) {
-      return PostWithProfileEntity.fromJson(json);
-    }).toList();
+    if (response.data['data'] != null) {
+      final List data = response.data['data'];
+      print("${data.runtimeType}");
+      final List<PostWithProfileEntity> results = data.map((json) {
+        return PostWithProfileEntity.fromJson(json);
+      }).toList();
 
-    return results;
+      return results;
+    } else {
+      return List.empty();
+    }
   }
 
   Future<int> getPostLikeCount(int id) async {

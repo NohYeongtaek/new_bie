@@ -23,9 +23,9 @@ class HomeScreen extends StatelessWidget {
                 Text("최신순"),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: viewModel.fetchPosts,
+                    onRefresh: viewModel.handleRefresh,
                     child: ListView.builder(
-                      // controller: viewModel.scrollController,
+                      controller: viewModel.scrollController,
                       itemCount: viewModel.posts.length, // 뷰모델.list.length
                       itemBuilder: (context, index) {
                         final PostWithProfileEntity item =

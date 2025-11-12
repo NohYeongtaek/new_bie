@@ -8,8 +8,14 @@ import 'package:new_bie/features/post/data/entity/user_entity.dart';
 class PostRepository {
   // 반환 형태가 무엇이 되어야 할까요?
   // List<Task>
-  Future<List<PostWithProfileEntity>> fetchPosts() async {
-    return await NetworkApiManager.shared.fetchPosts();
+  Future<List<PostWithProfileEntity>> fetchPosts(
+    String orderBy, {
+    int currentIndex = 1,
+  }) async {
+    return await NetworkApiManager.shared.fetchPosts(
+      orderBy,
+      currentIndex: currentIndex,
+    );
   }
 
   Future<PostWithProfileEntity> fetchPostItem(int id) async {
