@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SetProfileViewModel extends ChangeNotifier {
@@ -12,11 +13,8 @@ class SetProfileViewModel extends ChangeNotifier {
   bool _isLoading = false;
 
   File? get imageFile => _imageFile;
-
   String get nickName => _nickName;
-
   String get introduction => _introduction;
-
   bool get isLoading => _isLoading;
 
   void setNickName(String value) {
@@ -27,6 +25,15 @@ class SetProfileViewModel extends ChangeNotifier {
   void setIntroduction(String value) {
     _introduction = value;
     notifyListeners();
+  }
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      _imageFile = File(picked.path);
+      notifyListeners();
+    }
   }
 
   Future<void> saveProfile(BuildContext context) async {
@@ -40,12 +47,53 @@ class SetProfileViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    // try {
-    //   final userId = supabase.auth.currentUser?.id;
-    //   if (userId == null) throw Exception('로그인 정보가 없습니다.');
-    //
-    //   String? profileImageUrl;
-    // }
-    // catch
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('로그인 정보가 없습니다.');
+
+      String? profileImageUrl;
+
+      // 프로필 이미지 업로드
+      if (_imageFile != null) {
+        final fileName =
+            'avatars/$userId-${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+        await supabase.storage
+            .from('avatars')
+            .upload(
+              fileName,
+              _imageFile!,
+              fileOptions: const FileOptions(
+                cacheControl: '3600',
+                upsert: false,
+              ),
+            );
+
+        profileImageUrl = supabase.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+      }
+
+      // users 테이블에 저장
+      await supabase.from('users').upsert({
+        'id': userId,
+        'nick_name': _nickName,
+        'introduction': _introduction,
+        if (profileImageUrl != null) 'profile_image': profileImageUrl,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('프로필이 저장되었습니다!👍')));
+    } catch (e) {
+      debugPrint('프로필 저장 실패: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('프로필 저장에 실패했습니다: $e')));
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }
