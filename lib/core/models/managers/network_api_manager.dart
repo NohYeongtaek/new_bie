@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_count_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NetworkApiManager {
   static final NetworkApiManager _shared = NetworkApiManager();
@@ -34,6 +35,7 @@ class NetworkApiManager {
     String orderBy, {
     int currentIndex = 1,
     int perPage = 5,
+    required String category,
   }) async {
     int startIndex = currentIndex - 1;
     int endIndex = perPage - 1;
@@ -46,19 +48,42 @@ class NetworkApiManager {
 
     final String range = "${startIndex}-${endIndex}";
 
-    final Response<dynamic> response = (await dio.get(
-      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts?orderBy=${orderBy}',
-      options: Options(
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Range': range,
-        },
-      ),
-    ));
+    // ✅ 현재 로그인된 유저의 세션 정보 가져오기
+    final supabase = Supabase.instance.client;
+    final session = supabase.auth.currentSession;
+    final accessToken = session?.accessToken;
+    print("accessToken : ${accessToken}");
+    print("orderBy : ${orderBy}");
 
-    print("response 런타임타입 : ${response.runtimeType}");
+    // 만약 로그인이 안 되어 있으면 null일 수 있으니 체크
+    if (accessToken == null) {
+      print("[fetchPosts] ⚠️ 로그인 토큰이 없습니다. 비로그인 상태로 요청합니다.");
+    }
+    final response = await supabase.functions.invoke(
+      'post-function/posts',
+      method: HttpMethod.get,
+      queryParameters: {'orderBy': orderBy, 'category': category},
+      headers: {
+        'Authorization': 'Bearer ${accessToken}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Range': range,
+      },
+    );
+
+    // final data = res.data;
+
+    // final Response<dynamic> response = (await dio.get(
+    //   'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts?orderBy=${orderBy}&category=${category}',
+    //   options: Options(
+    //     headers: {
+    //       'Authorization': 'Bearer ${accessToken}',
+    //       'Content-Type': 'application/x-www-form-urlencoded',
+    //       'Range': range,
+    //     },
+    //   ),
+    // ));
+
+    print("response 런타임타입 : ${response}");
     if (response.data['data'] != null) {
       final List data = response.data['data'];
       print("${data.runtimeType}");

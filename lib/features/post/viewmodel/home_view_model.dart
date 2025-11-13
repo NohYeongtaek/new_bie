@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/main.dart';
 
 enum OrderByType { newFirst, oldFirst, likesFirst }
 
@@ -16,11 +17,13 @@ class HomeViewModel extends ChangeNotifier {
   //페이징 처리
   int _currentPage = 1;
   int get currentPage => _currentPage;
-
+  String selectCategory = "전체";
+  List<String> categoryList = ["전체"];
   //스크롤 컨트롤러
   ScrollController scrollController = ScrollController();
 
   HomeViewModel(this._postRepository) {
+    getCategoryList();
     Timer? _debounce;
 
     scrollController.addListener(() async {
@@ -47,7 +50,6 @@ class HomeViewModel extends ChangeNotifier {
         fetchNextPosts();
       }
     });
-
     fetchPosts();
   }
   void upToTop() {
@@ -72,6 +74,7 @@ class HomeViewModel extends ChangeNotifier {
     _posts = await _postRepository.fetchPosts(
       orderBy,
       currentIndex: _currentPage,
+      category: selectCategory,
     );
     notifyListeners();
   }
@@ -80,12 +83,17 @@ class HomeViewModel extends ChangeNotifier {
     _currentPage++;
     String orderBy = setOrderBy(type);
     List<PostWithProfileEntity> newFetchPosts = await _postRepository
-        .fetchPosts(orderBy, currentIndex: _currentPage);
+        .fetchPosts(
+          orderBy,
+          currentIndex: _currentPage,
+          category: selectCategory,
+        );
     _posts.addAll(newFetchPosts);
     notifyListeners();
   }
 
   Future<void> handleRefresh() async {
+    String userId = supabase.auth.currentUser?.id ?? "null1";
     _currentPage = 1;
     _posts = [];
     notifyListeners();
@@ -93,6 +101,7 @@ class HomeViewModel extends ChangeNotifier {
     _posts = await _postRepository.fetchPosts(
       orderBy,
       currentIndex: _currentPage,
+      category: selectCategory,
     );
     notifyListeners();
   }
@@ -108,6 +117,18 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> ChangeOrder(OrderByType inputType) async {
     type = inputType;
+    await handleRefresh();
+    notifyListeners();
+  }
+
+  Future<void> getCategoryList() async {
+    categoryList.addAll(await _postRepository.getCategoryList());
+    print("${categoryList}");
+    notifyListeners();
+  }
+
+  Future<void> ChangeCategory(String category) async {
+    selectCategory = category;
     await handleRefresh();
     notifyListeners();
   }
