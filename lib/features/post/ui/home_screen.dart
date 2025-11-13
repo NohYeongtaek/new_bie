@@ -20,7 +20,29 @@ class HomeScreen extends StatelessWidget {
               children: [
                 TextField(),
                 Row(),
-                Text("최신순"),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: DropdownMenu<OrderByType>(
+                    initialSelection: viewModel.type,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
+                        value: OrderByType.newFirst,
+                        label: "최신순",
+                      ),
+                      DropdownMenuEntry(
+                        value: OrderByType.oldFirst,
+                        label: "오래된 순",
+                      ),
+                      DropdownMenuEntry(
+                        value: OrderByType.likesFirst,
+                        label: "좋아요 순",
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value != null) viewModel.ChangeOrder(value);
+                    },
+                  ),
+                ),
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: viewModel.handleRefresh,
