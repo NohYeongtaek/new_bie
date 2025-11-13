@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/post/post_item.dart';
 import 'package:new_bie/features/post/viewmodel/home_view_model.dart';
@@ -7,6 +8,13 @@ import 'package:provider/provider.dart';
 // 홈화면
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Color setColor(String title, String selectCategory) {
+    if (title == selectCategory)
+      return orangeColor;
+    else
+      return Colors.white;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +27,25 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextField(),
-                Row(),
+                SizedBox(
+                  height: 60,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: viewModel.categoryList.length,
+                    itemBuilder: (context, index) {
+                      final String title = viewModel.categoryList[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            viewModel.ChangeCategory(title);
+                          },
+                          child: Text(title),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: DropdownMenu<OrderByType>(

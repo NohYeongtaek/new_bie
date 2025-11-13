@@ -11,10 +11,12 @@ class PostRepository {
   Future<List<PostWithProfileEntity>> fetchPosts(
     String orderBy, {
     int currentIndex = 1,
+    required String category,
   }) async {
     return await NetworkApiManager.shared.fetchPosts(
       orderBy,
       currentIndex: currentIndex,
+      category: category,
     );
   }
 
@@ -69,6 +71,10 @@ class PostRepository {
     List<String> images,
   ) async {
     await NetworkApiManager.shared.insertPost(userId, title, content, images);
+  }
+
+  Future<List<String>> getCategoryList() async {
+    return await SupabaseManager.shared.getCategoryList();
   }
 
   // Future<void> addMemo(String content) async {

@@ -237,4 +237,17 @@ class SupabaseManager {
       "blocked_user_id": blockId,
     });
   }
+
+  Future<List<String>> getCategoryList() async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('category_type')
+        .select('type_title');
+
+    if (data.length == 0) return [];
+    final List<String> results2 = data.map((json) {
+      return json['type_title'] as String;
+    }).toList();
+
+    return results2;
+  }
 }

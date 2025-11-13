@@ -44,6 +44,7 @@ Future<void> main() async {
     anonKey: // 인증키
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
   );
+  await Future.delayed(Duration(milliseconds: 300)); // 초기화 기다림
   runApp(
     MultiProvider(
       providers: [

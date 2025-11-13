@@ -51,7 +51,7 @@ class PostWithProfileEntity {
 
 class PostUserEntity {
   final String id;
-  final String nick_name;
+  final String? nick_name;
   final String? profile_image;
 
   PostUserEntity({
@@ -63,7 +63,7 @@ class PostUserEntity {
   factory PostUserEntity.fromJson(Map<String, dynamic> json) {
     return PostUserEntity(
       id: json['id'] as String,
-      nick_name: json['nick_name'] as String,
+      nick_name: json['nick_name'] as String?,
       profile_image: json['profile_image'] as String?,
     );
   }
