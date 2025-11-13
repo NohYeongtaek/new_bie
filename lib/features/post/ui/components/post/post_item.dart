@@ -45,7 +45,7 @@ class PostItem extends StatelessWidget {
                 Expanded(
                   child: SmallProfileComponent(
                     imageUrl: post.user.profile_image,
-                    nickName: post.user.nick_name,
+                    nickName: post.user.nick_name ?? "",
                     introduce: "${post.created_at.toTimesAgo()}",
                   ),
                 ),

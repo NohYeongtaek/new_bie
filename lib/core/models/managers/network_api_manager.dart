@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_count_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../main.dart';
 
 class NetworkApiManager {
   static final NetworkApiManager _shared = NetworkApiManager();
@@ -49,25 +52,28 @@ class NetworkApiManager {
     final String range = "${startIndex}-${endIndex}";
 
     // ✅ 현재 로그인된 유저의 세션 정보 가져오기
-    final supabase = Supabase.instance.client;
-    final session = supabase.auth.currentSession;
-    final accessToken = session?.accessToken;
-    print("accessToken : ${accessToken}");
+    // final supabase = Supabase.instance.client;
+    // final session = supabase.auth.currentSession;
+    // final accessToken = session?.accessToken;
+    // print("accessToken : ${accessToken}");
     print("orderBy : ${orderBy}");
 
     // 만약 로그인이 안 되어 있으면 null일 수 있으니 체크
-    if (accessToken == null) {
-      print("[fetchPosts] ⚠️ 로그인 토큰이 없습니다. 비로그인 상태로 요청합니다.");
-    }
+    // if (accessToken == null) {
+    //   print("[fetchPosts] ⚠️ 로그인 토큰이 없습니다. 비로그인 상태로 요청합니다.");
+    // }
     final response = await supabase.functions.invoke(
       'post-function/posts',
       method: HttpMethod.get,
       queryParameters: {'orderBy': orderBy, 'category': category},
       headers: {
-        'Authorization': 'Bearer ${accessToken}',
+        'Authorization': 'Bearer ${supabase.auth.currentSession?.accessToken}',
         'Content-Type': 'application/x-www-form-urlencoded',
         'Range': range,
       },
+    );
+    debugPrint(
+      'Authorization : Bearer ${supabase.auth.currentSession?.accessToken}',
     );
 
     // final data = res.data;
