@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
 import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
@@ -99,7 +100,30 @@ class PostItem extends StatelessWidget {
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
             ),
-
+            if (post.categories.length != 0)
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: post.categories.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          color: orangeColor,
+                          child: Text(
+                            post.categories[index].categoryType.type_title,
+                            style: TextStyle(color: blackColor, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

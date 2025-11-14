@@ -11,6 +11,7 @@ class PostWithProfileEntity {
   final int comments_count;
   final PostUserEntity user;
   final List<PostImageEntity> postImages;
+  final List<CategoryEntity> categories;
 
   PostWithProfileEntity({
     required this.id,
@@ -25,6 +26,7 @@ class PostWithProfileEntity {
     required this.comments_count,
     required this.user,
     required this.postImages,
+    required this.categories,
   });
 
   factory PostWithProfileEntity.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,11 @@ class PostWithProfileEntity {
       postImages:
           (json['post_images'] as List<dynamic>?)
               ?.map((image) => PostImageEntity.fromJson(image))
+              .toList() ??
+          [],
+      categories:
+          (json['category'] as List<dynamic>?)
+              ?.map((category) => CategoryEntity.fromJson(category))
               .toList() ??
           [],
     );
@@ -88,6 +95,35 @@ class PostImageEntity {
       index: json['index'] as int,
       image_url: json['image_url'] as String,
       created_at: json['created_at'] as String,
+    );
+  }
+}
+
+class CategoryEntity {
+  final int id;
+  final CategoryTypeEntity categoryType;
+
+  CategoryEntity({required this.id, required this.categoryType});
+  factory CategoryEntity.fromJson(Map<String, dynamic> json) {
+    return CategoryEntity(
+      id: json['id'] as int,
+      categoryType: CategoryTypeEntity.fromJson(
+        json['category_type'] as Map<String, dynamic>,
+      ),
+    );
+  }
+}
+
+class CategoryTypeEntity {
+  final int id;
+  final String type_title;
+
+  CategoryTypeEntity({required this.id, required this.type_title});
+
+  factory CategoryTypeEntity.fromJson(Map<String, dynamic> json) {
+    return CategoryTypeEntity(
+      id: json['id'] as int,
+      type_title: json['type_title'] as String,
     );
   }
 }
