@@ -62,12 +62,16 @@ class NetworkApiManager {
     // if (accessToken == null) {
     //   print("[fetchPosts] ⚠️ 로그인 토큰이 없습니다. 비로그인 상태로 요청합니다.");
     // }
+
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
     final response = await supabase.functions.invoke(
       'post-function/posts',
       method: HttpMethod.get,
       queryParameters: {'orderBy': orderBy, 'category': category},
       headers: {
-        'Authorization': 'Bearer ${supabase.auth.currentSession?.accessToken}',
+        'Authorization': authorizationKey,
         'Content-Type': 'application/x-www-form-urlencoded',
         'Range': range,
       },
