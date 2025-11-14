@@ -19,11 +19,16 @@ class LikeButton extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                spacing: 10,
                 children: [
-                  viewModel.likeEntity != null
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border, color: Colors.grey),
+                  Icon(
+                    viewModel.likeEntity != null
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: viewModel.likeEntity != null
+                        ? Colors.red
+                        : Colors.grey,
+                  ),
+                  const SizedBox(width: 4),
                   Text("${viewModel.likes_count}"),
                 ],
               ),
