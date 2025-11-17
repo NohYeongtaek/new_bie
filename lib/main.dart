@@ -201,7 +201,7 @@ class MyApp extends StatelessWidget {
           path: '/user_profile/:user_id',
           builder: (context, state) {
             final userId = state.pathParameters["user_id"] ?? "";
-            return const UserProfilePage();
+            return UserProfilePage(userId: userId); // ← String 전달
           },
         ),
         ShellRoute(
