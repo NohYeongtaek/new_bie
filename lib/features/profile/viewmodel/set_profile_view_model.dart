@@ -57,13 +57,16 @@ class SetProfileViewModel extends ChangeNotifier {
       if (_imageFile != null) {
         final fileName =
             'avatars/$userId-${DateTime.now().millisecondsSinceEpoch}.jpg';
-
         await supabase.storage
             .from('avatars')
             .upload(
               fileName,
               _imageFile!,
               fileOptions: const FileOptions(
+                headers: {
+                  "Authorization":
+                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+                },
                 cacheControl: '3600',
                 upsert: false,
               ),
@@ -80,7 +83,6 @@ class SetProfileViewModel extends ChangeNotifier {
         'nick_name': _nickName,
         'introduction': _introduction,
         if (profileImageUrl != null) 'profile_image': profileImageUrl,
-        'updated_at': DateTime.now().toIso8601String(),
       });
 
       ScaffoldMessenger.of(
