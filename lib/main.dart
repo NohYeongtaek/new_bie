@@ -193,8 +193,9 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/user_profile/:user_id',
           builder: (context, state) {
-            final userId = state.pathParameters["user_id"] ?? "";
-            return const UserProfilePage();
+            final userIdStr = state.pathParameters["user_id"] ?? "0";
+            final int userId = int.parse(userIdStr);
+            return UserProfilePage(userId: userId);
           },
         ),
         ShellRoute(
