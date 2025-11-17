@@ -11,7 +11,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserProfileViewModel()..loadUserProfile(userId.toString()),
+      create: (_) => UserProfileViewModel()..loadUserProfile(userId),
       child: Consumer<UserProfileViewModel>(
         builder: (context, viewModel, child) {
           final user = viewModel.user;
