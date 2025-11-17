@@ -13,6 +13,7 @@ import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.d
 import 'package:new_bie/features/follow/ui/follow_list_page.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/journal/ui/journal_page.dart';
+import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
 import 'package:new_bie/features/post/ui/home_screen.dart';
 import 'package:new_bie/features/post/ui/post_add_page.dart';
@@ -131,10 +132,13 @@ class MyApp extends StatelessWidget {
         debugPrint("[리디렉트] isLoggedIn: ${isLoggedIn}");
         final String currentRoute = state.uri.toString();
         debugPrint("[리디렉트] currentRoute: ${currentRoute}");
+        final UserEntity? user = authVM.user;
 
         //로그인 되면 홈화면으로 이동
-        if (isLoggedIn && currentRoute == '/login') {
+        if (isLoggedIn && currentRoute == '/login' && user?.nick_name != null) {
           return '/home';
+        } else if (isLoggedIn && user?.nick_name == null) {
+          return '/set_profile';
         }
 
         //접근 가능한 화면
@@ -185,7 +189,9 @@ class MyApp extends StatelessWidget {
             GoRoute(
               path: '/edit',
               builder: (context, state) {
-                return const PostEditPage();
+                final postId = state.pathParameters["id"] ?? "0";
+                final int detailId = int.parse(postId);
+                return PostEditPage(postId: detailId);
               },
             ),
           ],

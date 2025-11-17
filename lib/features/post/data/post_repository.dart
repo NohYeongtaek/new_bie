@@ -1,5 +1,6 @@
 import 'package:new_bie/core/models/managers/network_api_manager.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
@@ -69,12 +70,39 @@ class PostRepository {
     String title,
     String content,
     List<String> images,
+    List<int> categories,
   ) async {
-    await NetworkApiManager.shared.insertPost(userId, title, content, images);
+    await NetworkApiManager.shared.insertPost(
+      userId,
+      title,
+      content,
+      images,
+      categories,
+    );
   }
 
   Future<List<String>> getCategoryList() async {
     return await SupabaseManager.shared.getCategoryList();
+  }
+
+  Future<List<CategoryTypeEntity>> getCategoryTypeList() async {
+    return await SupabaseManager.shared.getCategoryTypeList();
+  }
+
+  Future<void> updatePost(
+    int postId,
+    String title,
+    String content,
+    List<String> images,
+    List<int> categories,
+  ) async {
+    await NetworkApiManager.shared.updatePost(
+      postId,
+      title,
+      content,
+      images,
+      categories,
+    );
   }
 
   // Future<void> addMemo(String content) async {

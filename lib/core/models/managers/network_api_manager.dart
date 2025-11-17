@@ -152,6 +152,7 @@ class NetworkApiManager {
     String title,
     String content,
     List<String> images,
+    List<int> categories,
   ) async {
     try {
       await dio.post(
@@ -168,11 +169,73 @@ class NetworkApiManager {
           'title': title,
           'content': content,
           'images': images,
+          'categories': categories,
         },
       );
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> updatePost(
+    int postId,
+    String title,
+    String content,
+    List<String> images,
+    List<int> categories,
+  ) async {
+    try {
+      await supabase.functions.invoke(
+        'post-function/posts/${postId}',
+        method: HttpMethod.put,
+        body: {
+          'title': title,
+          'content': content,
+          'images': images,
+          'categories': categories,
+        },
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<FunctionResponse> searchAll(
+    String keyword,
+    String type, {
+    int currentIndex = 1,
+    int perPage = 5,
+  }) async {
+    int startIndex = currentIndex - 1;
+    int endIndex = perPage - 1;
+
+    // 현재 페이지가 첫 페이지가 아니라면
+    if (currentIndex != 1) {
+      endIndex = (currentIndex * perPage) - 1;
+      startIndex = (currentIndex - 1) * perPage;
+    }
+
+    final String range = "${startIndex}-${endIndex}";
+
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/search',
+      method: HttpMethod.get,
+      queryParameters: {'keyword': keyword, 'type': type},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Range': range,
+      },
+    );
+    return response;
   }
 }
 

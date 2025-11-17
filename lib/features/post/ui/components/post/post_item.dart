@@ -54,7 +54,12 @@ class PostItem extends StatelessWidget {
                         SupabaseManager.shared.supabase.auth.currentUser?.id
                     ? PopupMenuButton(
                         itemBuilder: (context) => [
-                          PopupMenuItem(onTap: () {}, child: Text("수정")),
+                          PopupMenuItem(
+                            onTap: () {
+                              context.push("/post/${post.id}/edit");
+                            },
+                            child: Text("수정"),
+                          ),
                           PopupMenuItem(onTap: () {}, child: Text("삭제")),
                         ],
                       )

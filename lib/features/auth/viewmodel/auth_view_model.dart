@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthViewModel extends ChangeNotifier {
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
-
+  UserEntity? _user;
+  UserEntity? get user => _user;
   late StreamSubscription<AuthState> _subscription;
 
   AuthViewModel() {
@@ -57,11 +59,14 @@ class AuthViewModel extends ChangeNotifier {
   StreamSubscription<AuthState> _subscribeAuthEvent() {
     return SupabaseManager.shared.supabase.auth.onAuthStateChange.listen((
       data,
-    ) {
+    ) async {
       final AuthChangeEvent event = data.event;
       final Session? session = data.session;
 
       _isLoggedIn = session != null;
+      if (_isLoggedIn && session != null) {
+        _user = await SupabaseManager.shared.fetchUser(session.user.id);
+      }
       notifyListeners();
 
       debugPrint('[AuthVM] event: $event, session: $session');
