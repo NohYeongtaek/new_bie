@@ -10,7 +10,7 @@ import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
 import 'package:new_bie/features/auth/viewmodel/login_view_model.dart';
 import 'package:new_bie/features/block_users/ui/blocked_user_page.dart';
 import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
-import 'package:new_bie/features/follow/ui/follow_list_page.dart';
+import 'package:new_bie/features/follow/ui/follower_list_page.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/journal/ui/journal_page.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
@@ -285,9 +285,9 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
                 GoRoute(
-                  path: '/follow',
+                  path: '/follower',
                   builder: (context, state) {
-                    return const FollowListPage(followers: [], followings: []);
+                    return const FollowerListPage();
                   },
                 ),
               ],

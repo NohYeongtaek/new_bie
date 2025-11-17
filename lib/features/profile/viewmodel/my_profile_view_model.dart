@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
+
+import '../../../core/models/event_bus/follow_list_event_bus.dart';
+import '../../../main.dart';
 
 class MyProfileViewModel extends ChangeNotifier {
   // int inputCount = 0;
@@ -9,11 +14,22 @@ class MyProfileViewModel extends ChangeNotifier {
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   UserEntity? user;
+  StreamSubscription? _subscription;
 
   MyProfileViewModel(BuildContext context) {
     fetchUser();
-  }
 
+    _subscription = eventBus.on<FollowListEventBus>().listen((event) {
+      switch (event.type) {
+        case FollowEventType.unFollow:
+          fetchUser();
+          break;
+        case FollowEventType.addFollow:
+          fetchUser();
+          break;
+      }
+    });
+  }
   Future<void> fetchUser() async {
     final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
     if (userId == null) return;

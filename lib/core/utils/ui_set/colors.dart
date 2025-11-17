@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 // 배경색
 const Color blackColor = Color(0xff101820);
 // 글씨색

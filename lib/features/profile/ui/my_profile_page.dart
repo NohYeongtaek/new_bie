@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
@@ -58,34 +59,71 @@ class MyProfilePage extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              Text(
-                                '${viewModel.user?.follower_count}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push('/my_profile/follower');
+                                },
+                                child: Text(
+                                  '${viewModel.user?.follower_count}',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '팔로워',
-                                style: TextStyle(color: Colors.grey),
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push('/my_profile/follower');
+                                },
+                                child: Text(
+                                  '팔로워',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(width: 40),
                           Column(
                             children: [
-                              Text(
-                                '${viewModel.user?.following_count}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push('/my_profile/follower');
+                                },
+                                child: Text(
+                                  '${viewModel.user?.following_count}',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '팔로잉',
-                                style: TextStyle(color: Colors.grey),
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+                                  context.push('/my_profile/follower');
+                                },
+                                child: Text(
+                                  '팔로잉',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
                               ),
                             ],
                           ),
