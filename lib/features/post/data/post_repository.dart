@@ -4,6 +4,7 @@ import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
+import 'package:new_bie/features/post/data/entity/search_result_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 
 class PostRepository {
@@ -103,6 +104,24 @@ class PostRepository {
       images,
       categories,
     );
+  }
+
+  Future<SearchResultEntity> searchAll(
+    String keyword, {
+    String type = "all",
+    int currentIndex = 1,
+    int perPage = 5,
+  }) async {
+    return NetworkApiManager.shared.searchAll(
+      keyword,
+      type: type,
+      currentIndex: currentIndex,
+      perPage: perPage,
+    );
+  }
+
+  Future<void> deletePost(int postId) async {
+    await NetworkApiManager.shared.deletePost(postId);
   }
 
   // Future<void> addMemo(String content) async {

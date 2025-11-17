@@ -19,6 +19,7 @@ import 'package:new_bie/features/post/ui/home_screen.dart';
 import 'package:new_bie/features/post/ui/post_add_page.dart';
 import 'package:new_bie/features/post/ui/post_detail_page.dart';
 import 'package:new_bie/features/post/ui/post_edit_page.dart';
+import 'package:new_bie/features/post/ui/search/search_result_page.dart';
 import 'package:new_bie/features/post/viewmodel/home_view_model.dart';
 import 'package:new_bie/features/post/viewmodel/search/search_result_view_model.dart';
 import 'package:new_bie/features/profile/data/notices_repository.dart';
@@ -219,6 +220,14 @@ class MyApp extends StatelessWidget {
               builder: (context, state) {
                 return const HomeScreen();
               },
+              routes: [
+                GoRoute(
+                  path: '/search',
+                  builder: (context, state) {
+                    return const SearchResultPage();
+                  },
+                ),
+              ],
             ),
             GoRoute(
               path: '/add',

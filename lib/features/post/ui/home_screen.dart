@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/post/post_item.dart';
 import 'package:new_bie/features/post/viewmodel/home_view_model.dart';
+import 'package:new_bie/features/post/viewmodel/search/search_result_view_model.dart';
 import 'package:provider/provider.dart';
 
 // class HomeScreen extends StatefulWidget {
@@ -118,7 +120,21 @@ class HomeScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(),
+                TextField(
+                  controller: viewModel.keywordController,
+                  decoration: InputDecoration(
+                    hintText: '검색어를 입력하세요.',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        context.read<SearchResultViewModel>().search(
+                          viewModel.keywordController.text,
+                        );
+                        context.push('/home/search');
+                      },
+                      icon: Icon(Icons.search),
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 60,
                   child: ListView.builder(
@@ -179,7 +195,10 @@ class HomeScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final PostWithProfileEntity item =
                             viewModel.posts[index];
-                        return PostItem(post: item);
+                        return PostItem(
+                          post: item,
+                          onDelete: () => viewModel.deletePost(item.id),
+                        );
                       },
                     ),
                   ),

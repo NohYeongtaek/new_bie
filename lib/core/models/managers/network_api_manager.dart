@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_count_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
+import 'package:new_bie/features/post/data/entity/search_result_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../main.dart';
@@ -205,9 +206,9 @@ class NetworkApiManager {
     }
   }
 
-  Future<FunctionResponse> searchAll(
-    String keyword,
-    String type, {
+  Future<SearchResultEntity> searchAll(
+    String keyword, {
+    String type = "all",
     int currentIndex = 1,
     int perPage = 5,
   }) async {
@@ -235,7 +236,24 @@ class NetworkApiManager {
         'Range': range,
       },
     );
-    return response;
+    final Map<String, dynamic> data = response.data;
+    print("${response}");
+    print("${data}");
+    SearchResultEntity result = SearchResultEntity.fromJson(data);
+
+    return result;
+  }
+
+  Future<void> deletePost(int postId) async {
+    await supabase.functions.invoke(
+      'post-function/posts/${postId}',
+      method: HttpMethod.delete,
+      headers: {
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    );
   }
 }
 
