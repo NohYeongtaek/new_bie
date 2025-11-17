@@ -39,22 +39,6 @@ class _PostAddPage extends StatelessWidget {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  viewModel.uploadSelectedImages();
-                  _submitPost(context);
-                },
-                child: const Text(
-                  '등록',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(16),
@@ -62,10 +46,12 @@ class _PostAddPage extends StatelessWidget {
               children: [
                 TextField(
                   controller: viewModel.titleController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: '제목을 입력하세요',
-                    border: UnderlineInputBorder(),
+                    hintStyle: TextStyle(fontSize: 30),
+                    border: const UnderlineInputBorder(),
                   ),
+                  style: TextStyle(fontSize: 30),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -74,25 +60,40 @@ class _PostAddPage extends StatelessWidget {
                     hintText: '내용을 입력하세요',
                     border: UnderlineInputBorder(),
                   ),
-                  maxLines: 6,
+                  maxLines: 24,
+                  style: TextStyle(color: Colors.white),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 InkWell(
                   onTap: () {
                     viewModel.getImages();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('사진 추가 클릭됨')));
+                    // ScaffoldMessenger.of(
+                    //   context,
+                    // ).showSnackBar(const SnackBar(content: Text('사진 추가 클릭됨')));
                   },
-                  child: Row(
-                    children: const [
-                      Icon(Icons.image, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text(
-                        '사진 추가',
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                    ],
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.image, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            '사진 추가',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 if (viewModel.mediaFileList.length != 0)
@@ -116,7 +117,7 @@ class _PostAddPage extends StatelessWidget {
                       },
                     ),
                   ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
@@ -131,13 +132,13 @@ class _PostAddPage extends StatelessWidget {
                               );
                             },
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '해시태그 "${viewModel.hashtagController.text}" 추가됨',
-                              ),
-                            ),
-                          );
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: Text(
+                          //       '해시태그 "${viewModel.hashtagController.text}" 추가됨',
+                          //     ),
+                          //   ),
+                          // );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -146,7 +147,29 @@ class _PostAddPage extends StatelessWidget {
                             vertical: 14,
                           ),
                         ),
-                        child: const Text('카테고리 선택'),
+                        child: const Text(
+                          '카테고리 선택',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          viewModel.uploadSelectedImages();
+                          _submitPost(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: orangeColor,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
+                          ),
+                        ),
+                        child: const Text(
+                          '등록',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
 

@@ -35,7 +35,16 @@ class SmallProfileComponent extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(nickName), Text(introduce)],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(nickName),
+                Text(
+                  introduce,
+                  style: TextStyle(color: Colors.white),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],

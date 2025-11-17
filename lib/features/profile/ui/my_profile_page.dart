@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MyProfilePage extends StatelessWidget {
-  // final UserEntity user;
-
   const MyProfilePage({super.key});
 
   @override
@@ -24,7 +23,7 @@ class MyProfilePage extends StatelessWidget {
             centerTitle: false,
             actions: [
               IconButton(
-                icon: const Icon(Icons.settings_outlined),
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
                 onPressed: () {
                   context.push('/my_profile/setting');
                 },
@@ -37,7 +36,7 @@ class MyProfilePage extends StatelessWidget {
               children: [
                 // 프로필
                 Container(
-                  color: Colors.white,
+                  color: blackColor,
                   padding: const EdgeInsets.symmetric(
                     vertical: 20,
                     horizontal: 16,
@@ -70,7 +69,7 @@ class MyProfilePage extends StatelessWidget {
                                 child: Text(
                                   '${viewModel.user?.follower_count}',
                                   style: const TextStyle(
-                                    color: Colors.black,
+                                    color: orangeColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
@@ -87,7 +86,7 @@ class MyProfilePage extends StatelessWidget {
                                 },
                                 child: Text(
                                   '팔로워',
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
@@ -106,7 +105,7 @@ class MyProfilePage extends StatelessWidget {
                                 child: Text(
                                   '${viewModel.user?.following_count}',
                                   style: const TextStyle(
-                                    color: Colors.black,
+                                    color: orangeColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
@@ -122,7 +121,7 @@ class MyProfilePage extends StatelessWidget {
                                 },
                                 child: Text(
                                   '팔로잉',
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
@@ -157,11 +156,11 @@ class MyProfilePage extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const Divider(color: Colors.grey, thickness: 1, height: 0.5),
 
                 // 게시물
                 Container(
-                  color: Colors.white,
+                  color: blackColor,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
