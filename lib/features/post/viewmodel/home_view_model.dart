@@ -10,6 +10,7 @@ enum OrderByType { newFirst, oldFirst, likesFirst }
 class HomeViewModel extends ChangeNotifier {
   //포스트 리포지토리와 연결
   final PostRepository _postRepository;
+  final keywordController = TextEditingController();
   List<PostWithProfileEntity> _posts = [];
   List<PostWithProfileEntity> get posts => _posts;
   bool buttonIsWorking = false;
@@ -130,6 +131,13 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> ChangeCategory(String category) async {
     selectCategory = category;
     await handleRefresh();
+    notifyListeners();
+  }
+
+  Future<void> deletePost(int postId) async {
+    final index = posts.indexWhere((item) => item.id == postId);
+    await _postRepository.deletePost(postId);
+    posts.removeAt(index);
     notifyListeners();
   }
 }
