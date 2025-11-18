@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/user_profile_view_model.dart';
@@ -99,6 +100,7 @@ class UserProfilePage extends StatelessWidget {
                                 child: _buildPostGridView(
                                   viewModel.posts,
                                   viewModel,
+                                  context,
                                 ),
                               ),
                             ],
@@ -116,7 +118,8 @@ class UserProfilePage extends StatelessWidget {
   // 게시물 리스트
   static Widget _buildPostGridView(
     List<PostWithProfileEntity> posts,
-    UserProfileViewModel viewModel,
+    UserProfileViewModel viewMode,
+    BuildContext context,
   ) {
     if (posts.isEmpty) {
       return const Center(child: Text('아직 게시물이 없습니다.'));
@@ -125,15 +128,25 @@ class UserProfilePage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.count(
-        controller: viewModel.scrollController,
+        controller: viewMode.scrollController,
         crossAxisCount: 3,
         crossAxisSpacing: 4,
         mainAxisSpacing: 4,
         children: posts.map((post) {
           if (post.postImages.length != 0) {
-            return _buildPostImage(post.postImages[0].image_url);
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostImage(post.postImages[0].image_url),
+            );
           } else {
-            return _buildPostTextCard(post.content ?? "");
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostTextCard(post.content ?? ""),
+            );
           }
         }).toList(),
       ),

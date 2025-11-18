@@ -180,7 +180,11 @@ class MyProfilePage extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 400,
-                        child: _buildPostGridView(viewModel.posts, viewModel),
+                        child: _buildPostGridView(
+                          viewModel.posts,
+                          viewModel,
+                          context,
+                        ),
                       ),
                     ],
                   ),
@@ -197,6 +201,7 @@ class MyProfilePage extends StatelessWidget {
   static Widget _buildPostGridView(
     List<PostWithProfileEntity> posts,
     MyProfileViewModel viewMode,
+    BuildContext context,
   ) {
     if (posts.isEmpty) {
       return const Center(child: Text('아직 게시물이 없습니다.'));
@@ -211,9 +216,19 @@ class MyProfilePage extends StatelessWidget {
         mainAxisSpacing: 4,
         children: posts.map((post) {
           if (post.postImages.length != 0) {
-            return _buildPostImage(post.postImages[0].image_url);
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostImage(post.postImages[0].image_url),
+            );
           } else {
-            return _buildPostTextCard(post.content ?? "");
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostTextCard(post.content ?? ""),
+            );
           }
         }).toList(),
       ),
