@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/managers/network_api_manager.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 
 import '../../../core/models/event_bus/follow_list_event_bus.dart';
@@ -14,11 +16,42 @@ class MyProfileViewModel extends ChangeNotifier {
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   UserEntity? user;
+  List<PostWithProfileEntity> posts = [];
   StreamSubscription? _subscription;
-
+  ScrollController scrollController = ScrollController();
+  int _currentPage = 1;
+  int get currentPage => _currentPage;
+  bool buttonIsWorking = false;
   MyProfileViewModel(BuildContext context) {
-    fetchUser();
+    Timer? _debounce;
 
+    scrollController.addListener(() async {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        final double offset = scrollController.offset;
+
+        if (offset < 50) {
+          if (buttonIsWorking) {
+            buttonIsWorking = false;
+            notifyListeners();
+          }
+        } else {
+          if (!buttonIsWorking) {
+            buttonIsWorking = true;
+            notifyListeners();
+          }
+        }
+      });
+
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        fetchMorePosts();
+        notifyListeners();
+      }
+    });
+    fetchUser();
+    fetchPosts();
     _subscription = eventBus.on<FollowListEventBus>().listen((event) {
       switch (event.type) {
         case FollowEventType.unFollow:
@@ -36,6 +69,43 @@ class MyProfileViewModel extends ChangeNotifier {
     user = await SupabaseManager.shared.fetchUser(userId);
     notifyListeners();
   }
+
+  Future<void> fetchPosts() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    posts = await NetworkApiManager.shared.fetchUserPosts(
+      userId,
+      currentIndex: currentPage,
+    );
+    notifyListeners();
+  }
+
+  Future<void> fetchMorePosts() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    _currentPage++;
+    if (userId == null) return;
+    posts.addAll(
+      await NetworkApiManager.shared.fetchUserPosts(
+        userId,
+        currentIndex: currentPage,
+      ),
+    );
+    notifyListeners();
+  }
+
+  Future<void> refreshPosts() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    _currentPage = 0;
+    if (userId == null) return;
+    posts.addAll(
+      await NetworkApiManager.shared.fetchUserPosts(
+        userId,
+        currentIndex: currentPage,
+      ),
+    );
+    notifyListeners();
+  }
+
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;

@@ -28,7 +28,12 @@ class PostAddViewModel extends ChangeNotifier {
   }
 
   Future<void> getImages() async {
-    mediaFileList = await _picker.pickMultiImage();
+    mediaFileList.addAll(await _picker.pickMultiImage());
+    notifyListeners();
+  }
+
+  void removeNewImage(XFile image) {
+    mediaFileList.remove(image);
     notifyListeners();
   }
 

@@ -13,7 +13,9 @@ class NoticesViewModel extends ChangeNotifier {
   String? get error => _error;
   List<NoticeEntity> get notices => _notices;
 
-  NoticesViewModel(this._repository);
+  NoticesViewModel(this._repository) {
+    fetchNotices();
+  }
 
   Future<void> fetchNotices() async {
     if (_loading) return;

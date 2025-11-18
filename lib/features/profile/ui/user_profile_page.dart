@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/user_profile_view_model.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +13,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserProfileViewModel()..loadUserProfile(userId),
+      create: (_) => UserProfileViewModel(userId, context),
       child: Consumer<UserProfileViewModel>(
         builder: (context, viewModel, child) {
           final user = viewModel.user;
@@ -41,7 +43,7 @@ class UserProfilePage extends StatelessWidget {
                             children: [
                               SmallProfileComponent(
                                 imageUrl: user?.profileImage,
-                                nickName: user?.nickName ?? '닉네임 없음',
+                                nickName: user?.nick_name ?? '닉네임 없음',
                                 introduce: user?.introduction ?? '자기소개가 없습니다.',
                               ),
 
@@ -95,7 +97,11 @@ class UserProfilePage extends StatelessWidget {
                               ),
                               SizedBox(
                                 height: 400,
-                                child: _buildPostGridView([]),
+                                child: _buildPostGridView(
+                                  viewModel.posts,
+                                  viewModel,
+                                  context,
+                                ),
                               ),
                             ],
                           ),
@@ -109,20 +115,38 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  static Widget _buildPostGridView(List<Map<String, dynamic>> posts) {
-    if (posts.isEmpty) return const Center(child: Text('아직 게시물이 없습니다.'));
+  // 게시물 리스트
+  static Widget _buildPostGridView(
+    List<PostWithProfileEntity> posts,
+    UserProfileViewModel viewMode,
+    BuildContext context,
+  ) {
+    if (posts.isEmpty) {
+      return const Center(child: Text('아직 게시물이 없습니다.'));
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.count(
+        controller: viewMode.scrollController,
         crossAxisCount: 3,
         crossAxisSpacing: 4,
         mainAxisSpacing: 4,
         children: posts.map((post) {
-          if (post['type'] == 'image') {
-            return _buildPostImage(post['url']);
+          if (post.postImages.length != 0) {
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostImage(post.postImages[0].image_url),
+            );
           } else {
-            return _buildPostTextCard(post['content']);
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostTextCard(post.content ?? ""),
+            );
           }
         }).toList(),
       ),

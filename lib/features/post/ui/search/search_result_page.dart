@@ -152,6 +152,7 @@ class SearchPostView extends StatelessWidget {
             child: RefreshIndicator(
               onRefresh: viewModel.refreshPostPage,
               child: ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
                 controller: viewModel.postScrollController,
                 itemCount: viewModel.posts.length, // 뷰모델.list.length
                 itemBuilder: (context, index) {
@@ -185,6 +186,7 @@ class SearchUserView extends StatelessWidget {
             child: RefreshIndicator(
               onRefresh: viewModel.refreshPostPage,
               child: ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
                 controller: viewModel.userScrollController,
                 itemCount: viewModel.users.length, // 뷰모델.list.length
                 itemBuilder: (context, index) {
