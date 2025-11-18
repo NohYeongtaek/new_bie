@@ -61,10 +61,7 @@ class MyProfilePage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  context
-                                      .read<FollowListViewModel>()
-                                      .fetchAllFollowData();
-
+                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=0',
                                   );
@@ -81,10 +78,7 @@ class MyProfilePage extends StatelessWidget {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () {
-                                  context
-                                      .read<FollowListViewModel>()
-                                      .fetchAllFollowData();
-
+                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=0',
                                   );
@@ -101,10 +95,7 @@ class MyProfilePage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  context
-                                      .read<FollowListViewModel>()
-                                      .fetchAllFollowData();
-
+                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=1',
                                   );
@@ -121,9 +112,7 @@ class MyProfilePage extends StatelessWidget {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () {
-                                  context
-                                      .read<FollowListViewModel>()
-                                      .fetchAllFollowData();
+                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=1',
                                   );
