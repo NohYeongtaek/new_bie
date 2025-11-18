@@ -151,8 +151,12 @@ class SupabaseManager {
     await supabase.from('likes').insert({'post_id': postId, 'user_id': userId});
   }
 
-  Future<void> cancelLike(int id) async {
-    await supabase.from('likes').delete().eq('id', id);
+  Future<void> cancelLike(int postId, String userId) async {
+    await supabase
+        .from('likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', userId);
   }
 
   Future<List<CommentEntity>> fetchComments(int postId) async {

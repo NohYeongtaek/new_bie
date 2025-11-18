@@ -199,6 +199,7 @@ class HomeScreen extends StatelessWidget {
                         return PostItem(
                           post: item,
                           onDelete: () => viewModel.deletePost(item.id),
+                          onLike: () => viewModel.likeToggle(index, item.id),
                         );
                       },
                     ),

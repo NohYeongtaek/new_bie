@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/like_event_bus.dart';
 import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
+import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/search_result_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
@@ -15,6 +17,7 @@ class SearchResultViewModel extends ChangeNotifier {
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
+  static const PageType pageType = PageType.search;
   List<UserEntity> users = [];
   List<PostWithProfileEntity> posts = [];
   SearchResultEntity? searchResult;
@@ -22,6 +25,7 @@ class SearchResultViewModel extends ChangeNotifier {
   bool buttonIsWorking = false;
   final keywordController = TextEditingController();
   StreamSubscription? _postSubscription;
+  StreamSubscription? _likeSubscription;
   SearchResultViewModel(BuildContext context)
     : _repository = context.read<PostRepository>() {
     Timer? _debounce;
@@ -49,35 +53,61 @@ class SearchResultViewModel extends ChangeNotifier {
           userScrollController.position.maxScrollExtent) {
         fetchMoreUser();
       }
-      _postSubscription = eventBus.on<PostEventBus>().listen((event) async {
+    });
+    _postSubscription = eventBus.on<PostEventBus>().listen((event) async {
+      switch (event.type) {
+        case PostEventType.add:
+          break;
+        case PostEventType.delete:
+          final exists = posts.any((post) => post.id == event.postId);
+          if (exists) {
+            final foundPost = posts.indexWhere(
+              (post) => post.id == event.postId,
+            );
+            posts.removeAt(foundPost);
+            notifyListeners();
+          }
+          break;
+        case PostEventType.edit:
+          final exists = posts.any((post) => post.id == event.postId);
+          if (exists) {
+            final postIndex = posts.indexWhere(
+              (post) => post.id == event.postId,
+            );
+            final newPost = await _repository.fetchPostItem(event.postId ?? 0);
+            posts[postIndex] = newPost;
+            notifyListeners();
+          }
+          break;
+      }
+    });
+    _likeSubscription = eventBus.on<LikeEventBus>().listen((event) async {
+      if (event.pageType != pageType) {
         switch (event.type) {
-          case PostEventType.add:
-            break;
-          case PostEventType.delete:
+          case LikeActionType.like:
             final exists = posts.any((post) => post.id == event.postId);
             if (exists) {
               final foundPost = posts.indexWhere(
                 (post) => post.id == event.postId,
               );
-              posts.removeAt(foundPost);
+              posts[foundPost].likes_count++;
+              posts[foundPost].isLiked = true;
               notifyListeners();
             }
             break;
-          case PostEventType.edit:
+          case LikeActionType.cancel:
             final exists = posts.any((post) => post.id == event.postId);
             if (exists) {
-              final postIndex = posts.indexWhere(
+              final foundPost = posts.indexWhere(
                 (post) => post.id == event.postId,
               );
-              final newPost = await _repository.fetchPostItem(
-                event.postId ?? 0,
-              );
-              posts[postIndex] = newPost;
+              posts[foundPost].likes_count--;
+              posts[foundPost].isLiked = false;
               notifyListeners();
             }
             break;
         }
-      });
+      }
     });
     postScrollController.addListener(() async {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -213,6 +243,49 @@ class SearchResultViewModel extends ChangeNotifier {
     await _repository.deletePost(postId);
     posts.removeAt(index);
     notifyListeners();
+  }
+
+  Future<void> likeToggle(int index, int postId) async {
+    String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    bool isDone = false;
+    late LikeActionType type;
+    if (userId == null) return;
+    if (posts[index].isLiked == false) {
+      type = LikeActionType.like;
+      try {
+        posts[index].isLiked = true;
+        posts[index].likes_count++;
+        notifyListeners();
+        await _repository.insertLike(postId, userId);
+        isDone = true;
+      } catch (e) {
+        print("좋아요 실패 : ${e}");
+        posts[index].isLiked = false;
+        posts[index].likes_count--;
+        notifyListeners();
+        isDone = false;
+      }
+    } else if (posts[index].isLiked == true) {
+      type = LikeActionType.cancel;
+      try {
+        posts[index].isLiked = false;
+        posts[index].likes_count--;
+        notifyListeners();
+        await _repository.cancelLike(postId, userId);
+        isDone = true;
+      } catch (e) {
+        print("좋아요 취소 실패 : ${e}");
+        posts[index].isLiked = true;
+        posts[index].likes_count++;
+        notifyListeners();
+        isDone = false;
+      }
+    }
+    if (isDone) {
+      eventBus.fire(LikeEventBus(pageType, type, posts[index].id));
+    }
+    // posts[index] = await _postRepository.fetchPostItem(postId);
+    // notifyListeners();
   }
 
   // 입력한 글자 수를 받아오는 함수

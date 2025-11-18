@@ -33,6 +33,7 @@ import 'package:new_bie/features/profile/ui/update_profile_page.dart';
 import 'package:new_bie/features/profile/ui/user_profile_page.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
+import 'package:new_bie/features/profile/viewmodel/question_viewmodel.dart';
 import 'package:new_bie/features/profile/viewmodel/set_profile_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -96,6 +97,11 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) {
             return BlockedUserViewModel(context);
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return QuestionViewmodel(context);
           },
         ),
       ],

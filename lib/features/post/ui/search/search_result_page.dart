@@ -125,6 +125,10 @@ class SearchAllView extends StatelessWidget {
                       post: viewModel.posts[index],
                       onDelete: () =>
                           viewModel.deletePost(viewModel.posts[index].id),
+                      onLike: () => viewModel.likeToggle(
+                        index,
+                        viewModel.posts[index].id,
+                      ),
                     );
                   },
                 ),
@@ -166,6 +170,8 @@ class SearchPostView extends StatelessWidget {
                     post: viewModel.posts[index],
                     onDelete: () =>
                         viewModel.deletePost(viewModel.posts[index].id),
+                    onLike: () =>
+                        viewModel.likeToggle(index, viewModel.posts[index].id),
                   );
                 },
               ),

@@ -49,7 +49,7 @@ class LikesViewmodel extends ChangeNotifier {
       }
     } else if (likeEntity != null) {
       try {
-        _repository.cancelLike(likeEntity!.id);
+        _repository.cancelLike(postId, userId);
       } catch (e) {
         print("좋아요 취소 실패 : ${e}");
       }

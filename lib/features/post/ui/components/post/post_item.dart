@@ -16,6 +16,7 @@ import '../profile/small_profile_component.dart';
 class PostItem extends StatelessWidget {
   final PostWithProfileEntity post;
   final DeletePostCallback onDelete;
+  final LikeCallback? onLike;
   void Function()? likeFunction = () {};
 
   // final String? title;
@@ -27,6 +28,7 @@ class PostItem extends StatelessWidget {
     // this.title,
     // this.content,
     // required this.created_at,
+    this.onLike,
     required this.post,
     this.likeFunction,
     required this.onDelete,
@@ -129,7 +131,33 @@ class PostItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 spacing: 10,
                 children: [
-                  LikeButton(postId: post.id, likes_count: post.likes_count),
+                  onLike == null
+                      ? LikeButton(
+                          postId: post.id,
+                          likes_count: post.likes_count,
+                        )
+                      : InkWell(
+                          onTap: () {
+                            onLike!();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  post.isLiked == true
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: post.isLiked == true
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                                const SizedBox(width: 4),
+                                Text("${post.likes_count}"),
+                              ],
+                            ),
+                          ),
+                        ),
                   CommentButton(
                     comments_count: post.comments_count,
                     postId: post.id,

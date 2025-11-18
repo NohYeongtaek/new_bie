@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/like_event_bus.dart';
 import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
+import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
 import 'package:new_bie/main.dart';
@@ -10,6 +12,7 @@ enum OrderByType { newFirst, oldFirst, likesFirst }
 
 class HomeViewModel extends ChangeNotifier {
   //포스트 리포지토리와 연결
+  static const PageType pageType = PageType.home;
   final PostRepository _postRepository;
   final keywordController = TextEditingController();
   List<PostWithProfileEntity> _posts = [];
@@ -24,6 +27,7 @@ class HomeViewModel extends ChangeNotifier {
   //스크롤 컨트롤러
   ScrollController scrollController = ScrollController();
   StreamSubscription? _postSubscription;
+  StreamSubscription? _likeSubscription;
 
   HomeViewModel(this._postRepository) {
     getCategoryList();
@@ -54,6 +58,34 @@ class HomeViewModel extends ChangeNotifier {
       }
     });
     fetchPosts();
+    _likeSubscription = eventBus.on<LikeEventBus>().listen((event) async {
+      if (event.pageType != pageType) {
+        switch (event.type) {
+          case LikeActionType.like:
+            final exists = posts.any((post) => post.id == event.postId);
+            if (exists) {
+              final foundPost = posts.indexWhere(
+                (post) => post.id == event.postId,
+              );
+              posts[foundPost].likes_count++;
+              posts[foundPost].isLiked = true;
+              notifyListeners();
+            }
+            break;
+          case LikeActionType.cancel:
+            final exists = posts.any((post) => post.id == event.postId);
+            if (exists) {
+              final foundPost = posts.indexWhere(
+                (post) => post.id == event.postId,
+              );
+              posts[foundPost].likes_count--;
+              posts[foundPost].isLiked = false;
+              notifyListeners();
+            }
+            break;
+        }
+      }
+    });
     _postSubscription = eventBus.on<PostEventBus>().listen((event) async {
       switch (event.type) {
         case PostEventType.add:
@@ -190,5 +222,49 @@ class HomeViewModel extends ChangeNotifier {
   void keywordReset() {
     keywordController.text = "";
     notifyListeners();
+  }
+
+  Future<void> likeToggle(int index, int postId) async {
+    String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    bool isDone = false;
+    late LikeActionType type;
+    if (userId == null) return;
+    if (posts[index].isLiked == false) {
+      type = LikeActionType.like;
+      try {
+        posts[index].isLiked = true;
+        posts[index].likes_count++;
+        notifyListeners();
+        await _postRepository.insertLike(postId, userId);
+        isDone = true;
+      } catch (e) {
+        print("좋아요 실패 : ${e}");
+        posts[index].isLiked = false;
+        posts[index].likes_count--;
+        notifyListeners();
+        isDone = false;
+      }
+    } else if (posts[index].isLiked == true) {
+      type = LikeActionType.cancel;
+      try {
+        posts[index].isLiked = false;
+        posts[index].likes_count--;
+        notifyListeners();
+        await _postRepository.cancelLike(postId, userId);
+        isDone = true;
+      } catch (e) {
+        print("좋아요 취소 실패 : ${e}");
+        posts[index].isLiked = true;
+        posts[index].likes_count++;
+        notifyListeners();
+        isDone = false;
+      }
+    }
+    if (isDone) {
+      eventBus.fire(LikeEventBus(pageType, type, posts[index].id));
+    }
+
+    // posts[index] = await _postRepository.fetchPostItem(postId);
+    // notifyListeners();
   }
 }
