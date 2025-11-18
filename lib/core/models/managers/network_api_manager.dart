@@ -148,6 +148,32 @@ class NetworkApiManager {
     return results;
   }
 
+  Future<List<CommentWithProfileEntity>> fetchComments(int postId) async {
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/comments',
+      method: HttpMethod.get,
+      queryParameters: {'post_id': postId},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    );
+    if (response.data['data'] != null) {
+      final List data = response.data['data'];
+      print("${data.runtimeType}");
+      final List<CommentWithProfileEntity> results = data.map((json) {
+        return CommentWithProfileEntity.fromJson(json);
+      }).toList();
+
+      return results;
+    } else {
+      return List.empty();
+    }
+  }
+
   Future<void> insertPost(
     String userId,
     String title,
@@ -254,6 +280,49 @@ class NetworkApiManager {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     );
+  }
+
+  Future<List<PostWithProfileEntity>> fetchUserPosts(
+    String userId, {
+    int currentIndex = 1,
+    int perPage = 12,
+  }) async {
+    int startIndex = currentIndex - 1;
+    int endIndex = perPage - 1;
+
+    // 현재 페이지가 첫 페이지가 아니라면
+    if (currentIndex != 1) {
+      endIndex = (currentIndex * perPage) - 1;
+      startIndex = (currentIndex - 1) * perPage;
+    }
+
+    final String range = "${startIndex}-${endIndex}";
+
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/users_posts',
+      method: HttpMethod.get,
+      queryParameters: {'userId': userId},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Range': range,
+      },
+    );
+
+    if (response.data['data'] != null) {
+      final List data = response.data['data'];
+      print("${data.runtimeType}");
+      final List<PostWithProfileEntity> results = data.map((json) {
+        return PostWithProfileEntity.fromJson(json);
+      }).toList();
+
+      return results;
+    } else {
+      return List.empty();
+    }
   }
 }
 

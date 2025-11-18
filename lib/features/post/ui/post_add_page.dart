@@ -105,12 +105,19 @@ class _PostAddPage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            child: Image.file(
-                              File(viewModel.mediaFileList[index].path),
-                              fit: BoxFit.cover,
+                          child: InkWell(
+                            onTap: () {
+                              viewModel.removeNewImage(
+                                viewModel.mediaFileList[index],
+                              );
+                            },
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              child: Image.file(
+                                File(viewModel.mediaFileList[index].path),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         );
