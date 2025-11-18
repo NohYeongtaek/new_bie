@@ -55,38 +55,22 @@ class PostItem extends StatelessWidget {
                     userId: post.user.id,
                   ),
                 ),
-                post.user.id ==
-                        SupabaseManager.shared.supabase.auth.currentUser?.id
-                    ? PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            onTap: () {
-                              context.push("/post/${post.id}/edit");
-                            },
-                            child: Text("수정"),
-                          ),
-                          PopupMenuItem(
-                            onTap: () {
-                              onDelete();
-                            },
-                            child: Text("삭제"),
-                          ),
-                        ],
-                      )
-                    : PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(onTap: () {}, child: Text("신고")),
-                          PopupMenuItem(
-                            onTap: () {
-                              context.read<BlockedUserViewModel>().addBlockUser(
-                                userId!,
-                                blockId!,
-                              );
-                            },
-                            child: Text("차단"),
-                          ),
-                        ],
+                if (post.user.id !=
+                    SupabaseManager.shared.supabase.auth.currentUser?.id)
+                  PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(onTap: () {}, child: Text("신고")),
+                      PopupMenuItem(
+                        onTap: () {
+                          context.read<BlockedUserViewModel>().addBlockUser(
+                            userId!,
+                            blockId!,
+                          );
+                        },
+                        child: Text("차단"),
                       ),
+                    ],
+                  ),
               ],
             ),
             Text(post.title ?? "제목 없음", style: titleFontStyle),

@@ -38,6 +38,7 @@ class _CommentItem extends StatelessWidget {
         final Widget body = Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
               InkWell(
