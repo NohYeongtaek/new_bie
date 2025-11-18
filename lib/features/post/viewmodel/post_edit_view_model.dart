@@ -89,42 +89,55 @@ class PostEditViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePost() async {
-    if (titleController.text.isEmpty || contentController.text.isEmpty) return;
+  Future<bool> updatePost() async {
+    if (titleController.text.isEmpty || contentController.text.isEmpty)
+      return false;
     if (addImageMediaFileList.length != 0) {
       for (var image in addImageMediaFileList) {
         String uploadedProfileImage = "";
         final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
         final imgFile = File(image.path);
-        await SupabaseManager.shared.supabase.storage
-            .from("images")
-            .upload(
-              fileName,
-              imgFile,
-              fileOptions: const FileOptions(
-                headers: {
-                  "Authorization":
-                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
-                },
-              ),
-            );
-        uploadedProfileImage = SupabaseManager.shared.supabase.storage
-            .from("images")
-            .getPublicUrl(fileName);
-        urlList.add(uploadedProfileImage);
+        try {
+          await SupabaseManager.shared.supabase.storage
+              .from("images")
+              .upload(
+                fileName,
+                imgFile,
+                fileOptions: const FileOptions(
+                  headers: {
+                    "Authorization":
+                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+                  },
+                ),
+              );
+          uploadedProfileImage = SupabaseManager.shared.supabase.storage
+              .from("images")
+              .getPublicUrl(fileName);
+          urlList.add(uploadedProfileImage);
+        } catch (e) {
+          print("${e}");
+          return false;
+        }
         print(urlList);
       }
     }
     List<int> categoryIds = selectedCategoryList.map((item) {
       return item.id;
     }).toList();
-    await _repository.updatePost(
-      postId,
-      titleController.text,
-      contentController.text,
-      urlList,
-      categoryIds,
-    );
+    try {
+      await _repository.updatePost(
+        postId,
+        titleController.text,
+        contentController.text,
+        urlList,
+        categoryIds,
+      );
+    } catch (e) {
+      print("e");
+      return false;
+    }
+
+    return true;
   }
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
