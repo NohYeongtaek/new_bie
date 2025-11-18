@@ -1,35 +1,129 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
+import 'package:new_bie/features/post/data/entity/user_entity.dart';
+
+import '../../../core/models/event_bus/follow_list_event_bus.dart';
+import '../../../core/models/managers/supabase_manager.dart';
+import '../../../main.dart';
 
 class FollowListViewModel extends ChangeNotifier {
-  // int inputCount = 0;
+  // 팔로워 유저 리스트 그릇
+  List<FollowEntity?> _followerUsers = [];
+  List<FollowEntity?> get followerUsers => _followerUsers;
 
-  // final TextEditingController textEditingController = TextEditingController();
+  // 팔로잉 유저 리스트 그릇
+  List<FollowEntity?> _followingUsers = [];
+  List<FollowEntity?> get followingUsers => _followingUsers;
 
-  // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  FollowListViewModel(BuildContext context) {}
+  // 팔로워 유저 프로필 리스트 그릇
+  List<UserEntity?> _followerUserProfiles = [];
+  List<UserEntity?> get followerUserProfiles => _followerUserProfiles;
 
-  // 입력한 글자 수를 받아오는 함수
-  // void handleTextInput(String input) {
-  //   inputCount = input.length;
-  //   notifyListeners();
-  // }
+  // 팔로잉 유저 프로필 리스트 그릇
+  List<UserEntity?> _followingUserProfiles = [];
+  List<UserEntity?> get followingUserProfiles => _followingUserProfiles;
 
-  // Future 함수는 API나 Supabase, 메소드 채널과 사용할 때,
-  // 처리를 하는데 시간이 걸리는 작업을 할때 사용됨.
-  // 아래 함수 안 에서는 시간이 필요한 작업은 await를 사용 해야함
-  // Future<void> function() async {
-  //   try {
-  //
-  //   } catch (e) {
-  //
-  //   }
-  //
-  //   // 리빌딩, 리콤포지션 진행
-  //   notifyListeners();
-  // }
-  // Future<void> function1() async {
-  //   // 시간 지연 코드
-  //   await Future.delayed(const Duration(milliseconds: 1700));
-  //   notifyListeners();
-  // }
+  List<UserEntity?> get allUserProfiles {
+    return [
+      ..._followerUserProfiles, // 팔로워 목록을 먼저 넣음
+      ..._followingUserProfiles, // 그 뒤에 팔로잉 목록을 넣음
+    ];
+  }
+
+  FollowListViewModel(BuildContext context) {
+    fetchAllFollowData();
+    // eventBus.on<FollowListEventBus>().listen((event) {
+    //   switch (event.type) {
+    //     case FollowEventType.unFollow:
+    //       fetchAllFollowData();
+    //       break;
+    //     case FollowEventType.addFollow:
+    //       fetchAllFollowData();
+    //       break;
+    //   }
+    // });
+  }
+
+  Future<void> fetchAllFollowData() async {
+    await Future.wait([fetchFollowerUsers(), fetchFollowingUsers()]);
+    // 모든 엔티티를 가져온 후, 프로필을 가져옵니다.
+    await fetchFollowerUserProfile();
+    await fetchFollowingUserProfile();
+    notifyListeners();
+  }
+
+  //나 or 사용자의 팔로워 유저를 가져오는 것
+  Future<void> fetchFollowerUsers() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    _followerUsers = await SupabaseManager.shared.fetchFollowerUsers(userId);
+    await fetchFollowerUserProfile();
+    notifyListeners();
+  }
+
+  //나 or 사용자의 팔로잉 유저를 가져오는 것
+  Future<void> fetchFollowingUsers() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    _followingUsers = await SupabaseManager.shared.fetchFollowingUsers(userId);
+    await fetchFollowingUserProfile();
+    notifyListeners();
+  }
+
+  //팔로워 유저의 프로필을 가져와야함
+  Future<void> fetchFollowerUserProfile() async {
+    _followerUserProfiles = [];
+
+    for (var followerUserData in _followerUsers) {
+      UserEntity? user = await SupabaseManager.shared.fetchUser(
+        followerUserData!.follower_id,
+      );
+      if (user != null) {
+        _followerUserProfiles.add(user);
+        print("followUser nick_name ${user.nick_name}");
+      }
+    }
+  }
+
+  //팔로잉 유저의 프로필을 가져와야함
+  Future<void> fetchFollowingUserProfile() async {
+    _followingUserProfiles = [];
+
+    for (var followingUserData in _followingUsers) {
+      UserEntity? user = await SupabaseManager.shared.fetchUser(
+        followingUserData!.following_id,
+      );
+      if (user != null) {
+        _followingUserProfiles.add(user);
+        print("followingUser nick_name ${user.nick_name}");
+      }
+    }
+  }
+
+  Future<void> unFollow(int id) async {
+    // 1. DB에서 삭제
+    await SupabaseManager.shared.deleteFollow(id);
+
+    // await fetchAllFollowData();₩ㅌ
+
+    // (다른 화면 갱신이 필요하다면 이벤트 버스 유지)
+    eventBus.fire(
+      FollowListEventBus(message: "언팔로우 되었습니다", type: FollowEventType.unFollow),
+    );
+  }
+
+  Future<void> addFollow(String userId, String blockId) async {
+    // 1. DB에 추가
+    await SupabaseManager.shared.addFollow(userId, blockId);
+
+    // await fetchAllFollowData();
+    // (다른 화면 갱신이 필요하다면 이벤트 버스 유지)
+    eventBus.fire(
+      FollowListEventBus(message: "팔로우 되었습니다", type: FollowEventType.addFollow),
+    );
+  }
+
+  bool isFollowing(String userId) {
+    return _followingUsers.any((follow) => follow?.following_id == userId);
+  }
 }

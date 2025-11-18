@@ -1,57 +1,106 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-// Supabase users 테이블용 User 모델
-class User {
-  final String id;
-  final String nickName;
-  final String? profileImage;
-  final String? introduction;
-
-  User({
-    required this.id,
-    required this.nickName,
-    this.profileImage,
-    this.introduction,
-  });
-
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: map['id'] as String,
-      nickName: map['nick_name'] as String,
-      profileImage: map['profile_image'] as String?,
-      introduction: map['introduction'] as String?,
-    );
-  }
-}
+import 'package:new_bie/core/models/managers/network_api_manager.dart';
+import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
+import 'package:new_bie/features/post/data/entity/user_entity.dart';
 
 class UserProfileViewModel extends ChangeNotifier {
-  final SupabaseClient supabase = Supabase.instance.client;
-
-  User? _user;
+  final String userId;
+  UserEntity? _user;
   bool _isLoading = false;
+  ScrollController scrollController = ScrollController();
+  int _currentPage = 1;
+  int get currentPage => _currentPage;
+  bool buttonIsWorking = false;
 
-  User? get user => _user;
+  UserEntity? get user => _user;
   bool get isLoading => _isLoading;
 
-  // 특정 유저 프로필 불러오기
-  Future<void> loadUserProfile(String userId) async {
-    _isLoading = true;
-    notifyListeners();
+  List<PostWithProfileEntity> posts = [];
 
-    try {
-      final data = await supabase
-          .from('users')
-          .select()
-          .eq('id', userId)
-          .single(); // execute 제거
+  UserProfileViewModel(this.userId, BuildContext context) {
+    Timer? _debounce;
 
-      _user = User.fromMap(data as Map<String, dynamic>);
-    } catch (e) {
-      debugPrint('유저 정보 로드 실패: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    scrollController.addListener(() async {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        final double offset = scrollController.offset;
+
+        if (offset < 50) {
+          if (buttonIsWorking) {
+            buttonIsWorking = false;
+            notifyListeners();
+          }
+        } else {
+          if (!buttonIsWorking) {
+            buttonIsWorking = true;
+            notifyListeners();
+          }
+        }
+      });
+
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        fetchMorePosts();
+        notifyListeners();
+      }
+    });
+    loadUserProfile();
   }
+
+  Future<void> loadUserProfile() async {
+    _user = await SupabaseManager.shared.fetchUser(userId);
+    posts = await NetworkApiManager.shared.fetchUserPosts(
+      userId,
+      currentIndex: currentPage,
+    );
+    notifyListeners();
+  }
+
+  Future<void> fetchMorePosts() async {
+    _currentPage++;
+
+    posts.addAll(
+      await NetworkApiManager.shared.fetchUserPosts(
+        userId,
+        currentIndex: currentPage,
+      ),
+    );
+    notifyListeners();
+  }
+
+  Future<void> refreshPosts() async {
+    _currentPage = 0;
+    posts.addAll(
+      await NetworkApiManager.shared.fetchUserPosts(
+        userId,
+        currentIndex: currentPage,
+      ),
+    );
+    notifyListeners();
+  }
+
+  // // 특정 유저 프로필 불러오기
+  // Future<void> loadUserProfile(String userId) async {
+  //   _isLoading = true;
+  //   notifyListeners();
+  //
+  //   try {
+  //     final data = await supabase
+  //         .from('users')
+  //         .select()
+  //         .eq('id', userId)
+  //         .single(); // execute 제거
+  //
+  //     _user = User.fromMap(data as Map<String, dynamic>);
+  //   } catch (e) {
+  //     debugPrint('유저 정보 로드 실패: $e');
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 }

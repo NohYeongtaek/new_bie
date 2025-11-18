@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_count_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
+import 'package:new_bie/features/post/data/entity/search_result_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../main.dart';
@@ -147,11 +148,38 @@ class NetworkApiManager {
     return results;
   }
 
+  Future<List<CommentWithProfileEntity>> fetchComments(int postId) async {
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/comments',
+      method: HttpMethod.get,
+      queryParameters: {'post_id': postId},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    );
+    if (response.data['data'] != null) {
+      final List data = response.data['data'];
+      print("${data.runtimeType}");
+      final List<CommentWithProfileEntity> results = data.map((json) {
+        return CommentWithProfileEntity.fromJson(json);
+      }).toList();
+
+      return results;
+    } else {
+      return List.empty();
+    }
+  }
+
   Future<void> insertPost(
     String userId,
     String title,
     String content,
     List<String> images,
+    List<int> categories,
   ) async {
     try {
       await dio.post(
@@ -168,10 +196,132 @@ class NetworkApiManager {
           'title': title,
           'content': content,
           'images': images,
+          'categories': categories,
         },
       );
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> updatePost(
+    int postId,
+    String title,
+    String content,
+    List<String> images,
+    List<int> categories,
+  ) async {
+    try {
+      await supabase.functions.invoke(
+        'post-function/posts/${postId}',
+        method: HttpMethod.put,
+        body: {
+          'title': title,
+          'content': content,
+          'images': images,
+          'categories': categories,
+        },
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<SearchResultEntity> searchAll(
+    String keyword, {
+    String type = "all",
+    int currentIndex = 1,
+    int perPage = 5,
+  }) async {
+    int startIndex = currentIndex - 1;
+    int endIndex = perPage - 1;
+
+    // 현재 페이지가 첫 페이지가 아니라면
+    if (currentIndex != 1) {
+      endIndex = (currentIndex * perPage) - 1;
+      startIndex = (currentIndex - 1) * perPage;
+    }
+
+    final String range = "${startIndex}-${endIndex}";
+
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/search',
+      method: HttpMethod.get,
+      queryParameters: {'keyword': keyword, 'type': type},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Range': range,
+      },
+    );
+    final Map<String, dynamic> data = response.data;
+    print("${response}");
+    print("${data}");
+    SearchResultEntity result = SearchResultEntity.fromJson(data);
+
+    return result;
+  }
+
+  Future<void> deletePost(int postId) async {
+    await supabase.functions.invoke(
+      'post-function/posts/${postId}',
+      method: HttpMethod.delete,
+      headers: {
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    );
+  }
+
+  Future<List<PostWithProfileEntity>> fetchUserPosts(
+    String userId, {
+    int currentIndex = 1,
+    int perPage = 12,
+  }) async {
+    int startIndex = currentIndex - 1;
+    int endIndex = perPage - 1;
+
+    // 현재 페이지가 첫 페이지가 아니라면
+    if (currentIndex != 1) {
+      endIndex = (currentIndex * perPage) - 1;
+      startIndex = (currentIndex - 1) * perPage;
+    }
+
+    final String range = "${startIndex}-${endIndex}";
+
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
+    final response = await supabase.functions.invoke(
+      'post-function/users_posts',
+      method: HttpMethod.get,
+      queryParameters: {'userId': userId},
+      headers: {
+        'Authorization': authorizationKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Range': range,
+      },
+    );
+
+    if (response.data['data'] != null) {
+      final List data = response.data['data'];
+      print("${data.runtimeType}");
+      final List<PostWithProfileEntity> results = data.map((json) {
+        return PostWithProfileEntity.fromJson(json);
+      }).toList();
+
+      return results;
+    } else {
+      return List.empty();
     }
   }
 }

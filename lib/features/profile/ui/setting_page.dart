@@ -34,14 +34,18 @@ class SettingPage extends StatelessWidget {
                   leading: Icon(Icons.chat_bubble_outline),
                   title: const Text('문의하기'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/my_profile/setting/question');
+                  },
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 ListTile(
                   leading: Icon(Icons.notifications_none),
                   title: const Text('공지사항'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/my_profile/setting/notice');
+                  },
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 ListTile(
@@ -72,7 +76,7 @@ class SettingPage extends StatelessWidget {
                   onTap: () async {
                     context.read<AuthViewModel>().logout(
                       onLoggedOut: () {
-                        context.go('/login');
+                        context.go('/home');
                       },
                     );
                   },

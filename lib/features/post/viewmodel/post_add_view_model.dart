@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,14 +17,44 @@ class PostAddViewModel extends ChangeNotifier {
   final contentController = TextEditingController();
   final hashtagController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
+  List<CategoryTypeEntity> categoryList = [];
+  List<CategoryTypeEntity> selectedCategoryList = [];
   List<XFile> mediaFileList = [];
   List<String> urlList = [];
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   PostAddViewModel(BuildContext context)
-    : _repository = context.read<PostRepository>() {}
+    : _repository = context.read<PostRepository>() {
+    getCategoryTypeList();
+  }
 
   Future<void> getImages() async {
-    mediaFileList = await _picker.pickMultiImage();
+    mediaFileList.addAll(await _picker.pickMultiImage());
+    notifyListeners();
+  }
+
+  void removeNewImage(XFile image) {
+    mediaFileList.remove(image);
+    notifyListeners();
+  }
+
+  Future<void> getCategoryTypeList() async {
+    categoryList = await _repository.getCategoryTypeList();
+    notifyListeners();
+  }
+
+  void selectCategoriesToggle(CategoryTypeEntity categoryId) {
+    if (selectedCategoryList.contains(categoryId)) {
+      selectedCategoryList.remove(categoryId);
+      notifyListeners();
+    } else {
+      selectedCategoryList.add(categoryId);
+      notifyListeners();
+    }
+    notifyListeners();
+  }
+
+  void cancelCategory(CategoryTypeEntity category) {
+    selectedCategoryList.remove(category);
     notifyListeners();
   }
 
@@ -54,11 +85,15 @@ class PostAddViewModel extends ChangeNotifier {
       }
     }
     String userId = SupabaseManager.shared.supabase.auth.currentUser?.id ?? "";
+    List<int> categoryIds = selectedCategoryList.map((item) {
+      return item.id;
+    }).toList();
     await _repository.insertPost(
       userId,
       titleController.text,
       contentController.text,
       urlList,
+      categoryIds,
     );
 
     mediaFileList = [];
@@ -66,6 +101,7 @@ class PostAddViewModel extends ChangeNotifier {
     titleController.text = "";
     contentController.text = "";
     hashtagController.text = "";
+    selectedCategoryList = [];
     notifyListeners();
     // mediaFileList.forEach((image) async {
     //   String uploadedProfileImage = "";

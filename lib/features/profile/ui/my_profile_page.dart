@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
+import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
+import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MyProfilePage extends StatelessWidget {
-  // final UserEntity user;
-
   const MyProfilePage({super.key});
 
   @override
@@ -23,7 +24,7 @@ class MyProfilePage extends StatelessWidget {
             centerTitle: false,
             actions: [
               IconButton(
-                icon: const Icon(Icons.settings_outlined),
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
                 onPressed: () {
                   context.push('/my_profile/setting');
                 },
@@ -36,7 +37,7 @@ class MyProfilePage extends StatelessWidget {
               children: [
                 // 프로필
                 Container(
-                  color: Colors.white,
+                  color: blackColor,
                   padding: const EdgeInsets.symmetric(
                     vertical: 20,
                     horizontal: 16,
@@ -58,34 +59,79 @@ class MyProfilePage extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              Text(
-                                '${viewModel.user?.follower_count}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push(
+                                    '/my_profile/follower?initialTab=0',
+                                  );
+                                },
+                                child: Text(
+                                  '${viewModel.user?.follower_count}',
+                                  style: const TextStyle(
+                                    color: orangeColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '팔로워',
-                                style: TextStyle(color: Colors.grey),
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push(
+                                    '/my_profile/follower?initialTab=0',
+                                  );
+                                },
+                                child: Text(
+                                  '팔로워',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(width: 40),
                           Column(
                             children: [
-                              Text(
-                                '${viewModel.user?.following_count}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+
+                                  context.push(
+                                    '/my_profile/follower?initialTab=1',
+                                  );
+                                },
+                                child: Text(
+                                  '${viewModel.user?.following_count}',
+                                  style: const TextStyle(
+                                    color: orangeColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '팔로잉',
-                                style: TextStyle(color: Colors.grey),
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .read<FollowListViewModel>()
+                                      .fetchAllFollowData();
+                                  context.push(
+                                    '/my_profile/follower?initialTab=1',
+                                  );
+                                },
+                                child: Text(
+                                  '팔로잉',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ],
                           ),
@@ -99,8 +145,8 @@ class MyProfilePage extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey.shade200,
-                            foregroundColor: Colors.black87,
+                            backgroundColor: orangeColor,
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -119,11 +165,11 @@ class MyProfilePage extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const Divider(color: Colors.grey, thickness: 1, height: 0.5),
 
                 // 게시물
                 Container(
-                  color: Colors.white,
+                  color: blackColor,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -140,7 +186,14 @@ class MyProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 400, child: _buildPostGridView([])),
+                      SizedBox(
+                        height: 400,
+                        child: _buildPostGridView(
+                          viewModel.posts,
+                          viewModel,
+                          context,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -153,7 +206,11 @@ class MyProfilePage extends StatelessWidget {
   }
 
   // 게시물 리스트
-  static Widget _buildPostGridView(List<Map<String, dynamic>> posts) {
+  static Widget _buildPostGridView(
+    List<PostWithProfileEntity> posts,
+    MyProfileViewModel viewMode,
+    BuildContext context,
+  ) {
     if (posts.isEmpty) {
       return const Center(child: Text('아직 게시물이 없습니다.'));
     }
@@ -161,14 +218,25 @@ class MyProfilePage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.count(
+        controller: viewMode.scrollController,
         crossAxisCount: 3,
         crossAxisSpacing: 4,
         mainAxisSpacing: 4,
         children: posts.map((post) {
-          if (post['type'] == 'image') {
-            return _buildPostImage(post['url']);
+          if (post.postImages.length != 0) {
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostImage(post.postImages[0].image_url),
+            );
           } else {
-            return _buildPostTextCard(post['content']);
+            return InkWell(
+              onTap: () {
+                context.push('/post/${post.id}');
+              },
+              child: _buildPostTextCard(post.content ?? ""),
+            );
           }
         }).toList(),
       ),

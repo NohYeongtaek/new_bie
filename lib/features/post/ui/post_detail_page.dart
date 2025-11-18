@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
@@ -70,7 +71,9 @@ class _PostDetailPage extends StatelessWidget {
                                 ? PopupMenuButton(
                                     itemBuilder: (context) => [
                                       PopupMenuItem(
-                                        onTap: () {},
+                                        onTap: () {
+                                          context.push("/post/${postId}/edit");
+                                        },
                                         child: Text("수정"),
                                       ),
                                       PopupMenuItem(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/core/utils/callback/callbacks.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
@@ -14,7 +15,9 @@ import '../profile/small_profile_component.dart';
 
 class PostItem extends StatelessWidget {
   final PostWithProfileEntity post;
+  final DeletePostCallback onDelete;
   void Function()? likeFunction = () {};
+
   // final String? title;
   // final String? content;
   // final String created_at;
@@ -26,6 +29,7 @@ class PostItem extends StatelessWidget {
     // required this.created_at,
     required this.post,
     this.likeFunction,
+    required this.onDelete,
   });
 
   @override
@@ -48,14 +52,25 @@ class PostItem extends StatelessWidget {
                     imageUrl: post.user.profile_image,
                     nickName: post.user.nick_name ?? "",
                     introduce: "${post.created_at.toTimesAgo()}",
+                    userId: post.user.id,
                   ),
                 ),
                 post.user.id ==
                         SupabaseManager.shared.supabase.auth.currentUser?.id
                     ? PopupMenuButton(
                         itemBuilder: (context) => [
-                          PopupMenuItem(onTap: () {}, child: Text("수정")),
-                          PopupMenuItem(onTap: () {}, child: Text("삭제")),
+                          PopupMenuItem(
+                            onTap: () {
+                              context.push("/post/${post.id}/edit");
+                            },
+                            child: Text("수정"),
+                          ),
+                          PopupMenuItem(
+                            onTap: () {
+                              onDelete();
+                            },
+                            child: Text("삭제"),
+                          ),
                         ],
                       )
                     : PopupMenuButton(
