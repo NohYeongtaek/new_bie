@@ -27,6 +27,9 @@ class FollowerListPage extends StatelessWidget {
               Tab(text: '팔로워'),
               Tab(text: '팔로잉'),
             ],
+            indicatorColor: orangeColor,
+            labelColor: orangeColor,
+            splashFactory: NoSplash.splashFactory,
           ),
         ),
         body: SafeArea(
@@ -47,6 +50,7 @@ class FollowerListPage extends StatelessWidget {
                       return SizedBox(
                         height: 100,
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: SmallProfileComponent(
