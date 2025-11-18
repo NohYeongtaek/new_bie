@@ -64,7 +64,9 @@ class MyProfilePage extends StatelessWidget {
                                       .read<FollowListViewModel>()
                                       .fetchAllFollowData();
 
-                                  context.push('/my_profile/follower');
+                                  context.push(
+                                    '/my_profile/follower?initialTab=0',
+                                  );
                                 },
                                 child: Text(
                                   '${viewModel.user?.follower_count}',
@@ -82,7 +84,9 @@ class MyProfilePage extends StatelessWidget {
                                       .read<FollowListViewModel>()
                                       .fetchAllFollowData();
 
-                                  context.push('/my_profile/follower');
+                                  context.push(
+                                    '/my_profile/follower?initialTab=0',
+                                  );
                                 },
                                 child: Text(
                                   '팔로워',
@@ -100,7 +104,9 @@ class MyProfilePage extends StatelessWidget {
                                       .read<FollowListViewModel>()
                                       .fetchAllFollowData();
 
-                                  context.push('/my_profile/follower');
+                                  context.push(
+                                    '/my_profile/follower?initialTab=1',
+                                  );
                                 },
                                 child: Text(
                                   '${viewModel.user?.following_count}',
@@ -117,7 +123,9 @@ class MyProfilePage extends StatelessWidget {
                                   context
                                       .read<FollowListViewModel>()
                                       .fetchAllFollowData();
-                                  context.push('/my_profile/follower');
+                                  context.push(
+                                    '/my_profile/follower?initialTab=1',
+                                  );
                                 },
                                 child: Text(
                                   '팔로잉',
@@ -136,8 +144,8 @@ class MyProfilePage extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey.shade200,
-                            foregroundColor: Colors.black87,
+                            backgroundColor: orangeColor,
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

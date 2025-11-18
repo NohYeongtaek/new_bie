@@ -287,7 +287,11 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/follower',
                   builder: (context, state) {
-                    return const FollowerListPage();
+                    // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
+                    final tabIndexString =
+                        state.uri.queryParameters['initialTab'] ?? '0';
+                    final initialTab = int.tryParse(tabIndexString) ?? 0;
+                    return FollowerListPage(initialTabIndex: initialTab);
                   },
                 ),
               ],
