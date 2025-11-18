@@ -253,7 +253,7 @@ class MyProfilePage extends StatelessWidget {
   static Widget _buildPostTextCard(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: greedColor,
         borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,

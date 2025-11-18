@@ -42,118 +42,124 @@ class PostItem extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: SmallProfileComponent(
-                    imageUrl: post.user.profile_image,
-                    nickName: post.user.nick_name ?? "",
-                    introduce: "${post.created_at.toTimesAgo()}",
-                    userId: post.user.id,
-                  ),
-                ),
-                post.user.id ==
-                        SupabaseManager.shared.supabase.auth.currentUser?.id
-                    ? PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            onTap: () {
-                              context.push("/post/${post.id}/edit");
-                            },
-                            child: Text("수정"),
-                          ),
-                          PopupMenuItem(
-                            onTap: () {
-                              onDelete();
-                            },
-                            child: Text("삭제"),
-                          ),
-                        ],
-                      )
-                    : PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(onTap: () {}, child: Text("신고")),
-                          PopupMenuItem(
-                            onTap: () {
-                              context.read<BlockedUserViewModel>().addBlockUser(
-                                userId!,
-                                blockId!,
-                              );
-                            },
-                            child: Text("차단"),
-                          ),
-                        ],
-                      ),
-              ],
-            ),
-            Text(post.title ?? "제목 없음", style: titleFontStyle),
-            if (post.postImages.length != 0)
-              SizedBox(
-                height: 216,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: post.postImages.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.network(
-                        post.postImages[index].image_url,
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            Text(
-              post.content ?? "내용 없음",
-              style: contentFontStyle,
-              maxLines: 6,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (post.categories.length != 0)
-              SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: post.categories.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          color: orangeColor,
-                          child: Text(
-                            post.categories[index].categoryType.type_title,
-                            style: TextStyle(color: blackColor, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 10,
+        child: Container(
+          decoration: BoxDecoration(
+            color: greedColor,
+            border: Border.all(color: greedColor),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
                 children: [
-                  LikeButton(postId: post.id, likes_count: post.likes_count),
-                  CommentButton(
-                    comments_count: post.comments_count,
-                    postId: post.id,
+                  Expanded(
+                    child: SmallProfileComponent(
+                      imageUrl: post.user.profile_image,
+                      nickName: post.user.nick_name ?? "",
+                      introduce: "${post.created_at.toTimesAgo()}",
+                      userId: post.user.id,
+                    ),
                   ),
+                  post.user.id ==
+                          SupabaseManager.shared.supabase.auth.currentUser?.id
+                      ? PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              onTap: () {
+                                context.push("/post/${post.id}/edit");
+                              },
+                              child: Text("수정"),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                onDelete();
+                              },
+                              child: Text("삭제"),
+                            ),
+                          ],
+                        )
+                      : PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(onTap: () {}, child: Text("신고")),
+                            PopupMenuItem(
+                              onTap: () {
+                                context
+                                    .read<BlockedUserViewModel>()
+                                    .addBlockUser(userId!, blockId!);
+                              },
+                              child: Text("차단"),
+                            ),
+                          ],
+                        ),
                 ],
               ),
-            ),
-          ],
+              Text(post.title ?? "제목 없음", style: titleFontStyle),
+              if (post.postImages.length != 0)
+                SizedBox(
+                  height: 216,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: post.postImages.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.network(
+                          post.postImages[index].image_url,
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              Text(
+                post.content ?? "내용 없음",
+                style: contentFontStyle,
+                maxLines: 6,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (post.categories.length != 0)
+                SizedBox(
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: post.categories.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            color: orangeColor,
+                            child: Text(
+                              post.categories[index].categoryType.type_title,
+                              style: TextStyle(color: blackColor, fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 10,
+                  children: [
+                    LikeButton(postId: post.id, likes_count: post.likes_count),
+                    CommentButton(
+                      comments_count: post.comments_count,
+                      postId: post.id,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

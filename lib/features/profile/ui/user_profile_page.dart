@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/user_profile_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../../core/utils/ui_set/colors.dart';
 
 class UserProfilePage extends StatelessWidget {
   final String userId;
@@ -19,7 +22,7 @@ class UserProfilePage extends StatelessWidget {
           final user = viewModel.user;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F6F6),
+            backgroundColor: blackColor,
             appBar: AppBar(
               title: const Text(
                 '유저 프로필',
@@ -34,7 +37,7 @@ class UserProfilePage extends StatelessWidget {
                     child: Column(
                       children: [
                         Container(
-                          color: Colors.white,
+                          color: blackColor,
                           padding: const EdgeInsets.symmetric(
                             vertical: 20,
                             horizontal: 16,
@@ -47,6 +50,90 @@ class UserProfilePage extends StatelessWidget {
                                 introduce: user?.introduction ?? '자기소개가 없습니다.',
                               ),
 
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<FollowListViewModel>()
+                                              .fetchAllFollowData();
+
+                                          context.push(
+                                            '/user_profile/${userId}/follower?initialTab=0',
+                                          );
+                                        },
+                                        child: Text(
+                                          '${viewModel.user?.follower_count}',
+                                          style: const TextStyle(
+                                            color: orangeColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<FollowListViewModel>()
+                                              .fetchAllFollowData();
+
+                                          context.push(
+                                            '/user_profile/${userId}/follower?initialTab=0',
+                                          );
+                                        },
+                                        child: Text(
+                                          '팔로워',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 40),
+                                  Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<FollowListViewModel>()
+                                              .fetchAllFollowData();
+
+                                          context.push(
+                                            '/user_profile/${userId}/follower?initialTab=1',
+                                          );
+                                        },
+                                        child: Text(
+                                          '${viewModel.user?.following_count}',
+                                          style: const TextStyle(
+                                            color: orangeColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<FollowListViewModel>()
+                                              .fetchAllFollowData();
+                                          context.push(
+                                            '/user_profile/${userId}/follower?initialTab=1',
+                                          );
+                                        },
+                                        child: Text(
+                                          '팔로잉',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
                               const SizedBox(height: 20),
 
                               // 팔로우 버튼 (추후 구현)
@@ -54,8 +141,8 @@ class UserProfilePage extends StatelessWidget {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: orangeColor,
+                                    foregroundColor: blackColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -78,7 +165,7 @@ class UserProfilePage extends StatelessWidget {
 
                         // 게시물
                         Container(
-                          color: Colors.white,
+                          color: blackColor,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -163,7 +250,7 @@ class UserProfilePage extends StatelessWidget {
   static Widget _buildPostTextCard(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: greedColor,
         borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,
