@@ -4,7 +4,7 @@ import 'package:new_bie/features/profile/viewmodel/user_profile_view_model.dart'
 import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatelessWidget {
-  final int userId;
+  final String userId;
 
   const UserProfilePage({super.key, required this.userId});
 
