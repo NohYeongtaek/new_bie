@@ -294,15 +294,14 @@ class SupabaseManager {
     return results2;
   }
 
-  Future<List<CategoryTypeEntity>> getCategoryTypeList() async {
-    final List<Map<String, dynamic>> data = await supabase
-        .from('category_type')
-        .select();
+  //차단한 유저 로그인 금지 코드 추가해야함
+  Future<bool> isUserBlocked(String userId) async {
+    final result = await supabase
+        .from('blocked_users')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    if (data.length == 0) return [];
-    final List<CategoryTypeEntity> results4 = data
-        .map(CategoryTypeEntity.fromJson)
-        .toList();
-    return results4;
+    return result != null;
   }
 }
