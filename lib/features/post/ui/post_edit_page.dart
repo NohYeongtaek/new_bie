@@ -27,9 +27,15 @@ class PostEditPage extends StatelessWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    viewModel.updatePost();
-                    context.pop();
+                  onPressed: () async {
+                    bool isDone = await viewModel.updatePost();
+                    if (isDone) {
+                      context.pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('수정 되었습니다.')),
+                      );
+                    }
+                    ;
                   },
                   child: const Text(
                     '등록',

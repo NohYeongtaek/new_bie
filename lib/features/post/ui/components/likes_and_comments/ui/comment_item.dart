@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
@@ -40,7 +41,14 @@ class _CommentItem extends StatelessWidget {
             spacing: 10,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  if (viewModel.comment?.user.id ==
+                      SupabaseManager.shared.supabase.auth.currentUser?.id) {
+                    context.push('/my_profile');
+                  } else {
+                    context.push("/user_profile/${viewModel.comment?.user.id}");
+                  }
+                },
                 child: SizedBox(
                   width: imageSize,
                   height: imageSize,

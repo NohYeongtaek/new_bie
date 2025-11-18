@@ -52,6 +52,7 @@ class PostItem extends StatelessWidget {
                     imageUrl: post.user.profile_image,
                     nickName: post.user.nick_name ?? "",
                     introduce: "${post.created_at.toTimesAgo()}",
+                    userId: post.user.id,
                   ),
                 ),
                 post.user.id ==
