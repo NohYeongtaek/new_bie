@@ -7,12 +7,14 @@ import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 class FollowerListPage extends StatelessWidget {
-  const FollowerListPage({super.key});
+  final int initialTabIndex;
+  const FollowerListPage({super.key, required this.initialTabIndex});
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: initialTabIndex,
       child: Scaffold(
         appBar: AppBar(
           title: Text('${context.read<MyProfileViewModel>().user?.nick_name}'),
