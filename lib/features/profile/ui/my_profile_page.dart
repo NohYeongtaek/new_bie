@@ -154,6 +154,7 @@ class MyProfilePage extends StatelessWidget {
                           ),
                           onPressed: () {
                             // 프로필 수정 페이지 이동
+                            context.push('/my_profile/updateProfile');
                           },
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),

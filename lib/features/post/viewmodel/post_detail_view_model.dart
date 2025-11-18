@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
+import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/main.dart';
 import 'package:provider/provider.dart';
 
 class PostDetailViewModel extends ChangeNotifier {
@@ -13,6 +18,7 @@ class PostDetailViewModel extends ChangeNotifier {
   List<String> images = [];
   int currentPage = 0;
   PostWithProfileEntity? post;
+  StreamSubscription? _postSubscription;
 
   final int postId;
   PostRepository _repository;
@@ -20,6 +26,17 @@ class PostDetailViewModel extends ChangeNotifier {
   PostDetailViewModel(this.postId, BuildContext context)
     : _repository = context.read<PostRepository>() {
     fetchPost();
+    _postSubscription = eventBus.on<PostEventBus>().listen((event) {
+      switch (event.type) {
+        case PostEventType.add:
+          break;
+        case PostEventType.delete:
+          break;
+        case PostEventType.edit:
+          fetchPost();
+          break;
+      }
+    });
   }
 
   Future<void> fetchPost() async {
@@ -38,6 +55,19 @@ class PostDetailViewModel extends ChangeNotifier {
   void onChangedPage(int index) {
     currentPage = index;
     notifyListeners();
+  }
+
+  Future<bool> deletePost() async {
+    if (post?.user != SupabaseManager.shared.supabase.auth.currentUser?.id)
+      return false;
+    try {
+      await _repository.deletePost(postId);
+    } catch (e) {
+      print("삭제에 실패했습니다 : ${e}");
+      return false;
+    }
+    eventBus.fire(PostEventBus(PostEventType.delete, postId: postId));
+    return true;
   }
 
   // 입력한 글자 수를 받아오는 함수

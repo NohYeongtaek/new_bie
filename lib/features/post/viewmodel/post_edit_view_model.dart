@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/main.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,7 +24,7 @@ class PostEditViewModel extends ChangeNotifier {
   List<String> urlList = [];
   List<String> deleteImageUrl = [];
   PostWithProfileEntity? post;
-
+  bool isWorking = false;
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();
@@ -90,8 +92,13 @@ class PostEditViewModel extends ChangeNotifier {
   }
 
   Future<bool> updatePost() async {
-    if (titleController.text.isEmpty || contentController.text.isEmpty)
+    isWorking = true;
+    notifyListeners();
+    if (titleController.text.isEmpty || contentController.text.isEmpty) {
+      isWorking = false;
+      notifyListeners();
       return false;
+    }
     if (addImageMediaFileList.length != 0) {
       for (var image in addImageMediaFileList) {
         String uploadedProfileImage = "";
@@ -116,6 +123,8 @@ class PostEditViewModel extends ChangeNotifier {
           urlList.add(uploadedProfileImage);
         } catch (e) {
           print("${e}");
+          isWorking = false;
+          notifyListeners();
           return false;
         }
         print(urlList);
@@ -134,9 +143,11 @@ class PostEditViewModel extends ChangeNotifier {
       );
     } catch (e) {
       print("e");
+      isWorking = false;
+      notifyListeners();
       return false;
     }
-
+    eventBus.fire(PostEventBus(PostEventType.edit, postId: postId));
     return true;
   }
   // 입력한 글자 수를 받아오는 함수

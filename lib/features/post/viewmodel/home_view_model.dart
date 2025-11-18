@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
 import 'package:new_bie/main.dart';
@@ -22,6 +23,7 @@ class HomeViewModel extends ChangeNotifier {
   List<String> categoryList = ["전체"];
   //스크롤 컨트롤러
   ScrollController scrollController = ScrollController();
+  StreamSubscription? _postSubscription;
 
   HomeViewModel(this._postRepository) {
     getCategoryList();
@@ -52,6 +54,36 @@ class HomeViewModel extends ChangeNotifier {
       }
     });
     fetchPosts();
+    _postSubscription = eventBus.on<PostEventBus>().listen((event) async {
+      switch (event.type) {
+        case PostEventType.add:
+          Refresh();
+          break;
+        case PostEventType.delete:
+          final exists = posts.any((post) => post.id == event.postId);
+          if (exists) {
+            final foundPost = posts.indexWhere(
+              (post) => post.id == event.postId,
+            );
+            posts.removeAt(foundPost);
+            notifyListeners();
+          }
+          break;
+        case PostEventType.edit:
+          final exists = posts.any((post) => post.id == event.postId);
+          if (exists) {
+            final postIndex = posts.indexWhere(
+              (post) => post.id == event.postId,
+            );
+            final newPost = await _postRepository.fetchPostItem(
+              event.postId ?? 0,
+            );
+            posts[postIndex] = newPost;
+            notifyListeners();
+          }
+          break;
+      }
+    });
   }
   void upToTop() {
     scrollController.animateTo(
@@ -107,6 +139,20 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> Refresh() async {
+    type = OrderByType.newFirst;
+    _currentPage = 1;
+    _posts = [];
+    notifyListeners();
+    String orderBy = setOrderBy(type);
+    _posts = await _postRepository.fetchPosts(
+      orderBy,
+      currentIndex: _currentPage,
+      category: selectCategory,
+    );
+    notifyListeners();
+  }
+
   // Future<void> fetchMoreMemos() async {
   //   _currentPage = currentPage + 1;
   //   List<PostWithProfileEntity> newPosts = await _postRepository.fetchPosts();
@@ -138,6 +184,11 @@ class HomeViewModel extends ChangeNotifier {
     final index = posts.indexWhere((item) => item.id == postId);
     await _postRepository.deletePost(postId);
     posts.removeAt(index);
+    notifyListeners();
+  }
+
+  void keywordReset() {
+    keywordController.text = "";
     notifyListeners();
   }
 }

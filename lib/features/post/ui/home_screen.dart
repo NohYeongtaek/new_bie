@@ -130,6 +130,7 @@ class HomeScreen extends StatelessWidget {
                           viewModel.keywordController.text,
                         );
                         context.push('/home/search');
+                        viewModel.keywordReset();
                       },
                       icon: Icon(Icons.search),
                     ),

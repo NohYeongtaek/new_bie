@@ -29,6 +29,7 @@ import 'package:new_bie/features/profile/ui/notices_page.dart';
 import 'package:new_bie/features/profile/ui/question_page.dart';
 import 'package:new_bie/features/profile/ui/set_profile_page.dart';
 import 'package:new_bie/features/profile/ui/setting_page.dart';
+import 'package:new_bie/features/profile/ui/update_profile_page.dart';
 import 'package:new_bie/features/profile/ui/user_profile_page.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
@@ -292,6 +293,12 @@ class MyApp extends StatelessWidget {
                         state.uri.queryParameters['initialTab'] ?? '0';
                     final initialTab = int.tryParse(tabIndexString) ?? 0;
                     return FollowerListPage(initialTabIndex: initialTab);
+                  },
+                ),
+                GoRoute(
+                  path: '/updateProfile',
+                  builder: (context, state) {
+                    return UpdateProfilePage();
                   },
                 ),
               ],

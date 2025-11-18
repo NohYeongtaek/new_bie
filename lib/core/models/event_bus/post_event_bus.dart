@@ -4,4 +4,4 @@ class PostEventBus {
   PostEventBus(this.type, {this.postId});
 }
 
-enum PostEventType { edit, add }
+enum PostEventType { edit, add, delete }
