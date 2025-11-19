@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
+import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
+import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 class FollowerListPage extends StatelessWidget {
   final int initialTabIndex;
-  const FollowerListPage({super.key, required this.initialTabIndex});
+  final String targetUserId;
+  const FollowerListPage({
+    super.key,
+    required this.initialTabIndex,
+    required this.targetUserId,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<FollowListViewModel>();
+    Future.microtask(
+      () => viewModel.fetchAllFollowData(targetUserId: targetUserId),
+    );
     return DefaultTabController(
       length: 2,
       initialIndex: initialTabIndex,
@@ -46,9 +57,10 @@ class FollowerListPage extends StatelessWidget {
                       vertical: 8,
                     ),
                     itemBuilder: (context, index) {
-                      if (viewModel.followerUserProfiles[index] == null) {
-                        return const SizedBox.shrink();
-                      }
+                      final UserEntity user =
+                          viewModel.followerUserProfiles[index]!;
+                      final isFollowing = viewModel.isFollowing(user.id);
+
                       return SizedBox(
                         height: 100,
                         child: Row(
@@ -69,9 +81,13 @@ class FollowerListPage extends StatelessWidget {
                                         .followerUserProfiles[index]
                                         ?.introduction ??
                                     '',
+                                userId: user.id,
                               ),
                             ),
-                            FollowButton(index: index),
+                            FollowButton(
+                              userProfile: user,
+                              isInitialFollowing: isFollowing,
+                            ),
                           ],
                         ),
                       );
@@ -84,9 +100,11 @@ class FollowerListPage extends StatelessWidget {
                       vertical: 8,
                     ),
                     itemBuilder: (context, index) {
-                      if (viewModel.followingUserProfiles[index] == null) {
-                        return const SizedBox.shrink();
-                      }
+                      final UserEntity user =
+                          viewModel.followingUserProfiles[index]!;
+                      final FollowEntity follow = viewModel.followingUsers
+                          .firstWhere((f) => f?.following_id == user.id)!;
+
                       return SizedBox(
                         height: 100,
                         child: Row(
@@ -106,9 +124,14 @@ class FollowerListPage extends StatelessWidget {
                                         .followingUserProfiles[index]
                                         ?.introduction ??
                                     '',
+                                userId: user.id,
                               ),
                             ),
-                            FollowButton(index: index),
+                            FollowButton(
+                              userProfile: user,
+                              isInitialFollowing: true,
+                              followEntity: follow,
+                            ),
                           ],
                         ),
                       );
@@ -125,31 +148,34 @@ class FollowerListPage extends StatelessWidget {
 }
 
 class FollowButton extends StatefulWidget {
-  final int index;
-  const FollowButton({super.key, required this.index});
+  final UserEntity userProfile; // 해당 유저 프로필
+  final FollowEntity? followEntity; // 팔로잉 관계 엔티티 (언팔로우 시 필요)
+  final bool
+  isInitialFollowing; // 초기 팔로우 상태  const FollowButton({super.key, required this.index});
+
+  const FollowButton({
+    super.key,
+    required this.userProfile,
+    this.followEntity,
+    required this.isInitialFollowing,
+  });
 
   @override
   State<FollowButton> createState() => _FollowButtonState();
 }
 
 class _FollowButtonState extends State<FollowButton> {
-  bool isFollowing = false;
+  late bool isFollowing = false;
 
   @override
   void initState() {
     super.initState();
-    final viewModel = context.read<FollowListViewModel>();
-    final profileUserId = viewModel.followerUserProfiles[widget.index]!.id;
-
-    // 초기 팔로우 여부
-    isFollowing = viewModel.isFollowing(profileUserId);
+    isFollowing = widget.isInitialFollowing; // 전달받은 초기 상태 사용
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.read<FollowListViewModel>();
-
-    final profileUserId = viewModel.followerUserProfiles[widget.index]!.id;
     final myId = SupabaseManager.shared.supabase.auth.currentUser!.id;
 
     return TextButton(
@@ -162,13 +188,19 @@ class _FollowButtonState extends State<FollowButton> {
         // 2) DB 업데이트
         if (isFollowing) {
           // 팔로우
-          await viewModel.addFollow(myId, profileUserId);
+          await viewModel.addFollow(myId, widget.userProfile.id);
         } else {
-          // 언팔로우
-          final followEntity = viewModel.followingUsers.firstWhere(
-            (f) => f!.following_id == profileUserId,
-          )!;
-          await viewModel.unFollow(followEntity.id);
+          // 언팔로우 (followEntity가 null일 수 있으므로 주의)
+          final targetFollowEntity =
+              widget.followEntity ??
+              viewModel.followingUsers.firstWhere(
+                (f) => f!.following_id == widget.userProfile.id,
+                orElse: () => null, // 찾지 못하면 null 반환
+              );
+
+          if (targetFollowEntity != null) {
+            await viewModel.unFollow(targetFollowEntity.id);
+          }
         }
       },
       style: TextButton.styleFrom(

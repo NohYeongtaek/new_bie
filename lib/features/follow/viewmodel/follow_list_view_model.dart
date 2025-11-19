@@ -24,14 +24,23 @@ class FollowListViewModel extends ChangeNotifier {
   List<UserEntity?> get followingUserProfiles => _followingUserProfiles;
 
   List<UserEntity?> get allUserProfiles {
-    return [
-      ..._followerUserProfiles, // 팔로워 목록을 먼저 넣음
-      ..._followingUserProfiles, // 그 뒤에 팔로잉 목록을 넣음
-    ];
+    final Map<String, UserEntity> uniqueUsers = {};
+
+    for (var user in _followerUserProfiles) {
+      if (user != null) uniqueUsers[user.id] = user; // 팔로워 우선
+    }
+
+    for (var user in _followingUserProfiles) {
+      if (user != null && !uniqueUsers.containsKey(user.id)) {
+        uniqueUsers[user.id] = user; // 팔로잉 중 중복 제거
+      }
+    }
+
+    return uniqueUsers.values.toList();
   }
 
   FollowListViewModel(BuildContext context) {
-    fetchAllFollowData();
+    // fetchAllFollowData();
     // eventBus.on<FollowListEventBus>().listen((event) {
     //   switch (event.type) {
     //     case FollowEventType.unFollow:
@@ -44,58 +53,75 @@ class FollowListViewModel extends ChangeNotifier {
     // });
   }
 
-  Future<void> fetchAllFollowData() async {
-    await Future.wait([fetchFollowerUsers(), fetchFollowingUsers()]);
-    // 모든 엔티티를 가져온 후, 프로필을 가져옵니다.
-    await fetchFollowerUserProfile();
-    await fetchFollowingUserProfile();
-    notifyListeners();
-  }
+  Future<void> fetchAllFollowData({String? targetUserId}) async {
+    // 0. 기존 리스트 초기화
+    _followerUsers = [];
+    _followingUsers = [];
+    _followerUserProfiles = [];
+    _followingUserProfiles = [];
 
-  //나 or 사용자의 팔로워 유저를 가져오는 것
-  Future<void> fetchFollowerUsers() async {
-    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
-    if (userId == null) return;
-    _followerUsers = await SupabaseManager.shared.fetchFollowerUsers(userId);
-    await fetchFollowerUserProfile();
-    notifyListeners();
-  }
+    // targetUserId가 없으면 현재 로그인 유저 ID를 사용
+    final String userId =
+        targetUserId ?? SupabaseManager.shared.supabase.auth.currentUser!.id;
 
-  //나 or 사용자의 팔로잉 유저를 가져오는 것
-  Future<void> fetchFollowingUsers() async {
-    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
-    if (userId == null) return;
-    _followingUsers = await SupabaseManager.shared.fetchFollowingUsers(userId);
-    await fetchFollowingUserProfile();
+    // 1. 팔로워/팔로잉 목록 엔티티 가져오기
+    await Future.wait([
+      SupabaseManager.shared
+          .fetchFollowerUsers(userId)
+          .then((data) => _followerUsers = data),
+      SupabaseManager.shared
+          .fetchFollowingUsers(userId)
+          .then((data) => _followingUsers = data),
+    ]);
+
+    // 2. 프로필 정보 가져오기 (자기 자신 제외)
+    await fetchFollowerUserProfile(targetUserId: targetUserId);
+    await fetchFollowingUserProfile(targetUserId: targetUserId);
+
+    // 3. UI 갱신
     notifyListeners();
   }
 
   //팔로워 유저의 프로필을 가져와야함
-  Future<void> fetchFollowerUserProfile() async {
+  Future<void> fetchFollowerUserProfile({String? targetUserId}) async {
     _followerUserProfiles = [];
 
+    final excludedUserId =
+        targetUserId ?? SupabaseManager.shared.supabase.auth.currentUser!.id;
+
     for (var followerUserData in _followerUsers) {
+      if (followerUserData == null) continue;
+
+      // targetUserId 본인은 제외
+      if (followerUserData.follower_id == excludedUserId) continue;
+
       UserEntity? user = await SupabaseManager.shared.fetchUser(
-        followerUserData!.follower_id,
+        followerUserData.follower_id,
       );
       if (user != null) {
         _followerUserProfiles.add(user);
-        print("followUser nick_name ${user.nick_name}");
       }
     }
   }
 
   //팔로잉 유저의 프로필을 가져와야함
-  Future<void> fetchFollowingUserProfile() async {
+  Future<void> fetchFollowingUserProfile({String? targetUserId}) async {
     _followingUserProfiles = [];
 
+    final excludedUserId =
+        targetUserId ?? SupabaseManager.shared.supabase.auth.currentUser!.id;
+
     for (var followingUserData in _followingUsers) {
+      if (followingUserData == null) continue;
+
+      // targetUserId 본인은 제외
+      if (followingUserData.following_id == excludedUserId) continue;
+
       UserEntity? user = await SupabaseManager.shared.fetchUser(
-        followingUserData!.following_id,
+        followingUserData.following_id,
       );
       if (user != null) {
         _followingUserProfiles.add(user);
-        print("followingUser nick_name ${user.nick_name}");
       }
     }
   }

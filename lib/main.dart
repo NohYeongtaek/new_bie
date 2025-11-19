@@ -202,8 +202,24 @@ class MyApp extends StatelessWidget {
           path: '/user_profile/:user_id',
           builder: (context, state) {
             final userId = state.pathParameters["user_id"] ?? "";
-            return UserProfilePage(userId: userId); // ← String 전달
+            return UserProfilePage(userId: userId);
           },
+          routes: [
+            GoRoute(
+              path: '/follower',
+              builder: (context, state) {
+                // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
+                final tabIndexString =
+                    state.uri.queryParameters['initialTab'] ?? '0';
+                final initialTab = int.tryParse(tabIndexString) ?? 0;
+                final targetUserId = state.pathParameters["user_id"] ?? "";
+                return FollowerListPage(
+                  initialTabIndex: initialTab,
+                  targetUserId: targetUserId,
+                );
+              },
+            ),
+          ],
         ),
         ShellRoute(
           builder: (context, state, child) {
@@ -292,7 +308,12 @@ class MyApp extends StatelessWidget {
                     final tabIndexString =
                         state.uri.queryParameters['initialTab'] ?? '0';
                     final initialTab = int.tryParse(tabIndexString) ?? 0;
-                    return FollowerListPage(initialTabIndex: initialTab);
+                    final currentUserId =
+                        context.read<AuthViewModel>().user?.id ?? "";
+                    return FollowerListPage(
+                      initialTabIndex: initialTab,
+                      targetUserId: currentUserId,
+                    );
                   },
                 ),
                 GoRoute(
