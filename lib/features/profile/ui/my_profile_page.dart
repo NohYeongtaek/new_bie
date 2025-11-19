@@ -92,6 +92,7 @@ class MyProfilePage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=1',
                                   );
@@ -238,7 +239,7 @@ class MyProfilePage extends StatelessWidget {
   static Widget _buildPostTextCard(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: greedColor,
         borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,
