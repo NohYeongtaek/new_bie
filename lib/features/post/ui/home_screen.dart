@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/post/post_item.dart';
 import 'package:new_bie/features/post/viewmodel/home_view_model.dart';
@@ -120,11 +122,31 @@ class HomeScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(
-                  controller: viewModel.keywordController,
-                  decoration: InputDecoration(
-                    hintText: '검색어를 입력하세요.',
-                    suffixIcon: IconButton(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CupertinoTextField(
+                    controller: viewModel.keywordController,
+                    placeholder: '검색어를 입력하세요.',
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey6,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    onSubmitted: (value) {
+                      context.read<SearchResultViewModel>().search(value);
+                      context.push('/home/search');
+                      viewModel.keywordReset();
+                    },
+                    suffix: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(
+                        CupertinoIcons.search,
+                        size: 20,
+                        color: blackColor,
+                      ),
                       onPressed: () {
                         context.read<SearchResultViewModel>().search(
                           viewModel.keywordController.text,
@@ -132,7 +154,6 @@ class HomeScreen extends StatelessWidget {
                         context.push('/home/search');
                         viewModel.keywordReset();
                       },
-                      icon: Icon(Icons.search),
                     ),
                   ),
                 ),
@@ -145,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                       final String title = viewModel.categoryList[index];
                       final bool isSelected = title == viewModel.selectCategory;
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(4.0),
                         child: ElevatedButton(
                           onPressed: () {
                             viewModel.ChangeCategory(title);
@@ -153,10 +174,15 @@ class HomeScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isSelected
                                 ? Colors.orange
-                                : Colors.white,
+                                : Colors.transparent,
                             foregroundColor: isSelected
                                 ? Colors.white
-                                : Colors.black,
+                                : Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            minimumSize: const Size(0, 0),
                           ),
                           child: Text(title),
                         ),
@@ -164,27 +190,53 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: DropdownMenu<OrderByType>(
-                    initialSelection: viewModel.type,
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(
-                        value: OrderByType.newFirst,
-                        label: "최신순",
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownMenu<OrderByType>(
+                      initialSelection: viewModel.type,
+                      dropdownMenuEntries: [
+                        DropdownMenuEntry(
+                          value: OrderByType.newFirst,
+                          label: "최신순",
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor: orangeColor,
+                          ),
+                        ),
+                        DropdownMenuEntry(
+                          value: OrderByType.oldFirst,
+                          label: "오래된 순",
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor: orangeColor,
+                          ),
+                        ),
+                        DropdownMenuEntry(
+                          value: OrderByType.likesFirst,
+                          label: "좋아요 순",
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor: orangeColor,
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        if (value != null) viewModel.ChangeOrder(value);
+                      },
+                      inputDecorationTheme: const InputDecorationTheme(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 5.0,
+                          vertical: 4.0,
+                        ),
+                        isDense: true,
+                        border: InputBorder.none,
+                        suffixIconColor: orangeColor,
                       ),
-                      DropdownMenuEntry(
-                        value: OrderByType.oldFirst,
-                        label: "오래된 순",
+                      menuStyle: MenuStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          greedColor,
+                        ),
                       ),
-                      DropdownMenuEntry(
-                        value: OrderByType.likesFirst,
-                        label: "좋아요 순",
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value != null) viewModel.ChangeOrder(value);
-                    },
+                    ),
                   ),
                 ),
                 Expanded(
