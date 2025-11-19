@@ -43,194 +43,200 @@ class _PostAddPage extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                body: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ListView(
-                    children: [
-                      TextField(
-                        controller: viewModel.titleController,
-                        decoration: InputDecoration(
-                          hintText: '제목을 입력하세요',
-                          hintStyle: TextStyle(fontSize: 30),
-                          border: const UnderlineInputBorder(),
-                        ),
-                        style: TextStyle(fontSize: 30),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: viewModel.contentController,
-                        decoration: const InputDecoration(
-                          hintText: '내용을 입력하세요',
-                          border: UnderlineInputBorder(),
-                        ),
-                        maxLines: 24,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 12),
-                      InkWell(
-                        onTap: () {
-                          viewModel.getImages();
-                          // ScaffoldMessenger.of(
-                          //   context,
-                          // ).showSnackBar(const SnackBar(content: Text('사진 추가 클릭됨')));
-                        },
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white),
-                              borderRadius: BorderRadius.circular(32),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(Icons.image, color: Colors.white),
-                                SizedBox(width: 8),
-                                Text(
-                                  '사진 추가',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ListView(
+                      children: [
+                        TextField(
+                          controller: viewModel.titleController,
+                          decoration: InputDecoration(
+                            hintText: '제목을 입력하세요',
+                            hintStyle: TextStyle(fontSize: 30),
+                            border: const UnderlineInputBorder(),
                           ),
+                          style: TextStyle(fontSize: 30),
                         ),
-                      ),
-                      if (viewModel.mediaFileList.length != 0)
-                        SizedBox(
-                          height: 166,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: viewModel.mediaFileList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    viewModel.removeNewImage(
-                                      viewModel.mediaFileList[index],
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 150,
-                                    height: 150,
-                                    child: Image.file(
-                                      File(viewModel.mediaFileList[index].path),
-                                      fit: BoxFit.cover,
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: viewModel.contentController,
+                          decoration: const InputDecoration(
+                            hintText: '내용을 입력하세요',
+                            border: UnderlineInputBorder(),
+                          ),
+                          maxLines: 24,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        const SizedBox(height: 12),
+                        InkWell(
+                          onTap: () {
+                            viewModel.getImages();
+                            // ScaffoldMessenger.of(
+                            //   context,
+                            // ).showSnackBar(const SnackBar(content: Text('사진 추가 클릭됨')));
+                          },
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(32),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(Icons.image, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    '사진 추가',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showBarModalBottomSheet(
-                                  expand: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return _selectCategoryTypeBottomSheetList(
-                                      viewModel: viewModel,
-                                    );
-                                  },
-                                );
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text(
-                                //       '해시태그 "${viewModel.hashtagController.text}" 추가됨',
-                                //     ),
-                                //   ),
-                                // );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 14,
-                                ),
-                              ),
-                              child: const Text(
-                                '카테고리 선택',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                bool isDone = await viewModel
-                                    .uploadSelectedImages();
-                                if (isDone) {
-                                  context.go('/home');
-                                  _submitPost(context);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('게시물 등록 실패.')),
-                                  );
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: orangeColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 14,
-                                ),
-                              ),
-                              child: const Text(
-                                '등록',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      ),
-                      if (viewModel.selectedCategoryList.isNotEmpty)
-                        SizedBox(
-                          height: 60,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: viewModel.selectedCategoryList.length,
-                            itemBuilder: (context, index) {
-                              CategoryTypeEntity category =
-                                  viewModel.selectedCategoryList[index];
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    viewModel.cancelCategory(category);
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
+                        if (viewModel.mediaFileList.length != 0)
+                          SizedBox(
+                            height: 166,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: viewModel.mediaFileList.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      viewModel.removeNewImage(
+                                        viewModel.mediaFileList[index],
+                                      );
+                                    },
                                     child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      color: orangeColor,
-                                      child: Text(
-                                        category.type_title,
-                                        style: TextStyle(
-                                          color: blackColor,
-                                          fontSize: 12,
+                                      width: 150,
+                                      height: 150,
+                                      child: Image.file(
+                                        File(
+                                          viewModel.mediaFileList[index].path,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showBarModalBottomSheet(
+                                    expand: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return _selectCategoryTypeBottomSheetList(
+                                        viewModel: viewModel,
+                                      );
+                                    },
+                                  );
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(
+                                  //     content: Text(
+                                  //       '해시태그 "${viewModel.hashtagController.text}" 추가됨',
+                                  //     ),
+                                  //   ),
+                                  // );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                child: const Text(
+                                  '카테고리 선택',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  bool isDone = await viewModel
+                                      .uploadSelectedImages();
+                                  if (isDone) {
+                                    context.go('/home');
+                                    _submitPost(context);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('게시물 등록 실패.'),
+                                      ),
+                                    );
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: orangeColor,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                child: const Text(
+                                  '등록',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                        if (viewModel.selectedCategoryList.isNotEmpty)
+                          SizedBox(
+                            height: 60,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: viewModel.selectedCategoryList.length,
+                              itemBuilder: (context, index) {
+                                CategoryTypeEntity category =
+                                    viewModel.selectedCategoryList[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      viewModel.cancelCategory(category);
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        color: orangeColor,
+                                        child: Text(
+                                          category.type_title,
+                                          style: TextStyle(
+                                            color: blackColor,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
