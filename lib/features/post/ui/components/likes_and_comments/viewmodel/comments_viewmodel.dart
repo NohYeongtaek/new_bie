@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/core/models/event_bus/comment_event_bus.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
-import 'package:new_bie/main.dart';
 import 'package:provider/provider.dart';
 
 class CommentsViewmodel extends ChangeNotifier {
@@ -11,31 +10,74 @@ class CommentsViewmodel extends ChangeNotifier {
 
   final TextEditingController textEditingController = TextEditingController();
   final int postId;
-  List<int> commentsIdList = [];
+  // List<int> commentsIdList = [];
+  int? selectCommentIndex;
+  bool isWorking = false;
+  final TextEditingController commentUpdatingController =
+      TextEditingController();
+  List<CommentWithProfileEntity> commentsList = [];
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   CommentsViewmodel(this.postId, BuildContext context)
     : _repository = context.read<PostRepository>() {
-    fetchCommentsId();
-    eventBus.on<CommentEvent>().listen((event) {
-      switch (event.type) {
-        case CommentEventType.commentDelete:
-          refreshCommentsId();
-          break;
-      }
-    });
+    // fetchCommentsId();
+    fetchComment();
+    // eventBus.on<CommentEvent>().listen((event) {
+    //   switch (event.type) {
+    //     case CommentEventType.commentDelete:
+    //       refreshCommentsId();
+    //       break;
+    //   }
+    // });
   }
-
-  Future<void> fetchCommentsId() async {
-    commentsIdList = await _repository.fetchCommentIds(postId);
+  Future<void> fetchComment() async {
+    isWorking = true;
+    commentsList = await _repository.fetchComments(postId);
+    isWorking = false;
     notifyListeners();
   }
 
-  Future<void> refreshCommentsId() async {
-    commentsIdList = [];
-    commentsIdList = await _repository.fetchCommentIds(postId);
+  void startEdit(int index) {
+    selectCommentIndex = index;
+    commentUpdatingController.text = commentsList[index].content ?? "";
     notifyListeners();
   }
+
+  void cancelEdit() {
+    selectCommentIndex = null;
+    commentUpdatingController.text = "";
+    notifyListeners();
+  }
+
+  Future<void> editComment(int index, int commentId) async {
+    if (isWorking == true) return;
+    if (commentUpdatingController.text == commentsList[index].content) return;
+    try {
+      await _repository.editComment(commentId, commentUpdatingController.text);
+      isWorking = true;
+    } catch (e) {
+      isWorking = false;
+      return;
+    }
+    commentsList[index].content = commentUpdatingController.text;
+    selectCommentIndex = null;
+    notifyListeners();
+    commentsList[index] = await _repository.fetchCommentItem(commentId);
+    commentUpdatingController.text = "";
+    isWorking = false;
+    notifyListeners();
+  }
+
+  // Future<void> fetchCommentsId() async {
+  //   commentsIdList = await _repository.fetchCommentIds(postId);
+  //   notifyListeners();
+  // }
+  //
+  // Future<void> refreshCommentsId() async {
+  //   commentsIdList = [];
+  //   commentsIdList = await _repository.fetchCommentIds(postId);
+  //   notifyListeners();
+  // }
 
   Future<void> insertComment() async {
     final userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
@@ -53,8 +95,13 @@ class CommentsViewmodel extends ChangeNotifier {
       return;
     }
     textEditingController.text = "";
-    await Future.delayed(const Duration(milliseconds: 1700));
-    commentsIdList = await _repository.fetchCommentIds(postId);
+    commentsList = await _repository.fetchComments(postId);
+    notifyListeners();
+  }
+
+  Future<void> deleteComment(int index, int comment_id) async {
+    await _repository.deleteComment(comment_id);
+    commentsList.removeAt(index);
     notifyListeners();
   }
   // 입력한 글자 수를 받아오는 함수

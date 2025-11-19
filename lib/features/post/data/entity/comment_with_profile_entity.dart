@@ -4,7 +4,7 @@ class CommentWithProfileEntity {
   final int id;
   final int postId;
   final String? authorId;
-  final String? content;
+  String? content;
   final String? deleted_at;
   final String createdAt;
   final bool is_block;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/features/profile/viewmodel/question_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -13,16 +14,20 @@ class QuestionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final titleController = TextEditingController();
-    final contentController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('문의하기'),
         actions: [
           TextButton(
-            onPressed: () => _sendInquiry(context),
+            onPressed: () async {
+              bool isDone = await context
+                  .read<QuestionViewmodel>()
+                  .sendQuestion();
+              if (isDone) {
+                context.pop();
+                _sendInquiry(context);
+              }
+            },
             child: const Text(
               '전송',
               style: TextStyle(color: Colors.blue, fontSize: 16),
@@ -42,7 +47,7 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: emailController,
+                  controller: viewModel.emailController,
                   decoration: const InputDecoration(
                     hintText: '답변 받을 이메일을 입력하세요',
                     border: OutlineInputBorder(),
@@ -56,7 +61,7 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: titleController,
+                  controller: viewModel.titleController,
                   decoration: const InputDecoration(
                     hintText: '문의 제목을 입력하세요',
                     border: OutlineInputBorder(),
@@ -69,7 +74,7 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: contentController,
+                  controller: viewModel.contentController,
                   decoration: const InputDecoration(
                     hintText: '문의 내용을 자세히 입력해주세요',
                     border: OutlineInputBorder(),

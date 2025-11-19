@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/managers/supabase_manager.dart';
 
 //이것은 복붙용입니다. 혹시 몰라서 아직은 삭제하지 않으나 곧 삭제할 예정입니다.
 
@@ -6,13 +7,58 @@ class QuestionViewmodel extends ChangeNotifier {
   final emailController = TextEditingController();
   final titleController = TextEditingController();
   final contentController = TextEditingController();
+
+  bool isWork = false;
   // int inputCount = 0;
 
   // final TextEditingController textEditingController = TextEditingController();
 
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
-  QuestionViewmodel(BuildContext context) {}
+  QuestionViewmodel(BuildContext context) {
+    setEmail();
+  }
 
+  void setEmail() {
+    final email = SupabaseManager.shared.supabase.auth.currentUser?.email;
+    if (email != null) {
+      emailController.text = email;
+    }
+    notifyListeners();
+  }
+
+  //문의 하기 함수
+  Future<bool> sendQuestion() async {
+    if (isWork) return false;
+    isWork = true;
+    notifyListeners();
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null ||
+        emailController.text.isEmpty ||
+        titleController.text.isEmpty ||
+        contentController.text.isEmpty) {
+      isWork = false;
+      notifyListeners();
+      return false;
+    }
+    try {
+      await SupabaseManager.shared.sendQuestion(
+        userId,
+        emailController.text,
+        titleController.text,
+        contentController.text,
+      );
+    } catch (e) {
+      print("문의 전송 실패 : $e");
+      isWork = false;
+      notifyListeners();
+      return false;
+    }
+    titleController.text = "";
+    contentController.text = "";
+    isWork = false;
+    notifyListeners();
+    return true;
+  }
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;
