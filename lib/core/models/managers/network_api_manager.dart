@@ -155,14 +155,23 @@ class NetworkApiManager {
     String authorizationKey = supabase.auth.currentSession?.accessToken != null
         ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
         : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
-    final response = await supabase.functions.invoke(
-      'post-function/comments',
-      method: HttpMethod.get,
-      queryParameters: {'post_id': postId},
-      headers: {
-        'Authorization': authorizationKey,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+    // final response = await supabase.functions.invoke(
+    //   'post-function/comments',
+    //   method: HttpMethod.get,
+    //   queryParameters: {'post_id': "${postId}"},
+    //   headers: {
+    //     'Authorization': authorizationKey,
+    //     'Content-Type': 'application/x-www-form-urlencoded',
+    //   },
+    // );
+    final response = await dio.get(
+      'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/comment?post_id=${postId}',
+      options: Options(
+        headers: {
+          'Authorization': authorizationKey,
+          'Content-Type': 'application/json',
+        },
+      ),
     );
     if (response.data['data'] != null) {
       final List data = response.data['data'];

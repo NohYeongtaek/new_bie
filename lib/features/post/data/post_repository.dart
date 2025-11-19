@@ -124,6 +124,10 @@ class PostRepository {
     await NetworkApiManager.shared.deletePost(postId);
   }
 
+  Future<List<CommentWithProfileEntity>> fetchComments(int postId) async {
+    return await NetworkApiManager.shared.fetchComments(postId);
+  }
+
   // Future<void> addMemo(String content) async {
   //   return await NetworkApiManager.shared.addMemo(content);
   // }
