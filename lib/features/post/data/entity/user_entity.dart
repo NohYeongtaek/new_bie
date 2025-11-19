@@ -10,8 +10,6 @@ class UserEntity {
   final String? email;
   final bool is_blocked;
 
-  String? profileImage;
-
   UserEntity({
     required this.id,
     required this.profile_image,
