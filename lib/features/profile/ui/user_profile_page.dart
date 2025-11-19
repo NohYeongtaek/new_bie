@@ -23,10 +23,6 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<FollowListViewModel>();
-    Future.microtask(
-      () => viewModel.fetchAllFollowData(targetUserId: targetUserId),
-    );
     return ChangeNotifierProvider(
       create: (_) => UserProfileViewModel(userId, context),
       child: Consumer<UserProfileViewModel>(
