@@ -8,6 +8,7 @@ class UserEntity {
   final int following_count;
   final int follower_count;
   final String? email;
+  final bool is_blocked;
 
   String? profileImage;
 
@@ -21,6 +22,7 @@ class UserEntity {
     required this.following_count,
     required this.follower_count,
     required this.email,
+    required this.is_blocked,
   });
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class UserEntity {
       following_count: json['following_count'] as int,
       follower_count: json['follower_count'] as int,
       email: json['email'] as String?,
+      is_blocked: json['is_blocked'] as bool,
     );
   }
 

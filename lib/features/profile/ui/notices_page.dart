@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -49,10 +50,8 @@ class NoticesPage extends StatelessWidget {
             trailing: Icon(Icons.chevron_right),
             onTap: () {
               // 상세 페이지 이동
-              Navigator.pushNamed(
-                context,
-                '/notice_detail',
-                arguments: vm.notices[index],
+              context.push(
+                '/my_profile/setting/notice/${vm.notices[index].id}',
               );
             },
           );

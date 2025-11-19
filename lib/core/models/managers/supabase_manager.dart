@@ -321,4 +321,19 @@ class SupabaseManager {
 
     return result != null;
   }
+
+  //문의 하기 함수
+  Future<void> sendQuestion(
+    String userId,
+    String email,
+    String title,
+    String content,
+  ) async {
+    await supabase.from('question').insert({
+      'user_id': userId,
+      'email': email,
+      'title': title,
+      'content': content,
+    });
+  }
 }

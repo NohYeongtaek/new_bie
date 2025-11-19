@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 
-class BlockedUserPage extends StatelessWidget {
-  const BlockedUserPage({super.key});
+class BlockedUserByAdminPage extends StatelessWidget {
+  const BlockedUserByAdminPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +28,30 @@ class BlockedUserPage extends StatelessWidget {
                   // 로그아웃 확실히 하고 이동
                   await SupabaseManager.shared.supabase.auth.signOut();
                   if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, '/login');
+                    context.go('/login');
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text("로그인 화면으로 이동"),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  // 로그아웃 확실히 하고 이동
+                  await SupabaseManager.shared.supabase.auth.signOut();
+                  if (context.mounted) {
+                    context.go('/home');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text("홈 화면으로 이동"),
               ),
             ),
           ],
