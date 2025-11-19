@@ -119,6 +119,11 @@ class MyProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refreshAll() async {
+    refreshPosts();
+    fetchUser();
+  }
+
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;

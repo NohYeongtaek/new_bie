@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:new_bie/core/models/managers/network_api_manager.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
+import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 
@@ -19,6 +20,11 @@ class UserProfileViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   List<PostWithProfileEntity> posts = [];
+
+  FollowEntity? _isFollow;
+  FollowEntity? get isFollow => _isFollow;
+
+  bool isFollowing = false;
 
   UserProfileViewModel(this.userId, BuildContext context) {
     Timer? _debounce;
@@ -53,6 +59,7 @@ class UserProfileViewModel extends ChangeNotifier {
 
   Future<void> loadUserProfile() async {
     _isLoading = true;
+    _currentPage = 1;
     notifyListeners();
     _user = await SupabaseManager.shared.fetchUser(userId);
     posts = await NetworkApiManager.shared.fetchUserPosts(
@@ -60,6 +67,7 @@ class UserProfileViewModel extends ChangeNotifier {
       currentIndex: currentPage,
     );
     _isLoading = false;
+    await getUserPageFollowEntity();
     notifyListeners();
   }
 
@@ -86,24 +94,16 @@ class UserProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // // 특정 유저 프로필 불러오기
-  // Future<void> loadUserProfile(String userId) async {
-  //   _isLoading = true;
-  //   notifyListeners();
-  //
-  //   try {
-  //     final data = await supabase
-  //         .from('users')
-  //         .select()
-  //         .eq('id', userId)
-  //         .single(); // execute 제거
-  //
-  //     _user = User.fromMap(data as Map<String, dynamic>);
-  //   } catch (e) {
-  //     debugPrint('유저 정보 로드 실패: $e');
-  //   } finally {
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
+  Future<void> getUserPageFollowEntity() async {
+    final String? myId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (myId != null) {
+      _isFollow = await SupabaseManager.shared.getUserPageFollowEntity(
+        myId,
+        userId,
+      );
+    }
+    isFollowing = isFollow != null;
+
+    notifyListeners();
+  }
 }

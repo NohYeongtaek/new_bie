@@ -322,6 +322,21 @@ class SupabaseManager {
     return result != null;
   }
 
+  Future<FollowEntity?> getUserPageFollowEntity(
+    String myId,
+    String userId,
+  ) async {
+    final List<Map<String, dynamic>> data = await supabase
+        .from('follow')
+        .select()
+        .eq('follower_id', myId)
+        .eq('following_id', userId);
+
+    if (data.isEmpty) return null;
+    final List<FollowEntity> results = data.map((json) {
+      return FollowEntity.fromJson(json);
+    }).toList();
+    return results.first;
   //문의 하기 함수
   Future<void> sendQuestion(
     String userId,

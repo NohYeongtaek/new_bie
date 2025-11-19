@@ -5,7 +5,6 @@ import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
-import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 class FollowerListPage extends StatelessWidget {
@@ -28,7 +27,16 @@ class FollowerListPage extends StatelessWidget {
       initialIndex: initialTabIndex,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('${context.read<MyProfileViewModel>().user?.nick_name}'),
+          title: FutureBuilder(
+            future: SupabaseManager.shared.fetchUser(targetUserId),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Text("");
+              }
+              final user = snapshot.data!;
+              return Text(user.nick_name ?? "알 수 없음");
+            },
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
@@ -84,10 +92,17 @@ class FollowerListPage extends StatelessWidget {
                                 userId: user.id,
                               ),
                             ),
-                            FollowButton(
-                              userProfile: user,
-                              isInitialFollowing: isFollowing,
-                            ),
+                            if (user.id !=
+                                SupabaseManager
+                                    .shared
+                                    .supabase
+                                    .auth
+                                    .currentUser
+                                    ?.id)
+                              FollowButton(
+                                userProfile: user,
+                                isInitialFollowing: isFollowing,
+                              ),
                           ],
                         ),
                       );
@@ -127,11 +142,18 @@ class FollowerListPage extends StatelessWidget {
                                 userId: user.id,
                               ),
                             ),
-                            FollowButton(
-                              userProfile: user,
-                              isInitialFollowing: true,
-                              followEntity: follow,
-                            ),
+                            if (user.id !=
+                                SupabaseManager
+                                    .shared
+                                    .supabase
+                                    .auth
+                                    .currentUser
+                                    ?.id)
+                              FollowButton(
+                                userProfile: user,
+                                isInitialFollowing: true,
+                                followEntity: follow,
+                              ),
                           ],
                         ),
                       );

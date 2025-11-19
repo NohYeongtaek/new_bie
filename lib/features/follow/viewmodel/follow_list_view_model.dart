@@ -130,7 +130,7 @@ class FollowListViewModel extends ChangeNotifier {
     // 1. DB에서 삭제
     await SupabaseManager.shared.deleteFollow(id);
 
-    // await fetchAllFollowData();₩ㅌ
+    // await fetchAllFollowData();
 
     // (다른 화면 갱신이 필요하다면 이벤트 버스 유지)
     eventBus.fire(

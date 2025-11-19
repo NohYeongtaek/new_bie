@@ -217,7 +217,8 @@ class MyApp extends StatelessWidget {
           path: '/user_profile/:user_id',
           builder: (context, state) {
             final userId = state.pathParameters["user_id"] ?? "";
-            return UserProfilePage(userId: userId);
+            final targetUserId = state.pathParameters["user_id"] ?? "";
+            return UserProfilePage(userId: userId, targetUserId: targetUserId);
           },
           routes: [
             GoRoute(

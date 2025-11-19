@@ -31,159 +31,165 @@ class MyProfilePage extends StatelessWidget {
             ],
             elevation: 0,
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                // 프로필
-                Container(
-                  color: blackColor,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                    horizontal: 16,
-                  ),
-                  child: Column(
-                    children: [
-                      SmallProfileComponent(
-                        imageUrl: viewModel.user?.profile_image,
-                        nickName: viewModel.user?.nick_name ?? '닉네임 없음',
-                        introduce:
-                            viewModel.user?.introduction ?? '자기소개가 없습니다.',
-                      ),
+          body: RefreshIndicator(
+            onRefresh: viewModel.refreshAll,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  // 프로필
+                  Container(
+                    color: blackColor,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 16,
+                    ),
+                    child: Column(
+                      children: [
+                        SmallProfileComponent(
+                          imageUrl: viewModel.user?.profile_image,
+                          nickName: viewModel.user?.nick_name ?? '닉네임 없음',
+                          introduce:
+                              viewModel.user?.introduction ?? '자기소개가 없습니다.',
+                        ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // 팔로워, 팔로잉부분
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    '/my_profile/follower?initialTab=0',
-                                  );
-                                },
-                                child: Text(
-                                  '${viewModel.user?.follower_count}',
-                                  style: const TextStyle(
-                                    color: orangeColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                        // 팔로워, 팔로잉부분
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                      '/my_profile/follower?initialTab=0',
+                                    );
+                                  },
+                                  child: Text(
+                                    '${viewModel.user?.follower_count}',
+                                    style: const TextStyle(
+                                      color: orangeColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    '/my_profile/follower?initialTab=0',
-                                  );
-                                },
-                                child: Text(
-                                  '팔로워',
-                                  style: TextStyle(color: Colors.white),
+                                const SizedBox(height: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                      '/my_profile/follower?initialTab=0',
+                                    );
+                                  },
+                                  child: Text(
+                                    '팔로워',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
+                              ],
+                            ),
+                            const SizedBox(width: 40),
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
+                                    context.push(
+                                      '/my_profile/follower?initialTab=1',
+                                    );
+                                  },
+                                  child: Text(
+                                    '${viewModel.user?.following_count}',
+                                    style: const TextStyle(
+                                      color: orangeColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                      '/my_profile/follower?initialTab=1',
+                                    );
+                                  },
+                                  child: Text(
+                                    '팔로잉',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // 프로필 수정버튼
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: orangeColor,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ],
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              // 프로필 수정 페이지 이동
+                              context.push('/my_profile/updateProfile');
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Text('프로필 수정'),
+                            ),
                           ),
-                          const SizedBox(width: 40),
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
-                                  context.push(
-                                    '/my_profile/follower?initialTab=1',
-                                  );
-                                },
-                                child: Text(
-                                  '${viewModel.user?.following_count}',
-                                  style: const TextStyle(
-                                    color: orangeColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Divider(color: Colors.grey, thickness: 1, height: 0.5),
+
+                  // 게시물
+                  Container(
+                    color: blackColor,
+                    child: Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Text(
+                              '게시물',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(height: 4),
-                              GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    '/my_profile/follower?initialTab=1',
-                                  );
-                                },
-                                child: Text(
-                                  '팔로잉',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 400,
+                            child: _buildPostGridView(
+                              viewModel.posts,
+                              viewModel,
+                              context,
+                            ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 20),
-
-                      // 프로필 수정버튼
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: orangeColor,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            // 프로필 수정 페이지 이동
-                            context.push('/my_profile/updateProfile');
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Text('프로필 수정'),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-
-                const Divider(color: Colors.grey, thickness: 1, height: 0.5),
-
-                // 게시물
-                Container(
-                  color: blackColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: Text(
-                          '게시물',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 400,
-                        child: _buildPostGridView(
-                          viewModel.posts,
-                          viewModel,
-                          context,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
