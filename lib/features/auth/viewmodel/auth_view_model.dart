@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:new_bie/core/models/event_bus/login_event_bus.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
+import 'package:new_bie/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -67,6 +69,7 @@ class AuthViewModel extends ChangeNotifier {
       if (_isLoggedIn && session != null) {
         _user = await SupabaseManager.shared.fetchUser(session.user.id);
       }
+      eventBus.fire(LoginEventBus());
       notifyListeners();
 
       debugPrint('[AuthVM] event: $event, session: $session');
