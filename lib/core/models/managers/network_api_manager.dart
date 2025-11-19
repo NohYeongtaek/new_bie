@@ -17,12 +17,15 @@ class NetworkApiManager {
   NetworkApiManager() {}
 
   Future<PostWithProfileEntity> fetchPostItem(int id) async {
+    String authorizationKey = supabase.auth.currentSession?.accessToken != null
+        ? 'Bearer ${supabase.auth.currentSession?.accessToken}'
+        : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc';
     final response = await dio.get(
       'https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/posts/${id}',
       options: Options(
         headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc',
+          'Authorization': authorizationKey,
+
           'Content-Type': 'application/json',
         },
       ),

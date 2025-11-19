@@ -9,8 +9,9 @@ class PostWithProfileEntity {
   final String? deleted_at;
   final String created_at;
   final bool is_block;
-  final int likes_count;
-  final int comments_count;
+  int likes_count;
+  int comments_count;
+  bool? isLiked;
   final PostUserEntity user;
   final List<PostImageEntity> postImages;
   final List<CategoryEntity> categories;
@@ -29,6 +30,7 @@ class PostWithProfileEntity {
     required this.user,
     required this.postImages,
     required this.categories,
+    required this.isLiked,
   });
 
   factory PostWithProfileEntity.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class PostWithProfileEntity {
               ?.map((category) => CategoryEntity.fromJson(category))
               .toList() ??
           [],
+      isLiked: json['is_liked'] as bool?,
     );
   }
 }

@@ -42,8 +42,8 @@ class PostRepository {
     await SupabaseManager.shared.insertLike(postId, userId);
   }
 
-  Future<void> cancelLike(int id) async {
-    await SupabaseManager.shared.cancelLike(id);
+  Future<void> cancelLike(int postId, String userId) async {
+    await SupabaseManager.shared.cancelLike(postId, userId);
   }
 
   Future<List<int>> fetchCommentIds(int postId) async {

@@ -6,7 +6,6 @@ import 'package:new_bie/core/utils/ui_set/fonts.dart';
 import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/likes_and_comments/ui/comment_button.dart';
-import 'package:new_bie/features/post/ui/components/likes_and_comments/ui/like_button.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/post/viewmodel/post_detail_view_model.dart';
 import 'package:provider/provider.dart';
@@ -135,7 +134,30 @@ class _PostDetailPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 spacing: 10,
                 children: [
-                  LikeButton(postId: postId),
+                  InkWell(
+                    onTap: () async {
+                      if (viewModel.post != null) {
+                        await viewModel.likeToggle(viewModel.post!.id);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            viewModel.post?.isLiked == true
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: viewModel.post?.isLiked == true
+                                ? Colors.red
+                                : Colors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text("${post?.likes_count ?? 0}"),
+                        ],
+                      ),
+                    ),
+                  ),
                   CommentButton(
                     comments_count: post?.comments_count ?? 0,
                     postId: postId,
