@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/widgets/bottom_nav_bar.dart';
 import 'package:new_bie/core/widgets/splash_page.dart';
+import 'package:new_bie/features/auth/ui/blocked_user_page.dart';
 import 'package:new_bie/features/auth/ui/login_page.dart';
 import 'package:new_bie/features/auth/ui/unregister_page.dart';
 import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
@@ -145,6 +146,8 @@ class MyApp extends StatelessWidget {
         //로그인 되면 홈화면으로 이동
         if (isLoggedIn && currentRoute == '/login' && user?.nick_name != null) {
           return '/home';
+        } else if (isLoggedIn && user?.is_blocked == true) {
+          return '/blocked';
         } else if (isLoggedIn && user?.nick_name == null) {
           return '/set_profile';
         }
@@ -162,6 +165,12 @@ class MyApp extends StatelessWidget {
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/blocked',
+          builder: (context, state) {
+            return const BlockedUserByAdminPage();
+          },
+        ),
         GoRoute(
           path: '/login',
           builder: (context, state) {
@@ -295,7 +304,7 @@ class MyApp extends StatelessWidget {
                             final noticeId =
                                 state.pathParameters["notice_id"] ?? "0";
                             final int detailId = int.parse(noticeId);
-                            return const NoticeDetailPage();
+                            return NoticeDetailPage(noticeId: detailId);
                           },
                         ),
                       ],
