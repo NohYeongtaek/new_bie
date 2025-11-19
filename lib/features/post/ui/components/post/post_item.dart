@@ -17,27 +17,21 @@ class PostItem extends StatelessWidget {
   final PostWithProfileEntity post;
   final DeletePostCallback onDelete;
   final LikeCallback? onLike;
-  void Function()? likeFunction = () {};
-
-  // final String? title;
-  // final String? content;
-  // final String created_at;
+  final void Function()? likeFunction;
 
   PostItem({
     super.key,
-    // this.title,
-    // this.content,
-    // required this.created_at,
-    this.onLike,
     required this.post,
-    this.likeFunction,
     required this.onDelete,
+    this.onLike,
+    this.likeFunction,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
-    final String blockId = post.user.id;
+    final String? currentUserId =
+        SupabaseManager.shared.supabase.auth.currentUser?.id;
+
     return InkWell(
       onTap: () {
         context.push('/post/${post.id}');
@@ -59,51 +53,38 @@ class PostItem extends StatelessWidget {
                     child: SmallProfileComponent(
                       imageUrl: post.user.profile_image,
                       nickName: post.user.nick_name ?? "",
-                      introduce: "${post.created_at.toTimesAgo()}",
+                      introduce: post.created_at.toTimesAgo(),
                       userId: post.user.id,
                     ),
                   ),
-                ),
-                if (post.user.id !=
-                    SupabaseManager.shared.supabase.auth.currentUser?.id)
-                  PopupMenuButton(
-                    itemBuilder: (context) => [
-                      PopupMenuItem(onTap: () {}, child: Text("신고")),
-                      PopupMenuItem(
-                        onTap: () {
-                          context.read<BlockedUserViewModel>().addBlockUser(
-                            userId!,
-                            blockId!,
-                          );
-                        },
-                        child: Text("차단"),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-            Text(post.title ?? "제목 없음", style: titleFontStyle),
-            if (post.postImages.length != 0)
-              SizedBox(
-                height: 216,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: post.postImages.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.network(
-                        post.postImages[index].image_url,
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
+                  if (post.user.id != currentUserId)
+                    PopupMenuButton(
+                      itemBuilder: (context) => [
+                        PopupMenuItem(onTap: () {}, child: Text("신고")),
+                        PopupMenuItem(
+                          onTap: () {
+                            if (currentUserId != null) {
+                              context.read<BlockedUserViewModel>().addBlockUser(
+                                currentUserId,
+                                post.user.id,
+                              );
+                            }
+                          },
+                          child: Text("차단"),
+                        ),
+                      ],
+                    ),
+                ],
               ),
-              Text(post.title ?? "제목 없음", style: titleFontStyle),
-              if (post.postImages.length != 0)
+
+              // 제목
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(post.title ?? "제목 없음", style: titleFontStyle),
+              ),
+
+              // 이미지 리스트
+              if (post.postImages.isNotEmpty)
                 SizedBox(
                   height: 216,
                   child: ListView.builder(
@@ -122,51 +103,20 @@ class PostItem extends StatelessWidget {
                     },
                   ),
                 ),
-              Text(
-                post.content ?? "내용 없음",
-                style: contentFontStyle,
-                maxLines: 6,
-                overflow: TextOverflow.ellipsis,
+
+              // 내용
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  post.content ?? "내용 없음",
+                  style: contentFontStyle,
+                  maxLines: 6,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  onLike == null
-                      ? LikeButton(
-                          postId: post.id,
-                          likes_count: post.likes_count,
-                        )
-                      : InkWell(
-                          onTap: () {
-                            onLike!();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  post.isLiked == true
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: post.isLiked == true
-                                      ? Colors.red
-                                      : Colors.grey,
-                                ),
-                                const SizedBox(width: 4),
-                                Text("${post.likes_count}"),
-                              ],
-                            ),
-                          ),
-                        ),
-                  CommentButton(
-                    comments_count: post.comments_count,
-                    postId: post.id,
-
-              if (post.categories.length != 0)
+              // 카테고리
+              if (post.categories.isNotEmpty)
                 SizedBox(
                   height: 50,
                   child: ListView.builder(
@@ -188,16 +138,35 @@ class PostItem extends StatelessWidget {
                         ),
                       );
                     },
-
                   ),
                 ),
+
+              // 좋아요 + 댓글
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  spacing: 10,
                   children: [
-                    LikeButton(postId: post.id, likes_count: post.likes_count),
+                    if (onLike == null)
+                      LikeButton(postId: post.id, likes_count: post.likes_count)
+                    else
+                      InkWell(
+                        onTap: () => onLike?.call(),
+                        child: Row(
+                          children: [
+                            Icon(
+                              post.isLiked == true
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: post.isLiked == true
+                                  ? Colors.red
+                                  : Colors.grey,
+                            ),
+                            SizedBox(width: 4),
+                            Text("${post.likes_count}"),
+                          ],
+                        ),
+                      ),
+                    SizedBox(width: 16),
                     CommentButton(
                       comments_count: post.comments_count,
                       postId: post.id,
