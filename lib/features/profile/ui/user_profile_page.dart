@@ -66,7 +66,7 @@ class UserProfilePage extends StatelessWidget {
                             child: Column(
                               children: [
                                 SmallProfileComponent(
-                                  imageUrl: user?.profileImage,
+                                  imageUrl: user?.profile_image,
                                   nickName: user?.nick_name ?? '닉네임 없음',
                                   introduce:
                                       user?.introduction ?? '자기소개가 없습니다.',
