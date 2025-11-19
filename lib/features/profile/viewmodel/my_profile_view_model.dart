@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/login_event_bus.dart';
 import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/core/models/managers/network_api_manager.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
@@ -20,6 +21,7 @@ class MyProfileViewModel extends ChangeNotifier {
   List<PostWithProfileEntity> posts = [];
   StreamSubscription? _subscription;
   StreamSubscription? _postSubscription;
+  StreamSubscription? _loginSubscription;
   ScrollController scrollController = ScrollController();
   int _currentPage = 1;
   int get currentPage => _currentPage;
@@ -76,6 +78,11 @@ class MyProfileViewModel extends ChangeNotifier {
           refreshPosts();
           break;
       }
+    });
+
+    _loginSubscription = eventBus.on<LoginEventBus>().listen((event) {
+      fetchUser();
+      refreshPosts();
     });
   }
   Future<void> fetchUser() async {
