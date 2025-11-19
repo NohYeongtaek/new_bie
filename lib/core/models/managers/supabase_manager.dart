@@ -337,6 +337,8 @@ class SupabaseManager {
       return FollowEntity.fromJson(json);
     }).toList();
     return results.first;
+  }
+
   //문의 하기 함수
   Future<void> sendQuestion(
     String userId,
