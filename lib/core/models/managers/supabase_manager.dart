@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_bie/features/block_users/data/blocked_user_entity.dart';
 import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
-import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/entity/comments_entity.dart';
 import 'package:new_bie/features/post/data/entity/likes_entity.dart';
 import 'package:new_bie/features/post/data/entity/notice_entity.dart';
 import 'package:new_bie/features/post/data/entity/post_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../features/post/data/entity/category_type_entity.dart';
 
 class SupabaseManager {
   // 이유 - 밖에서 shared를 null등 건드리지 못하게
@@ -304,5 +305,16 @@ class SupabaseManager {
         .map(CategoryTypeEntity.fromJson)
         .toList();
     return results4;
+  }
+
+  //차단한 유저 로그인 금지 코드 추가해야함
+  Future<bool> isUserBlocked(String userId) async {
+    final result = await supabase
+        .from('blocked_users')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    return result != null;
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
-import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
@@ -61,7 +60,6 @@ class MyProfilePage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=0',
                                   );
@@ -78,7 +76,6 @@ class MyProfilePage extends StatelessWidget {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () {
-                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=0',
                                   );
@@ -112,7 +109,6 @@ class MyProfilePage extends StatelessWidget {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () {
-                                  // FollowerListPage에서 fetchAllFollowData를 호출하므로 여기서는 불필요
                                   context.push(
                                     '/my_profile/follower?initialTab=1',
                                   );
@@ -143,6 +139,7 @@ class MyProfilePage extends StatelessWidget {
                           ),
                           onPressed: () {
                             // 프로필 수정 페이지 이동
+                            context.push('/my_profile/updateProfile');
                           },
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),

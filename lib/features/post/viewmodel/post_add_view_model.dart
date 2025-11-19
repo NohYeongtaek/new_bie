@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/category_type_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/main.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,6 +23,7 @@ class PostAddViewModel extends ChangeNotifier {
   List<CategoryTypeEntity> selectedCategoryList = [];
   List<XFile> mediaFileList = [];
   List<String> urlList = [];
+  bool isWorking = false;
   // 뷰모델 생성자, context를 통해 리포지토리를 받아올 수 있음.
   PostAddViewModel(BuildContext context)
     : _repository = context.read<PostRepository>() {
@@ -58,43 +61,63 @@ class PostAddViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadSelectedImages() async {
-    if (titleController.text.isEmpty || contentController.text.isEmpty) return;
-    if (mediaFileList.length != 0) {
-      for (var image in mediaFileList) {
-        String uploadedProfileImage = "";
-        final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
-        final imgFile = File(image.path);
-        await SupabaseManager.shared.supabase.storage
-            .from("images")
-            .upload(
-              fileName,
-              imgFile,
-              fileOptions: const FileOptions(
-                headers: {
-                  "Authorization":
-                      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
-                },
-              ),
-            );
-        uploadedProfileImage = SupabaseManager.shared.supabase.storage
-            .from("images")
-            .getPublicUrl(fileName);
-        urlList.add(uploadedProfileImage);
-        print(urlList);
+  Future<bool> uploadSelectedImages() async {
+    isWorking = true;
+    notifyListeners();
+    if (titleController.text.isEmpty || contentController.text.isEmpty) {
+      isWorking = false;
+      notifyListeners();
+      return false;
+    }
+    try {
+      if (mediaFileList.length != 0) {
+        for (var image in mediaFileList) {
+          String uploadedProfileImage = "";
+          final String fileName = "${DateTime.now().millisecondsSinceEpoch}";
+          final imgFile = File(image.path);
+          await SupabaseManager.shared.supabase.storage
+              .from("images")
+              .upload(
+                fileName,
+                imgFile,
+                fileOptions: const FileOptions(
+                  headers: {
+                    "Authorization":
+                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc",
+                  },
+                ),
+              );
+          uploadedProfileImage = SupabaseManager.shared.supabase.storage
+              .from("images")
+              .getPublicUrl(fileName);
+          urlList.add(uploadedProfileImage);
+          print(urlList);
+        }
       }
+    } catch (e) {
+      print("이미지 등록 실패 : ${e}");
+      isWorking = false;
+      notifyListeners();
+      return false;
     }
     String userId = SupabaseManager.shared.supabase.auth.currentUser?.id ?? "";
     List<int> categoryIds = selectedCategoryList.map((item) {
       return item.id;
     }).toList();
-    await _repository.insertPost(
-      userId,
-      titleController.text,
-      contentController.text,
-      urlList,
-      categoryIds,
-    );
+    try {
+      await _repository.insertPost(
+        userId,
+        titleController.text,
+        contentController.text,
+        urlList,
+        categoryIds,
+      );
+    } catch (e) {
+      print("게시물 등록 실패 : ${e}");
+      isWorking = false;
+      notifyListeners();
+      return false;
+    }
 
     mediaFileList = [];
     urlList = [];
@@ -102,7 +125,10 @@ class PostAddViewModel extends ChangeNotifier {
     contentController.text = "";
     hashtagController.text = "";
     selectedCategoryList = [];
+    isWorking = false;
     notifyListeners();
+    eventBus.fire(PostEventBus(PostEventType.add));
+    return true;
     // mediaFileList.forEach((image) async {
     //   String uploadedProfileImage = "";
     //   final String fileName = "${DateTime.now().millisecondsSinceEpoch}";

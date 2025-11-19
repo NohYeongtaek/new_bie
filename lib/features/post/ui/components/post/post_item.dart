@@ -61,38 +61,44 @@ class PostItem extends StatelessWidget {
                       userId: post.user.id,
                     ),
                   ),
-                  post.user.id ==
-                          SupabaseManager.shared.supabase.auth.currentUser?.id
-                      ? PopupMenuButton(
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              onTap: () {
-                                context.push("/post/${post.id}/edit");
-                              },
-                              child: Text("수정"),
-                            ),
-                            PopupMenuItem(
-                              onTap: () {
-                                onDelete();
-                              },
-                              child: Text("삭제"),
-                            ),
-                          ],
-                        )
-                      : PopupMenuButton(
-                          itemBuilder: (context) => [
-                            PopupMenuItem(onTap: () {}, child: Text("신고")),
-                            PopupMenuItem(
-                              onTap: () {
-                                context
-                                    .read<BlockedUserViewModel>()
-                                    .addBlockUser(userId!, blockId!);
-                              },
-                              child: Text("차단"),
-                            ),
-                          ],
-                        ),
-                ],
+                ),
+                if (post.user.id !=
+                    SupabaseManager.shared.supabase.auth.currentUser?.id)
+                  PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(onTap: () {}, child: Text("신고")),
+                      PopupMenuItem(
+                        onTap: () {
+                          context.read<BlockedUserViewModel>().addBlockUser(
+                            userId!,
+                            blockId!,
+                          );
+                        },
+                        child: Text("차단"),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            Text(post.title ?? "제목 없음", style: titleFontStyle),
+            if (post.postImages.length != 0)
+              SizedBox(
+                height: 216,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: post.postImages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        post.postImages[index].image_url,
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
               ),
               Text(post.title ?? "제목 없음", style: titleFontStyle),
               if (post.postImages.length != 0)

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/post/ui/components/post/post_item.dart';
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
@@ -90,10 +91,15 @@ class SearchAllView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final user = viewModel.users[index];
                     final String? userProfileImage = user.profile_image;
-                    return SmallProfileComponent(
-                      imageUrl: userProfileImage,
-                      nickName: user.nick_name ?? "",
-                      introduce: user.introduction ?? "",
+                    return InkWell(
+                      onTap: () {
+                        context.push("/user_profile/${user.id}");
+                      },
+                      child: SmallProfileComponent(
+                        imageUrl: userProfileImage,
+                        nickName: user.nick_name ?? "",
+                        introduce: user.introduction ?? "",
+                      ),
                     );
                   },
                 ),
@@ -192,10 +198,15 @@ class SearchUserView extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final user = viewModel.users[index];
                   final String? userProfileImage = user.profile_image;
-                  return SmallProfileComponent(
-                    imageUrl: userProfileImage,
-                    nickName: user.nick_name ?? "",
-                    introduce: user.introduction ?? "",
+                  return InkWell(
+                    onTap: () {
+                      context.push("/user_profile/${user.id}");
+                    },
+                    child: SmallProfileComponent(
+                      imageUrl: userProfileImage,
+                      nickName: user.nick_name ?? "",
+                      introduce: user.introduction ?? "",
+                    ),
                   );
                 },
               ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/core/models/managers/network_api_manager.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
@@ -18,6 +19,7 @@ class MyProfileViewModel extends ChangeNotifier {
   UserEntity? user;
   List<PostWithProfileEntity> posts = [];
   StreamSubscription? _subscription;
+  StreamSubscription? _postSubscription;
   ScrollController scrollController = ScrollController();
   int _currentPage = 1;
   int get currentPage => _currentPage;
@@ -62,6 +64,19 @@ class MyProfileViewModel extends ChangeNotifier {
           break;
       }
     });
+    _postSubscription = eventBus.on<PostEventBus>().listen((event) {
+      switch (event.type) {
+        case PostEventType.add:
+          refreshPosts();
+          break;
+        case PostEventType.delete:
+          refreshPosts();
+          break;
+        case PostEventType.edit:
+          refreshPosts();
+          break;
+      }
+    });
   }
   Future<void> fetchUser() async {
     final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
@@ -95,13 +110,11 @@ class MyProfileViewModel extends ChangeNotifier {
 
   Future<void> refreshPosts() async {
     final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
-    _currentPage = 0;
+    _currentPage = 1;
     if (userId == null) return;
-    posts.addAll(
-      await NetworkApiManager.shared.fetchUserPosts(
-        userId,
-        currentIndex: currentPage,
-      ),
+    posts = await NetworkApiManager.shared.fetchUserPosts(
+      userId,
+      currentIndex: currentPage,
     );
     notifyListeners();
   }

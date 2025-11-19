@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:new_bie/core/models/event_bus/post_event_bus.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
 import 'package:new_bie/features/post/data/entity/search_result_entity.dart';
 import 'package:new_bie/features/post/data/entity/user_entity.dart';
 import 'package:new_bie/features/post/data/post_repository.dart';
+import 'package:new_bie/main.dart';
 import 'package:provider/provider.dart';
 
 class SearchResultViewModel extends ChangeNotifier {
@@ -19,6 +21,7 @@ class SearchResultViewModel extends ChangeNotifier {
   PostRepository _repository;
   bool buttonIsWorking = false;
   final keywordController = TextEditingController();
+  StreamSubscription? _postSubscription;
   SearchResultViewModel(BuildContext context)
     : _repository = context.read<PostRepository>() {
     Timer? _debounce;
@@ -46,6 +49,35 @@ class SearchResultViewModel extends ChangeNotifier {
           userScrollController.position.maxScrollExtent) {
         fetchMoreUser();
       }
+      _postSubscription = eventBus.on<PostEventBus>().listen((event) async {
+        switch (event.type) {
+          case PostEventType.add:
+            break;
+          case PostEventType.delete:
+            final exists = posts.any((post) => post.id == event.postId);
+            if (exists) {
+              final foundPost = posts.indexWhere(
+                (post) => post.id == event.postId,
+              );
+              posts.removeAt(foundPost);
+              notifyListeners();
+            }
+            break;
+          case PostEventType.edit:
+            final exists = posts.any((post) => post.id == event.postId);
+            if (exists) {
+              final postIndex = posts.indexWhere(
+                (post) => post.id == event.postId,
+              );
+              final newPost = await _repository.fetchPostItem(
+                event.postId ?? 0,
+              );
+              posts[postIndex] = newPost;
+              notifyListeners();
+            }
+            break;
+        }
+      });
     });
     postScrollController.addListener(() async {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -182,6 +214,7 @@ class SearchResultViewModel extends ChangeNotifier {
     posts.removeAt(index);
     notifyListeners();
   }
+
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;

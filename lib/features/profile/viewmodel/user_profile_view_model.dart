@@ -52,11 +52,14 @@ class UserProfileViewModel extends ChangeNotifier {
   }
 
   Future<void> loadUserProfile() async {
+    _isLoading = true;
+    notifyListeners();
     _user = await SupabaseManager.shared.fetchUser(userId);
     posts = await NetworkApiManager.shared.fetchUserPosts(
       userId,
       currentIndex: currentPage,
     );
+    _isLoading = false;
     notifyListeners();
   }
 
