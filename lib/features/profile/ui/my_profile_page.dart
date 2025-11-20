@@ -21,7 +21,7 @@ class MyProfilePage extends StatelessWidget {
       child: Consumer<MyProfileViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F6F6),
+            backgroundColor: blackColor,
             appBar: AppBar(
               title: const Text(
                 '마이페이지',
