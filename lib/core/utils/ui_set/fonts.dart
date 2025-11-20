@@ -9,7 +9,7 @@ final TextStyle titleFontStyle = TextStyle(
 );
 
 // 내용
-final TextStyle contentFontStyle = TextStyle(
+const TextStyle contentFontStyle = TextStyle(
   color: Colors.white,
   fontSize: 16,
   fontWeight: FontWeight.normal,

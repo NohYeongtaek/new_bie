@@ -118,7 +118,8 @@ class _FollowerListContentState extends State<_FollowerListContent> {
                     itemBuilder: (context, index) {
                       final UserEntity user =
                           viewModel.followerUserProfiles[index]!;
-                      final myId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+                      final myId =
+                          SupabaseManager.shared.supabase.auth.currentUser?.id;
                       final isMe = user.id == myId;
                       final isFollowing = viewModel.isFollowing(user.id);
 
@@ -127,14 +128,14 @@ class _FollowerListContentState extends State<_FollowerListContent> {
                       FollowEntity? myFollowEntity;
                       if (isMe) {
                         try {
-                          myFollowEntity = viewModel.myFollowingUsers.firstWhere(
-                            (f) => f?.following_id == widget.targetUserId,
-                          );
+                          myFollowEntity = viewModel.myFollowingUsers
+                              .firstWhere(
+                                (f) => f?.following_id == widget.targetUserId,
+                              );
                         } catch (e) {
                           myFollowEntity = null;
                         }
                       }
-
                       return SizedBox(
                         height: 100,
                         child: Row(
@@ -159,13 +160,14 @@ class _FollowerListContentState extends State<_FollowerListContent> {
                                 userId: isMe ? null : user.id,
                               ),
                             ),
-                            if (isMe)
+                            if (user.id !=
+                                SupabaseManager
+                                    .shared
+                                    .supabase
+                                    .auth
+                                    .currentUser
+                                    ?.id)
                               // 팔로워 목록에서 내가 나올 때는 언팔로우 버튼
-                              FollowingUnfollowButton(
-                                userProfile: user,
-                                followEntity: myFollowEntity,
-                              )
-                            else
                               // 다른 사람은 팔로우/팔로잉 버튼
                               FollowerFollowButton(
                                 userProfile: user,
@@ -185,14 +187,17 @@ class _FollowerListContentState extends State<_FollowerListContent> {
                     itemBuilder: (context, index) {
                       final UserEntity user =
                           viewModel.followingUserProfiles[index]!;
-                      final myId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+                      final myId =
+                          SupabaseManager.shared.supabase.auth.currentUser?.id;
                       FollowEntity? follow;
                       try {
-                        follow = viewModel.followingUsers
-                            .firstWhere((f) => f?.following_id == user.id);
+                        follow = viewModel.followingUsers.firstWhere(
+                          (f) => f?.following_id == user.id,
+                        );
                       } catch (e) {
                         follow = null;
                       }
+                      final isFollowing = viewModel.isFollowing(user.id);
 
                       return SizedBox(
                         height: 100,

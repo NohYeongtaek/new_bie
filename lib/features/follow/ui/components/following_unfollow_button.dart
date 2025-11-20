@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/follow/data/entity/follow_entity.dart';
 import 'package:new_bie/features/follow/viewmodel/follow_list_view_model.dart';
@@ -25,7 +24,7 @@ class FollowingUnfollowButton extends StatelessWidget {
       onPressed: () async {
         // 언팔로우만 가능
         FollowEntity? targetFollowEntity = followEntity;
-        
+
         if (targetFollowEntity == null) {
           try {
             targetFollowEntity = viewModel.followingUsers.firstWhere(
@@ -45,11 +44,7 @@ class FollowingUnfollowButton extends StatelessWidget {
         foregroundColor: blackColor,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-      child: const Text(
-        "언팔로우",
-        style: TextStyle(fontSize: 14),
-      ),
+      child: const Text("팔로잉", style: TextStyle(fontSize: 14)),
     );
   }
 }
-
