@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/callback/callbacks.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
 import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
 import 'package:new_bie/features/post/data/entity/comment_with_profile_entity.dart';
@@ -31,7 +32,7 @@ class CommentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final double imageSize = 40;
     final Widget body = Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
@@ -81,42 +82,58 @@ class CommentItem extends StatelessWidget {
                 Text(comment.content ?? "", style: contentFontStyle),
               ],
             ),
-          ),
-          // 자기 자신의 id 면 수정,삭제를 띄우고 아니면 신고, 차단을 띄워라
+          ), // 자기 자신의 id 면 수정,삭제를 띄우고 아니면 신고, 차단을 띄워라
           comment.user.id ==
                   SupabaseManager.shared.supabase.auth.currentUser?.id
-              ? PopupMenuButton(
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      onTap: () {
-                        viewModel.startEdit(commentIndex);
-                      },
-                      child: Text("수정"),
-                    ),
-                    PopupMenuItem(onTap: onDelete, child: Text("삭제")),
-                  ],
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: PopupMenuButton(
+                    color: blackColor,
+                    iconColor: orangeColor,
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () {
+                          viewModel.startEdit(commentIndex);
+                        },
+                        child: Text("수정", style: TextStyle(color: orangeColor)),
+                      ),
+                      PopupMenuItem(
+                        onTap: onDelete,
+                        child: Text("삭제", style: TextStyle(color: orangeColor)),
+                      ),
+                    ],
+                  ),
                 )
-              : PopupMenuButton(
-                  itemBuilder: (context) => [
-                    PopupMenuItem(onTap: () {}, child: Text("신고")),
-                    PopupMenuItem(
-                      onTap: () {
-                        final userId = SupabaseManager
-                            .shared
-                            .supabase
-                            .auth
-                            .currentUser
-                            ?.id;
-                        if (userId != null) {
-                          context.read<BlockedUserViewModel>().addBlockUser(
-                            userId,
-                            comment.user.id,
-                          );
-                        }
-                      },
-                      child: Text("차단"),
-                    ),
-                  ],
+              : Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: PopupMenuButton(
+                    color: blackColor,
+                    iconColor: orangeColor,
+
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Text("신고", style: TextStyle(color: orangeColor)),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {
+                          final userId = SupabaseManager
+                              .shared
+                              .supabase
+                              .auth
+                              .currentUser
+                              ?.id;
+                          if (userId != null) {
+                            context.read<BlockedUserViewModel>().addBlockUser(
+                              userId,
+                              comment.user.id,
+                            );
+                          }
+                        },
+                        child: Text("차단", style: TextStyle(color: orangeColor)),
+                      ),
+                    ],
+                  ),
                 ),
         ],
       ),

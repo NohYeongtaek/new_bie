@@ -59,8 +59,15 @@ class PostItem extends StatelessWidget {
                   ),
                   if (post.user.id != currentUserId)
                     PopupMenuButton(
+                      color: blackColor,
                       itemBuilder: (context) => [
-                        PopupMenuItem(onTap: () {}, child: Text("신고")),
+                        PopupMenuItem(
+                          onTap: () {},
+                          child: Text(
+                            "신고",
+                            style: TextStyle(color: orangeColor),
+                          ),
+                        ),
                         PopupMenuItem(
                           onTap: () {
                             if (currentUserId != null) {
@@ -70,7 +77,10 @@ class PostItem extends StatelessWidget {
                               );
                             }
                           },
-                          child: Text("차단"),
+                          child: Text(
+                            "차단",
+                            style: TextStyle(color: orangeColor),
+                          ),
                         ),
                       ],
                     ),
@@ -159,10 +169,13 @@ class PostItem extends StatelessWidget {
                                   : Icons.favorite_border,
                               color: post.isLiked == true
                                   ? Colors.red
-                                  : Colors.grey,
+                                  : Colors.white,
                             ),
                             SizedBox(width: 4),
-                            Text("${post.likes_count}"),
+                            Text(
+                              "${post.likes_count}",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ],
                         ),
                       ),

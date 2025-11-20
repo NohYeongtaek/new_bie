@@ -3,9 +3,6 @@ import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.d
 import 'package:new_bie/features/post/ui/components/profile/small_profile_component.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/utils/ui_set/fonts.dart'
-    show titleFontStyle, buttonFontStyle;
-
 class BlockedUserPage extends StatelessWidget {
   const BlockedUserPage({super.key});
 
@@ -13,7 +10,10 @@ class BlockedUserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('차단된 사용자 목록', style: titleFontStyle),
+        title: Text(
+          '차단된 사용자 목록',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -67,12 +67,14 @@ class BlockedUserPage extends StatelessWidget {
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.grey.shade100,
                                 foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
                               ),
-                              child: Center(
-                                child: Text('차단 해제', style: buttonFontStyle),
+                              child: Text(
+                                '차단 해제',
+                                style: const TextStyle(fontSize: 14),
                               ),
                             ),
                           ],

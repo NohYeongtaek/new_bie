@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
@@ -17,7 +18,6 @@ class _SearchResultPageState extends State<SearchResultPage>
     with TickerProviderStateMixin {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     context.read<SearchResultViewModel>().initializeTabController(this);
   }
@@ -28,19 +28,31 @@ class _SearchResultPageState extends State<SearchResultPage>
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            title: TextField(
+            // ⬇️ 검색창을 title에 다시 배치합니다. (TabBar 위에 위치) ⬇️
+            title: CupertinoTextField(
               controller: viewModel.keywordController,
-              decoration: InputDecoration(
-                hint: Text("검색어를 입력하세요"),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    context.read<SearchResultViewModel>().searchAtResultPage();
-                  },
-                  icon: Icon(Icons.search),
+              placeholder: '검색어를 입력하세요.',
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemGrey6,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              onSubmitted: (value) {
+                viewModel.searchAtResultPage();
+              },
+              suffix: CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(
+                  CupertinoIcons.search,
+                  size: 20,
+                  color: blackColor,
                 ),
-                border: InputBorder.none,
+                onPressed: () {
+                  viewModel.searchAtResultPage();
+                },
               ),
             ),
+
             bottom: TabBar(
               controller: viewModel.tabController,
               isScrollable: true,
@@ -62,6 +74,7 @@ class _SearchResultPageState extends State<SearchResultPage>
               SearchUserView(viewModel: viewModel),
             ],
           ),
+          // ⬆️ body 수정 완료 ⬆️
         );
       },
     );
@@ -73,12 +86,23 @@ class SearchAllView extends StatelessWidget {
   final SearchResultViewModel viewModel;
   @override
   Widget build(BuildContext context) {
+    // 화면 높이 계산 (스크롤 뷰 내에서 중앙처럼 보이게 하기 위함)
+    final mediaQuery = MediaQuery.of(context);
+    // AppBar 높이 (56.0), TabBar 높이 (56.0), 상단 검색창 높이 (약 56.0)를 대략적으로 뺌
+    final totalHeight =
+        mediaQuery.size.height - mediaQuery.padding.top - 56.0 - 56.0 - 56.0;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (viewModel.posts.length == 0 && viewModel.users.length == 0)
-            Center(child: Text("검색 결과가 없습니다.")),
+            SizedBox(
+              height: totalHeight * 0.93,
+              child: Center(
+                child: Text("검색 결과가 없습니다.", style: TextStyle(fontSize: 25)),
+              ),
+            ),
           if (viewModel.users.length > 0)
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -107,7 +131,13 @@ class SearchAllView extends StatelessWidget {
                   onPressed: () {
                     viewModel.moveToTab(2);
                   },
-                  child: Text("유저 검색결과 보러가기"),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(orangeColor),
+                  ),
+                  child: Text(
+                    "유저 검색결과 보러가기",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -155,8 +185,16 @@ class SearchPostView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text("검색 결과 : 게시물 ${viewModel.posts.length}개"),
-        if (viewModel.posts.length == 0) Center(child: Text("검색결과가 없습니다.")),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+          child: Text("검색 결과 : 게시물 ${viewModel.posts.length}개"),
+        ),
+        if (viewModel.posts.length == 0)
+          Expanded(
+            child: Center(
+              child: Text("검색 결과가 없습니다.", style: TextStyle(fontSize: 25)),
+            ),
+          ),
         if (viewModel.posts.length > 0)
           Expanded(
             child: RefreshIndicator(
@@ -164,7 +202,7 @@ class SearchPostView extends StatelessWidget {
               child: ListView.builder(
                 physics: AlwaysScrollableScrollPhysics(),
                 controller: viewModel.postScrollController,
-                itemCount: viewModel.posts.length, // 뷰모델.list.length
+                itemCount: viewModel.posts.length,
                 itemBuilder: (context, index) {
                   return PostItem(
                     post: viewModel.posts[index],
@@ -191,8 +229,16 @@ class SearchUserView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text("검색 결과 : 유저 ${viewModel.users.length}명"),
-        if (viewModel.users.length == 0) Center(child: Text("검색결과가 없습니다.")),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+          child: Text("검색 결과 : 유저 ${viewModel.users.length}명"),
+        ),
+        if (viewModel.users.length == 0)
+          Expanded(
+            child: Center(
+              child: Text("검색 결과가 없습니다.", style: TextStyle(fontSize: 25)),
+            ),
+          ),
         if (viewModel.users.length > 0)
           Expanded(
             child: RefreshIndicator(
@@ -200,7 +246,7 @@ class SearchUserView extends StatelessWidget {
               child: ListView.builder(
                 physics: AlwaysScrollableScrollPhysics(),
                 controller: viewModel.userScrollController,
-                itemCount: viewModel.users.length, // 뷰모델.list.length
+                itemCount: viewModel.users.length,
                 itemBuilder: (context, index) {
                   final user = viewModel.users[index];
                   final String? userProfileImage = user.profile_image;

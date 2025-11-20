@@ -26,7 +26,7 @@ class LikeButton extends StatelessWidget {
                         : Icons.favorite_border,
                     color: viewModel.likeEntity != null
                         ? Colors.red
-                        : Colors.grey,
+                        : Colors.white,
                   ),
                   const SizedBox(width: 4),
                   Text("${viewModel.likes_count}"),
