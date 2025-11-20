@@ -67,6 +67,7 @@ class _CommentsListview extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            textInputAction: TextInputAction.done,
                             style: TextStyle(color: Colors.white),
                             controller: viewModel.textEditingController,
                             decoration: const InputDecoration(

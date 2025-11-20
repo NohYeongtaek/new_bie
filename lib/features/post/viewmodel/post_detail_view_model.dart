@@ -60,7 +60,7 @@ class PostDetailViewModel extends ChangeNotifier {
   }
 
   Future<bool> deletePost() async {
-    if (post?.user != SupabaseManager.shared.supabase.auth.currentUser?.id)
+    if (post?.user.id != SupabaseManager.shared.supabase.auth.currentUser?.id)
       return false;
     try {
       await _repository.deletePost(postId);

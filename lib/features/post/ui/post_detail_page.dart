@@ -81,7 +81,20 @@ class _PostDetailPage extends StatelessWidget {
                                         ),
                                       ),
                                       PopupMenuItem(
-                                        onTap: () {},
+                                        onTap: () {
+                                          print("삭제 시작");
+                                          Future.microtask(() async {
+                                            print("뷰모델에 삭제 요청");
+                                            bool isDone = await viewModel
+                                                .deletePost();
+                                            print("처리 완료");
+                                            if (isDone && context.mounted) {
+                                              print("삭제하기 완료");
+                                              context.pop();
+                                            }
+                                            print("안됨");
+                                          });
+                                        },
                                         child: Text(
                                           "삭제",
                                           style: TextStyle(color: orangeColor),
