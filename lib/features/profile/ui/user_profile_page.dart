@@ -76,7 +76,7 @@ class UserProfilePage extends StatelessWidget {
                                         GestureDetector(
                                           onTap: () {
                                             context.push(
-                                              '/user_profile/${userId}/follower?initialTab=0',
+                                              '/user_profile/${targetUserId}/follower?initialTab=0',
                                             );
                                           },
                                           child: Text(
@@ -92,7 +92,7 @@ class UserProfilePage extends StatelessWidget {
                                         GestureDetector(
                                           onTap: () {
                                             context.push(
-                                              '/user_profile/${userId}/follower?initialTab=0',
+                                              '/user_profile/${targetUserId}/follower?initialTab=0',
                                             );
                                           },
                                           child: Text(
@@ -110,7 +110,7 @@ class UserProfilePage extends StatelessWidget {
                                         GestureDetector(
                                           onTap: () {
                                             context.push(
-                                              '/user_profile/${userId}/follower?initialTab=1',
+                                              '/user_profile/${targetUserId}/follower?initialTab=1',
                                             );
                                           },
                                           child: Text(
@@ -126,7 +126,7 @@ class UserProfilePage extends StatelessWidget {
                                         GestureDetector(
                                           onTap: () {
                                             context.push(
-                                              '/user_profile/${userId}/follower?initialTab=1',
+                                              '/user_profile/${targetUserId}/follower?initialTab=1',
                                             );
                                           },
                                           child: Text(

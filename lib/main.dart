@@ -242,11 +242,10 @@ class MyApp extends StatelessWidget {
                     state.uri.queryParameters['initialTab'] ?? '0';
                 final initialTab = int.tryParse(tabIndexString) ?? 0;
                 final targetUserId = state.pathParameters["user_id"] ?? "";
-                return NoTransitionPage(
-                  child: FollowerListPage(
-                    initialTabIndex: initialTab,
-                    targetUserId: targetUserId,
-                  ),
+                return FollowerListPage(
+                  key: ValueKey('user_profile_follower_${targetUserId}_$initialTab'),
+                  initialTabIndex: initialTab,
+                  targetUserId: targetUserId,
                 );
               },
             ),
@@ -356,11 +355,10 @@ class MyApp extends StatelessWidget {
                     final initialTab = int.tryParse(tabIndexString) ?? 0;
                     final currentUserId =
                         context.read<AuthViewModel>().user?.id ?? "";
-                    return NoTransitionPage(
-                      child: FollowerListPage(
-                        initialTabIndex: initialTab,
-                        targetUserId: currentUserId,
-                      ),
+                    return FollowerListPage(
+                      key: ValueKey('my_profile_follower_${currentUserId}_$initialTab'),
+                      initialTabIndex: initialTab,
+                      targetUserId: currentUserId,
                     );
                   },
                 ),
