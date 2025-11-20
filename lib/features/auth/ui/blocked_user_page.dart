@@ -43,10 +43,10 @@ class BlockedUserByAdminPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () async {
                   // 로그아웃 확실히 하고 이동
-                  await SupabaseManager.shared.supabase.auth.signOut();
                   if (context.mounted) {
                     context.go('/home');
                   }
+                  await SupabaseManager.shared.supabase.auth.signOut();
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
