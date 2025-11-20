@@ -4,7 +4,7 @@ import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/extension/time_extension.dart';
-import '../../../core/utils/ui_set/fonts.dart' show titleFontStyle;
+import '../../../core/utils/ui_set/fonts.dart';
 
 class NoticesPage extends StatelessWidget {
   const NoticesPage({super.key});
@@ -35,13 +35,13 @@ class NoticesPage extends StatelessWidget {
           return ListTile(
             title: Text(
               vm.notices[index].title ?? '제목 없음', // 제목
-              style: titleFontStyle,
+              style: normalFontStyle,
             ),
-            subtitle: Text(
+            trailing: Text(
               timeAgo(vm.notices[index].created_at.toDateTime()),
               style: TextStyle(fontSize: 14, color: Colors.white),
+              textAlign: TextAlign.right,
             ),
-            trailing: Icon(Icons.chevron_right),
             onTap: () {
               // 상세 페이지 이동
               context.push(

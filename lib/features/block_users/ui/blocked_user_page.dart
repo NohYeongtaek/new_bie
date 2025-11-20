@@ -61,8 +61,7 @@ class BlockedUserPage extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: () => viewModel.deleteBlockedUser(
-                                viewModel.blockUsers[index]?.id ??
-                                    9999999999999999,
+                                viewModel.blockUsers[index]?.id ?? 99999999,
                               ),
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.grey.shade100,
