@@ -245,46 +245,41 @@ class SupabaseManager {
     });
   }
 
-  Future<List<FollowEntity?>> fetchFollowerUsers(String id) async {
-    // Map<String, dynamic> <- 이거 하나가 제이슨 이다
-    final List<Map<String, dynamic>> data = await supabase
-        .from('follow')
-        .select()
-        .eq('following_id', id);
-    // 콜렉션 형태변환
-    // T Function(Map<String, dynamic>)
-    final List<FollowEntity> results = data.map((Map<String, dynamic> json) {
-      return FollowEntity.fromJson(json);
-    }).toList();
+  // 여러 사용자 ID로 배치 조회
+  Future<List<UserEntity>> fetchUsersByIds(List<String> ids, {int batchSize = 100}) async {
+    if (ids.isEmpty) return [];
 
-    return results;
+    List<UserEntity> allUsers = [];
+
+    // 배치 크기만큼 나눠서 조회
+    for (int i = 0; i < ids.length; i += batchSize) {
+      final end = (i + batchSize < ids.length) ? i + batchSize : ids.length;
+      final batch = ids.sublist(i, end);
+
+      // 여러 ID를 조회하는 방법: or 조건 사용
+      if (batch.length == 1) {
+        // ID가 1개면 eq 사용
+        final data = await supabase
+            .from('users')
+            .select()
+            .eq('id', batch[0]);
+        if (data.isNotEmpty) {
+          allUsers.add(UserEntity.fromJson(data[0]));
+        }
+      } else {
+        // 여러 ID는 or 조건으로 조회
+        final orConditions = batch.map((id) => 'id.eq.$id').join(',');
+        final List<Map<String, dynamic>> data = await supabase
+            .from('users')
+            .select()
+            .or(orConditions);
+        allUsers.addAll(data.map((json) => UserEntity.fromJson(json)));
+      }
+    }
+
+    return allUsers;
   }
 
-  Future<List<FollowEntity?>> fetchFollowingUsers(String id) async {
-    // Map<String, dynamic> <- 이거 하나가 제이슨 이다
-    final List<Map<String, dynamic>> data = await supabase
-        .from('follow')
-        .select()
-        .eq('follower_id', id);
-    // 콜렉션 형태변환
-    // T Function(Map<String, dynamic>)
-    final List<FollowEntity> results = data.map((Map<String, dynamic> json) {
-      return FollowEntity.fromJson(json);
-    }).toList();
-
-    return results;
-  }
-
-  Future<void> addFollow(String followerId, String followingId) async {
-    await supabase.from("follow").insert({
-      "follower_id": followerId,
-      "following_id": followingId,
-    });
-  }
-
-  Future<void> deleteFollow(int id) async {
-    await supabase.from('follow').delete().eq('id', id);
-  }
 
   Future<List<String>> getCategoryList() async {
     final List<Map<String, dynamic>> data = await supabase

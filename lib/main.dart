@@ -230,6 +230,7 @@ class MyApp extends StatelessWidget {
                 final initialTab = int.tryParse(tabIndexString) ?? 0;
                 final targetUserId = state.pathParameters["user_id"] ?? "";
                 return FollowerListPage(
+                  key: ValueKey('user_profile_follower_${targetUserId}_$initialTab'),
                   initialTabIndex: initialTab,
                   targetUserId: targetUserId,
                 );
@@ -327,6 +328,7 @@ class MyApp extends StatelessWidget {
                     final currentUserId =
                         context.read<AuthViewModel>().user?.id ?? "";
                     return FollowerListPage(
+                      key: ValueKey('my_profile_follower_${currentUserId}_$initialTab'),
                       initialTabIndex: initialTab,
                       targetUserId: currentUserId,
                     );
