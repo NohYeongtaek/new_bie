@@ -15,7 +15,13 @@ class PostAddPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PostAddViewModel(context),
-      child: _PostAddPage(),
+      child: WillPopScope(
+        onWillPop: () async {
+          context.go('/home');
+          return false;
+        },
+        child: _PostAddPage(),
+      ),
     );
   }
 }
@@ -40,10 +46,6 @@ class _PostAddPage extends StatelessWidget {
                   title: const Text(
                     '게시글 작성',
                     style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(context),
                   ),
                 ),
                 body: SafeArea(

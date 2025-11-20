@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
 import 'package:new_bie/features/auth/viewmodel/login_view_model.dart';
@@ -33,52 +34,63 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("")),
-      body: SafeArea(
-        child: Consumer<LoginViewModel>(
-          builder: (context, viewmodel, child) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("/:new_bie", style: titleFontStyle),
-                Text("프로그래머를 위한 커뮤니티", style: contentFontStyle),
-                SizedBox(height: 150),
-                Text(_userId ?? '로그인 안됨(최종 배포 때엔 지울 것: 로그아웃 진행 중인 것 노출X)'),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-                        await SupabaseManager.shared.googleSignIn();
-                      } else {
-                        await SupabaseManager.shared.supabase.auth
-                            .signInWithOAuth(OAuthProvider.google);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 10,
-                        children: [
-                          Image.asset(
-                            'assets/images/google.png',
-                            width: 25,
-                            height: 25,
-                          ),
-                          Text("구글로 시작하기", style: TextStyle(fontSize: 20)),
-                        ],
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(title: Text("")),
+        body: SafeArea(
+          child: Consumer<LoginViewModel>(
+            builder: (context, viewmodel, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("/:new_bie", style: titleFontStyle),
+                  Text("프로그래머를 위한 커뮤니티", style: contentFontStyle),
+                  SizedBox(height: 150),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          if (!kIsWeb &&
+                              (Platform.isAndroid || Platform.isIOS)) {
+                            await SupabaseManager.shared.googleSignIn();
+                          } else {
+                            await SupabaseManager.shared.supabase.auth
+                                .signInWithOAuth(OAuthProvider.google);
+                          }
+                        } catch (e) {
+                          return;
+                        }
+                        context.go('/home');
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            Image.asset(
+                              'assets/images/google.png',
+                              width: 25,
+                              height: 25,
+                            ),
+                            Text("구글로 시작하기", style: TextStyle(fontSize: 20)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
+      onWillPop: () async {
+        context.go('/home');
+        return false;
+      },
     );
   }
 }
