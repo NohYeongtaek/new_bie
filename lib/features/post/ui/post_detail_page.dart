@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/models/managers/supabase_manager.dart';
 import 'package:new_bie/core/utils/extension/time_extension.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/utils/ui_set/fonts.dart';
 import 'package:new_bie/features/block_users/viewmodel/blocked_user_view_model.dart';
 import 'package:new_bie/features/post/data/entity/post_with_profile_entity.dart';
@@ -68,24 +69,35 @@ class _PostDetailPage extends StatelessWidget {
                                         .currentUser
                                         ?.id
                                 ? PopupMenuButton(
+                                    color: blackColor,
                                     itemBuilder: (context) => [
                                       PopupMenuItem(
                                         onTap: () {
                                           context.push("/post/${postId}/edit");
                                         },
-                                        child: Text("수정"),
+                                        child: Text(
+                                          "수정",
+                                          style: TextStyle(color: orangeColor),
+                                        ),
                                       ),
                                       PopupMenuItem(
                                         onTap: () {},
-                                        child: Text("삭제"),
+                                        child: Text(
+                                          "삭제",
+                                          style: TextStyle(color: orangeColor),
+                                        ),
                                       ),
                                     ],
                                   )
                                 : PopupMenuButton(
+                                    color: blackColor,
                                     itemBuilder: (context) => [
                                       PopupMenuItem(
                                         onTap: () {},
-                                        child: Text("신고"),
+                                        child: Text(
+                                          "신고",
+                                          style: TextStyle(color: orangeColor),
+                                        ),
                                       ),
                                       PopupMenuItem(
                                         onTap: () {
@@ -93,7 +105,10 @@ class _PostDetailPage extends StatelessWidget {
                                               .read<BlockedUserViewModel>()
                                               .addBlockUser(userId!, blockId!);
                                         },
-                                        child: Text("차단"),
+                                        child: Text(
+                                          "차단",
+                                          style: TextStyle(color: orangeColor),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -150,10 +165,13 @@ class _PostDetailPage extends StatelessWidget {
                                 : Icons.favorite_border,
                             color: viewModel.post?.isLiked == true
                                 ? Colors.red
-                                : Colors.grey,
+                                : Colors.white,
                           ),
                           const SizedBox(width: 4),
-                          Text("${post?.likes_count ?? 0}"),
+                          Text(
+                            "${post?.likes_count ?? 0}",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ],
                       ),
                     ),

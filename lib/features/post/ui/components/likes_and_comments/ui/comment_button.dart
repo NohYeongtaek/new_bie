@@ -23,12 +23,15 @@ class CommentButton extends StatelessWidget {
           // shape: RoundedRectangleBorder(
           //   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           // ),
-          expand: true,
           clipBehavior: Clip.antiAlias,
           builder: (BuildContext context) {
-            return Scaffold(
-              appBar: AppBar(title: Text("댓글"), centerTitle: true),
-              body: CommentsListview(postId: postId),
+            //화면의 70%만 채우고 싶어서
+            return FractionallySizedBox(
+              heightFactor: 0.7,
+              child: Scaffold(
+                appBar: AppBar(title: Text("댓글"), centerTitle: true),
+                body: SafeArea(child: CommentsListview(postId: postId)),
+              ),
             );
           },
         );
@@ -38,8 +41,8 @@ class CommentButton extends StatelessWidget {
         child: Row(
           spacing: 10,
           children: [
-            Icon(Icons.comment_outlined, color: Colors.white),
-            Text("${comments_count}"),
+            Image.asset('assets/images/chatLogo.png', width: 20, height: 20),
+            Text("${comments_count}", style: TextStyle(color: Colors.white)),
           ],
         ),
       ),

@@ -4,8 +4,7 @@ import 'package:new_bie/features/profile/viewmodel/notices_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/extension/time_extension.dart';
-import '../../../core/utils/ui_set/fonts.dart'
-    show titleFontStyle, dateFontStyle;
+import '../../../core/utils/ui_set/fonts.dart' show titleFontStyle;
 
 class NoticesPage extends StatelessWidget {
   const NoticesPage({super.key});
@@ -16,7 +15,7 @@ class NoticesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항', style: titleFontStyle),
+        title: Text('공지사항', style: TextStyle(fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -29,11 +28,8 @@ class NoticesPage extends StatelessWidget {
         itemCount: vm.notices.length,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
-        separatorBuilder: (context, index) => const Divider(
-          color: Color(0xFFE5E5E5),
-          height: 0.5,
-          thickness: 0.5,
-        ),
+        separatorBuilder: (context, index) =>
+            const Divider(color: Colors.white54, height: 0.5, thickness: 0.5),
 
         itemBuilder: (context, index) {
           return ListTile(
@@ -42,10 +38,8 @@ class NoticesPage extends StatelessWidget {
               style: titleFontStyle,
             ),
             subtitle: Text(
-              vm.notices[index].created_at != null
-                  ? timeAgo(vm.notices[index].created_at!.toDateTime())
-                  : '',
-              style: dateFontStyle,
+              timeAgo(vm.notices[index].created_at.toDateTime()),
+              style: TextStyle(fontSize: 14, color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
             onTap: () {

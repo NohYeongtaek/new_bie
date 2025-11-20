@@ -16,7 +16,10 @@ class QuestionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('문의하기'),
+        title: const Text(
+          '문의하기',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           TextButton(
             onPressed: () async {
@@ -30,7 +33,7 @@ class QuestionPage extends StatelessWidget {
             },
             child: const Text(
               '전송',
-              style: TextStyle(color: Colors.blue, fontSize: 16),
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
         ],
@@ -47,6 +50,7 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
+                  style: TextStyle(color: Colors.white),
                   controller: viewModel.emailController,
                   decoration: const InputDecoration(
                     hintText: '답변 받을 이메일을 입력하세요',
@@ -61,6 +65,7 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
+                  style: TextStyle(color: Colors.white),
                   controller: viewModel.titleController,
                   decoration: const InputDecoration(
                     hintText: '문의 제목을 입력하세요',
@@ -74,12 +79,13 @@ class QuestionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextField(
+                  style: TextStyle(color: Colors.white),
                   controller: viewModel.contentController,
                   decoration: const InputDecoration(
                     hintText: '문의 내용을 자세히 입력해주세요',
                     border: OutlineInputBorder(),
                   ),
-                  maxLines: 6,
+                  maxLines: 18,
                 ),
                 const SizedBox(height: 20),
                 const Text(
