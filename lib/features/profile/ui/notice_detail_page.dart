@@ -15,7 +15,10 @@ class NoticeDetailPage extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('공지사항', style: titleFontStyle),
+              title: Text(
+                '공지사항 상세',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),

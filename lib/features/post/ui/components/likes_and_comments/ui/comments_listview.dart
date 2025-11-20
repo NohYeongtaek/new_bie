@@ -32,7 +32,12 @@ class _CommentsListview extends StatelessWidget {
                   Container(color: orangeColor, height: 1),
                   Expanded(
                     child: viewModel.commentsList.isEmpty
-                        ? Center(child: Text("작성된 댓글이 없습니다.\n첫 댓글 작성 해보세요!"))
+                        ? Center(
+                            child: Text(
+                              "작성된 댓글이 없습니다.\n첫 댓글 작성 해보세요!",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          )
                         : ListView.builder(
                             // controller: viewModel.scrollController,
                             itemCount: viewModel
@@ -62,6 +67,7 @@ class _CommentsListview extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            style: TextStyle(color: Colors.white),
                             controller: viewModel.textEditingController,
                             decoration: const InputDecoration(
                               hintText: '댓글',
@@ -85,13 +91,16 @@ class _CommentsListview extends StatelessWidget {
                             // hashtagController.clear();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: orangeColor,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 14,
                             ),
                           ),
-                          child: const Text('추가'),
+                          child: const Text(
+                            '추가',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ],
                     ),

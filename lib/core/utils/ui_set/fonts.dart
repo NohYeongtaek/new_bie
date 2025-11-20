@@ -3,6 +3,7 @@ import 'package:new_bie/core/utils/ui_set/colors.dart';
 
 // 제목
 final TextStyle titleFontStyle = TextStyle(
+  color: orangeColor,
   fontSize: 32, // 40까지도
   fontWeight: FontWeight.bold,
 );
@@ -22,7 +23,7 @@ final TextStyle pageTitleFontStyle = TextStyle(
 
 // 게시물 업로드 시간 등등
 final TextStyle dateFontStyle = TextStyle(
-  color: orangeColor,
+  color: Colors.white54,
   fontSize: 14,
   fontWeight: FontWeight.normal,
 );

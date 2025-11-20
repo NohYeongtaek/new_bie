@@ -167,64 +167,77 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/blocked',
-          builder: (context, state) {
-            return const BlockedUserByAdminPage();
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: BlockedUserByAdminPage());
           },
         ),
         GoRoute(
           path: '/login',
-          builder: (context, state) {
-            return const LoginPage();
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: LoginPage());
           },
         ),
         GoRoute(
           path: '/splash',
-          builder: (context, state) {
-            return const SplashPage();
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: SplashPage());
           },
         ),
         GoRoute(
           path: '/unregister',
-          builder: (context, state) {
-            return const UnregisterPage();
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: UnregisterPage());
           },
         ),
         GoRoute(
           path: '/set_profile',
-          builder: (context, state) {
-            return const SetProfilePage();
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: SetProfilePage());
           },
         ),
         GoRoute(
           path: '/post/:id',
-          builder: (context, state) {
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
             final postId = state.pathParameters["id"] ?? "0";
             final int detailId = int.parse(postId);
-            return PostDetailPage(id: detailId);
+            return NoTransitionPage(child: PostDetailPage(id: detailId));
           },
           routes: [
             GoRoute(
               path: '/edit',
-              builder: (context, state) {
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
                 final postId = state.pathParameters["id"] ?? "0";
                 final int detailId = int.parse(postId);
-                return PostEditPage(postId: detailId);
+                return NoTransitionPage(child: PostEditPage(postId: detailId));
               },
             ),
           ],
         ),
         GoRoute(
           path: '/user_profile/:user_id',
-          builder: (context, state) {
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
             final userId = state.pathParameters["user_id"] ?? "";
             final targetUserId = state.pathParameters["user_id"] ?? "";
-            return UserProfilePage(userId: userId, targetUserId: targetUserId);
+            return NoTransitionPage(
+              child: UserProfilePage(
+                userId: userId,
+                targetUserId: targetUserId,
+              ),
+            );
           },
           routes: [
             GoRoute(
               path: '/follower',
-              builder: (context, state) {
-                // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
                 final tabIndexString =
                     state.uri.queryParameters['initialTab'] ?? '0';
                 final initialTab = int.tryParse(tabIndexString) ?? 0;
@@ -243,85 +256,100 @@ class MyApp extends StatelessWidget {
             return Scaffold(body: child, bottomNavigationBar: BottomNavBar());
           },
           routes: [
+            // Splash Page는 ShellRoute에 포함시키지 않는 것이 일반적이나,
+            // 코드가 포함하고 있으므로 수정합니다.
             GoRoute(
               path: '/splash',
-              builder: (context, state) {
-                return const SplashPage();
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: SplashPage());
               },
             ),
             GoRoute(
               path: '/home',
-              builder: (context, state) {
-                return const HomeScreen();
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: HomeScreen());
               },
               routes: [
                 GoRoute(
                   path: '/search',
-                  builder: (context, state) {
-                    return const SearchResultPage();
+                  // builder -> pageBuilder로 변경
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(child: SearchResultPage());
                   },
                 ),
               ],
             ),
             GoRoute(
               path: '/add',
-              builder: (context, state) {
-                return const PostAddPage();
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: PostAddPage());
               },
             ),
             GoRoute(
               path: '/journal',
-              builder: (context, state) {
-                return const JournalPage();
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: JournalPage());
               },
             ),
             GoRoute(
               path: '/my_profile',
-              builder: (context, state) {
-                return const MyProfilePage();
+              // builder -> pageBuilder로 변경
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: MyProfilePage());
               },
               routes: [
                 GoRoute(
                   path: '/setting',
-                  builder: (context, state) {
-                    return const SettingPage();
+                  // builder -> pageBuilder로 변경
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(child: SettingPage());
                   },
                   routes: [
                     GoRoute(
                       path: '/question',
-                      builder: (context, state) {
-                        return const QuestionPage();
+                      // builder -> pageBuilder로 변경
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(child: QuestionPage());
                       },
                     ),
                     GoRoute(
                       path: '/notice',
-                      builder: (context, state) {
-                        return const NoticesPage();
+                      // builder -> pageBuilder로 변경
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(child: NoticesPage());
                       },
                       routes: [
                         GoRoute(
                           path: '/:notice_id',
-                          builder: (context, state) {
+                          // builder -> pageBuilder로 변경
+                          pageBuilder: (context, state) {
                             final noticeId =
                                 state.pathParameters["notice_id"] ?? "0";
                             final int detailId = int.parse(noticeId);
-                            return NoticeDetailPage(noticeId: detailId);
+                            return NoTransitionPage(
+                              child: NoticeDetailPage(noticeId: detailId),
+                            );
                           },
                         ),
                       ],
                     ),
                     GoRoute(
                       path: '/blocked_users',
-                      builder: (context, state) {
-                        return const BlockedUserPage();
+                      // builder -> pageBuilder로 변경
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(child: BlockedUserPage());
                       },
                     ),
                   ],
                 ),
                 GoRoute(
                   path: '/follower',
-                  builder: (context, state) {
-                    // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
+                  // builder -> pageBuilder로 변경
+                  pageBuilder: (context, state) {
                     final tabIndexString =
                         state.uri.queryParameters['initialTab'] ?? '0';
                     final initialTab = int.tryParse(tabIndexString) ?? 0;
@@ -336,8 +364,9 @@ class MyApp extends StatelessWidget {
                 ),
                 GoRoute(
                   path: '/updateProfile',
-                  builder: (context, state) {
-                    return UpdateProfilePage();
+                  // builder -> pageBuilder로 변경
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(child: UpdateProfilePage());
                   },
                 ),
               ],
@@ -351,6 +380,8 @@ class MyApp extends StatelessWidget {
       title: title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        splashFactory: NoSplash.splashFactory, // 스플래쉬(리플효과) 제거
+        highlightColor: Colors.transparent, // 하이라이트 효과 제거
         colorScheme: ColorScheme.fromSeed(seedColor: orangeColor),
         scaffoldBackgroundColor: blackColor,
         textTheme: ThemeData(
@@ -365,4 +396,24 @@ class MyApp extends StatelessWidget {
       routerConfig: _router,
     );
   }
+}
+
+// 애니메이션 없이 페이지를 전환해주는 클래스
+class NoTransitionPage<T> extends CustomTransitionPage<T> {
+  const NoTransitionPage({required super.child, super.key})
+    : super(
+        transitionDuration: Duration.zero, // 전환 시간 0
+        reverseTransitionDuration: Duration.zero, // 역전환 시간 0
+        transitionsBuilder: _noTransitionBuilder,
+      );
+}
+
+// 애니메이션 없이 child만 반환하는 빌더
+Widget _noTransitionBuilder(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return child;
 }
