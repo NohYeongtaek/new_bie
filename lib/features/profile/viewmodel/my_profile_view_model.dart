@@ -131,6 +131,13 @@ class MyProfileViewModel extends ChangeNotifier {
     fetchUser();
   }
 
+  Future<void> unRegister() async {
+    final String? userId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    await SupabaseManager.shared.unRegister(userId);
+    await SupabaseManager.shared.supabase.auth.signOut();
+  }
+
   // 입력한 글자 수를 받아오는 함수
   // void handleTextInput(String input) {
   //   inputCount = input.length;

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
+import 'package:new_bie/features/profile/viewmodel/my_profile_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../../core/widgets/popup/popup_ask.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -108,11 +111,29 @@ class SettingPage extends StatelessWidget {
                     color: Colors.white,
                   ),
                   onTap: () async {
-                    context.read<AuthViewModel>().logout(
-                      onLoggedOut: () {
-                        context.go('/home');
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return PopupAsk(
+                          content: '로그아웃 하시겠습니까?',
+                          yesText: '확인',
+                          noText: '취소',
+                          yesLogic: () async {
+                            Navigator.pop(dialogContext);
+                            await context.read<AuthViewModel>().logout(
+                              onLoggedOut: () {
+                                context.go('/home');
+                              },
+                            );
+                          },
+                        );
                       },
                     );
+                    // context.read<AuthViewModel>().logout(
+                    //   onLoggedOut: () {
+                    //     context.go('/home');
+                    //   },
+                    // );
                   },
                 ),
                 const Divider(
@@ -127,7 +148,30 @@ class SettingPage extends StatelessWidget {
                     '탈퇴하기',
                     style: TextStyle(color: Colors.red),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return PopupAsk(
+                          content: '정말 탈퇴하시겠습니까?',
+                          inputContentTextStyle: TextStyle(
+                            color: Colors.red,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          yesText: '확인',
+                          noText: '취소',
+                          yesLogic: () async {
+                            Navigator.pop(dialogContext);
+                            await context
+                                .read<MyProfileViewModel>()
+                                .unRegister();
+                            context.go('login');
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),

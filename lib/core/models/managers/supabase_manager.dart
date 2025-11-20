@@ -246,7 +246,10 @@ class SupabaseManager {
   }
 
   // 여러 사용자 ID로 배치 조회
-  Future<List<UserEntity>> fetchUsersByIds(List<String> ids, {int batchSize = 100}) async {
+  Future<List<UserEntity>> fetchUsersByIds(
+    List<String> ids, {
+    int batchSize = 100,
+  }) async {
     if (ids.isEmpty) return [];
 
     List<UserEntity> allUsers = [];
@@ -259,10 +262,7 @@ class SupabaseManager {
       // 여러 ID를 조회하는 방법: or 조건 사용
       if (batch.length == 1) {
         // ID가 1개면 eq 사용
-        final data = await supabase
-            .from('users')
-            .select()
-            .eq('id', batch[0]);
+        final data = await supabase.from('users').select().eq('id', batch[0]);
         if (data.isNotEmpty) {
           allUsers.add(UserEntity.fromJson(data[0]));
         }
@@ -279,7 +279,6 @@ class SupabaseManager {
 
     return allUsers;
   }
-
 
   Future<List<String>> getCategoryList() async {
     final List<Map<String, dynamic>> data = await supabase
@@ -347,5 +346,13 @@ class SupabaseManager {
       'title': title,
       'content': content,
     });
+  }
+
+  // 탈퇴 유저 unRegisterAt 생성하기
+  Future<void> unRegister(String userId) async {
+    await supabase
+        .from('users')
+        .update({'unregister_at': '${DateTime.now()}'})
+        .eq('id', userId);
   }
 }

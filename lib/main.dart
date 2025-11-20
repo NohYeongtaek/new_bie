@@ -5,6 +5,7 @@ import 'package:new_bie/core/utils/ui_set/colors.dart';
 import 'package:new_bie/core/widgets/bottom_nav_bar.dart';
 import 'package:new_bie/core/widgets/splash_page.dart';
 import 'package:new_bie/features/auth/ui/blocked_user_page.dart';
+import 'package:new_bie/features/auth/ui/deleted_user_page.dart';
 import 'package:new_bie/features/auth/ui/login_page.dart';
 import 'package:new_bie/features/auth/ui/unregister_page.dart';
 import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
@@ -150,10 +151,19 @@ class MyApp extends StatelessWidget {
           return '/blocked';
         } else if (isLoggedIn && user?.nick_name == null) {
           return '/set_profile';
+        } else if (isLoggedIn && user?.unregister_at != null) {
+          return '/deleted_user';
         }
 
         //접근 가능한 화면
-        final List<String> publicRoutes = ['/login', '/splash', '/home'];
+        final List<String> publicRoutes = [
+          '/login',
+          '/splash',
+          '/home',
+          '/blocked',
+          '/deleted_user',
+          '/set_profile',
+        ];
         // 비로그인인데 publicRoutes 중 어떤 것도 아닌 경우 로그인 페이지로(지선생)
         final bool isPublic = publicRoutes.any(
           (path) => currentRoute.startsWith(path),
@@ -161,10 +171,16 @@ class MyApp extends StatelessWidget {
         if (!isLoggedIn && !isPublic) {
           return '/login';
         }
-
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/deleted_user',
+          // builder -> pageBuilder로 변경
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: DeletedUserPage());
+          },
+        ),
         GoRoute(
           path: '/blocked',
           // builder -> pageBuilder로 변경
