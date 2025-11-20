@@ -236,16 +236,20 @@ class MyApp extends StatelessWidget {
           routes: [
             GoRoute(
               path: '/follower',
-              // builder -> pageBuilder로 변경
               pageBuilder: (context, state) {
+                // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
                 final tabIndexString =
                     state.uri.queryParameters['initialTab'] ?? '0';
                 final initialTab = int.tryParse(tabIndexString) ?? 0;
                 final targetUserId = state.pathParameters["user_id"] ?? "";
-                return FollowerListPage(
-                  key: ValueKey('user_profile_follower_${targetUserId}_$initialTab'),
-                  initialTabIndex: initialTab,
-                  targetUserId: targetUserId,
+                return NoTransitionPage(
+                  child: FollowerListPage(
+                    key: ValueKey(
+                      'user_profile_follower_${targetUserId}_$initialTab',
+                    ),
+                    initialTabIndex: initialTab,
+                    targetUserId: targetUserId,
+                  ),
                 );
               },
             ),
@@ -348,17 +352,21 @@ class MyApp extends StatelessWidget {
                 ),
                 GoRoute(
                   path: '/follower',
-                  // builder -> pageBuilder로 변경
                   pageBuilder: (context, state) {
+                    // 쿼리 파라미터에서 initialTab 값을 가져옴. 없으면 기본값 0
                     final tabIndexString =
                         state.uri.queryParameters['initialTab'] ?? '0';
                     final initialTab = int.tryParse(tabIndexString) ?? 0;
                     final currentUserId =
                         context.read<AuthViewModel>().user?.id ?? "";
-                    return FollowerListPage(
-                      key: ValueKey('my_profile_follower_${currentUserId}_$initialTab'),
-                      initialTabIndex: initialTab,
-                      targetUserId: currentUserId,
+                    return NoTransitionPage(
+                      child: FollowerListPage(
+                        key: ValueKey(
+                          'my_profile_follower_${currentUserId}_$initialTab',
+                        ),
+                        initialTabIndex: initialTab,
+                        targetUserId: currentUserId,
+                      ),
                     );
                   },
                 ),
