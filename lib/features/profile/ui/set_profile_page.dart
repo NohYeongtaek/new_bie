@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:new_bie/core/utils/ui_set/colors.dart';
+import 'package:new_bie/features/auth/viewmodel/auth_view_model.dart';
 import 'package:new_bie/features/profile/viewmodel/set_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -109,15 +112,29 @@ class SetProfilePage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: orangeColor,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: viewModel.isLoading
-                            ? null
-                            : () => viewModel.saveProfile(context),
+                        onPressed: () async {
+                          // 1. 저장 로직 실행 및 성공 여부 확인
+                          final bool isSuccess = await viewModel.saveProfile(
+                            context,
+                          );
+
+                          if (isSuccess) {
+                            // 2. AuthViewModel 가져오기
+                            final authVM = context.read<AuthViewModel>();
+
+                            // 3.  최신 사용자 정보(닉네임이 채워진)를 Supabase에서 가져와 AuthVM 갱신
+                            await authVM.fetchUser();
+
+                            // 4. 홈 화면으로 이동 (이제 갱신된 AuthVM 정보 덕분에 리디렉트되지 않음)
+                            context.go('/home');
+                          }
+                        },
                         child: viewModel.isLoading
                             ? const SizedBox(
                                 height: 20,

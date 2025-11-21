@@ -36,12 +36,13 @@ class SetProfileViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> saveProfile(BuildContext context) async {
+  Future<bool> saveProfile(BuildContext context) async {
+    //  반환 타입을 Future<bool>로 변경
     if (_nickName.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('닉네임을 입력해주세요.')));
-      return;
+      return false; // 닉네임 유효성 검사 실패 시 false 반환
     }
 
     _isLoading = true;
@@ -51,12 +52,14 @@ class SetProfileViewModel extends ChangeNotifier {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) throw Exception('로그인 정보가 없습니다.');
 
+      // ... (이미지 업로드 및 users 테이블 저장 로직은 동일)
       String? profileImageUrl;
 
       // 프로필 이미지 업로드
       if (_imageFile != null) {
         final fileName =
             'avatars/$userId-${DateTime.now().millisecondsSinceEpoch}.jpg';
+        // ... (Supabase Storage upload 로직)
         await supabase.storage
             .from('avatars')
             .upload(
@@ -88,11 +91,13 @@ class SetProfileViewModel extends ChangeNotifier {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('프로필이 저장되었습니다!👍')));
+      return true; //  저장 성공 시 true 반환
     } catch (e) {
       debugPrint('프로필 저장 실패: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('프로필 저장에 실패했습니다: $e')));
+      return false; //  저장 실패 시 false 반환
     } finally {
       _isLoading = false;
       notifyListeners();

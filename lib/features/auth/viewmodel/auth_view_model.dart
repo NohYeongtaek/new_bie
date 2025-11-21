@@ -67,6 +67,7 @@ class AuthViewModel extends ChangeNotifier {
 
       _isLoggedIn = session != null;
       if (_isLoggedIn && session != null) {
+        // 인증 상태 변경 시 사용자 정보 가져오기
         _user = await SupabaseManager.shared.fetchUser(session.user.id);
       }
       eventBus.fire(LoginEventBus());
@@ -74,5 +75,31 @@ class AuthViewModel extends ChangeNotifier {
 
       debugPrint('[AuthVM] event: $event, session: $session');
     });
+  }
+
+  //  추가된 함수: 최신 사용자 정보를 수동으로 가져와 갱신
+  Future<void> fetchUser() async {
+    final currentUserId = SupabaseManager.shared.supabase.auth.currentUser?.id;
+    if (currentUserId == null) {
+      debugPrint('[AuthVM] fetchUser: Current user is null.');
+      _user = null;
+      notifyListeners();
+      return;
+    }
+
+    try {
+      // SupabaseManager의 fetchUser를 재사용하여 최신 프로필 정보 갱신
+      _user = await SupabaseManager.shared.fetchUser(currentUserId);
+      debugPrint(
+        '[AuthVM] fetchUser: User profile updated (nick_name: ${_user?.nick_name})',
+      );
+    } catch (e) {
+      debugPrint('[AuthVM] fetchUser failed to update user profile: $e');
+      // 갱신 실패 시 _user는 기존 값을 유지하거나 null로 처리할 수 있습니다.
+      // 여기서는 갱신 실패하더라도 현재 _user 값을 유지합니다.
+    }
+
+    // GoRouter 리디렉션 로직이 사용자 갱신을 감지하도록 notifyListeners 호출
+    notifyListeners();
   }
 }
