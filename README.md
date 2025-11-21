@@ -1,20 +1,34 @@
-# new_bie
+## 프로젝트 소개
+>뉴비 개발자와 초보 실무자들을 위한 익명 기반 커뮤니티 & 협업 매칭 플랫폼입니다. 개발 관련 하여 카테고리별로 글을 작성하고, 질문하고, 팀 프로젝트를 구성할 수 있는 공간을 제공합니다.
+특히, 기존 플랫폼(커리어리, 사람인 등)과 달리 사용자 경험 중심의 뉴비 친화형 커뮤니티입니다. 사이드 프로젝트 매칭을 한 번에 제공을 목표로 하고 있습니다.
 
-project 2
+## 개발 기간
+> 2025.10.29 - 2025.11.21
 
-## Getting Started
+## 기술 스택
+**Frontend**
+>- **언어/빌드**: Kotlin, Gradle(KTS), Flutter, Dart
+>- **아키텍처**: MVVM
+>- **비동기/데이터**: Provider, GoRouter
+**Backend**
+>- Supabase
 
-This project is a starting point for a Flutter application.
+## 주요 기능
+| 섹션                 | 주요 기능                                            |
+|--------------------|--------------------------------------------------|
+| 인증 (Supabase Auth) | • 소셜 로그인: 구글                                     |
+| 홈                  | • 전체 글 목록<br> • 최신순 / 오래된순 / 좋아요 순 정렬<br>• 검색기능  |
+| 게시글                | • 글 생성 / 수정 / 삭제<br>• 이미지 업로드<br>• 좋아요, 댓글       |
+| 프로필 / 팔로잉 시스템      | • 게시글 모아보기<br>• 팔로워 / 팔로잉 목록<br>•프로필 임이지 + 소개 수정 |
 
-A few resources to get you started if this is your first Flutter project:
+## 팀원 소개
+|                   팀장                   |               부팀장                |                팀원                |
+|:--------------------------------------:|:--------------------------------:|:--------------------------------:|
+| [노영택](https://github.com/NohYeongtaek) | [김민제](https://github.com/kmj685) | [서연우](https://github.com/123-art-ctrl) |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-commit function1
-1
-test
-ㅎㅎㅎㅎㅎㅎㅎㅎㅎ
+## 담당 역할
+| 팀원  | 역할                                                                                                                                                                                        |
+|-----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 노영택 | • 소셜 로그인(구글)<br>• 팔로우 기능<br>• 사용자 차단<br>• 전반적인 UI/UX<br>• 전반적인 폴더 구조 설계                                                                                                                   |
+| 김민제 | • Supabase Edge Functions를 통한 게시물 CRUD,  검색 기능 개발<br>• 홈 화면, 검색 화면, 마이 프로필 화면, 유저 프로필 화면 게시물 페이징 기능 구현<br>• 좋아요, 댓글 기능 개발<br>• 프로필 수정 기능 개발<br>• Supabase로 DB 설계<br>• 화면 기능정의서, API 문서 작성 |
+| 서연우 | • 게시물 작성, 수정 화면, 프로필 화면, 프로필 설정 화면, 설정 화면, 문의하기 화면, 팔로우 화면 UI 개발<br>• 프로필 설정 기능 개발<br>• 발표자료, 요구사항 정의서 등등 문서 작성                                                                           |
